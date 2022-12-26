@@ -15,7 +15,7 @@ import '@shoelace-style/shoelace/dist/components/textarea/textarea.js';
 import '@shoelace-style/shoelace/dist/components/drawer/drawer.js';
 import '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js';
 import '@shoelace-style/shoelace/dist/components/radio/radio.js';
-import '@shoelace-style/shoelace/dist/components/input/input.js';
+import '@shoelace-style/shoelace/dist/components/color-picker/color-picker.js';
 
 import '../components/timeline';
 import '../components/timeline-item';
@@ -42,6 +42,7 @@ export class AppHome extends LitElement {
   @state() attachmentPreview: string | null = null;
   @state() replies: any[] = [];
   @state() replyID: string | null = null;
+  @state() primary_color: string = '#000000';
 
   static get styles() {
     return [
@@ -59,6 +60,12 @@ export class AppHome extends LitElement {
         grid-template-columns: 75vw 22vw;
       }
 
+      #settings-drawer label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: bold;
+      }
 
       #profile {
         padding: 12px;
@@ -77,6 +84,18 @@ export class AppHome extends LitElement {
         gap: 14px;
         justify-content: space-between;
         margin-top: 8px;
+      }
+
+      sl-radio {
+        padding: 8px;
+        margin-top: 4px;
+        background: #00000024;
+        border-radius: 4px;
+      }
+
+      sl-radio::part(control) {
+        --toggle-size: 20px;
+        height: 20px;
       }
 
       #replies-drawer ul {
@@ -136,6 +155,15 @@ export class AppHome extends LitElement {
       #infoCard {
         padding: 18px;
         padding-top: 0px;
+      }
+
+      sl-color-picker::part(base) {
+        right: 91px;
+        position: fixed;
+      }
+
+      sl-drawer::part(panel) {
+        overflow-x: hidden;
       }
 
       pwa-install {
@@ -202,6 +230,10 @@ export class AppHome extends LitElement {
       }
     }
 
+    sl-tab-group::part(tabs) {
+      width: 18vw;
+    }
+
 
       @media (horizontal-viewport-segments: 2) {
         #welcomeBar {
@@ -226,6 +258,27 @@ export class AppHome extends LitElement {
     // for more info check out the lit docs https://lit.dev/docs/components/lifecycle/
     console.log('This is your home page');
     this.user = await getCurrentUser();
+
+    const potentialColor = localStorage.getItem("primary_color");
+
+    if (potentialColor) {
+      this.primary_color = potentialColor;
+      document.documentElement.style.setProperty('--sl-color-primary-600', potentialColor);
+    }
+    else {
+      // get css variable color
+      const color = getComputedStyle(document.documentElement).getPropertyValue('--sl-color-primary-600');
+      this.primary_color = color;
+    }
+  }
+
+  handlePrimaryColor(color: string) {
+    this.primary_color = color;
+
+    // set css variable color
+    document.documentElement.style.setProperty('--sl-color-primary-600', color);
+
+    localStorage.setItem("primary_color", color);
   }
 
   share() {
@@ -310,16 +363,12 @@ export class AppHome extends LitElement {
       </sl-dialog>
 
       <sl-drawer id="settings-drawer" placement="end" label="Settings">
-        <form>
 
-          <sl-radio-group id="theme" label="Theme" value="1">
-            <sl-radio value="1">Dark</sl-radio>
-            <sl-radio value="2">Light</sl-radio>
-            <sl-radio value="3">Colorful</sl-radio>
-          </sl-radio-group>
+          <label>
+            Theme Color
+            <sl-color-picker @sl-change="${($event: any) => this.handlePrimaryColor($event.target.value)}" .value="${this.primary_color}"></sl-color-picker>
+          </label>
 
-
-        </form>
       </sl-drawer>
 
       <sl-drawer id="replies-drawer" placement="end" label="Comments">

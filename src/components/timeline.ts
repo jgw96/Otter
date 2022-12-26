@@ -48,6 +48,10 @@ export class Timeline extends LitElement {
                 --padding: 10px;
             }
 
+            sl-card img {
+                height: 302px;
+            }
+
             .header-block {
                 display: flex;
                 align-items: center;

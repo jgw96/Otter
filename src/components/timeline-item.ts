@@ -32,6 +32,11 @@ export class TimelineItem extends LitElement {
                 border: none;
             }
 
+            sl-card img {
+                height: 420px;
+                object-fit: cover;
+            }
+
             .header-block {
                 display: flex;
                 align-items: center;

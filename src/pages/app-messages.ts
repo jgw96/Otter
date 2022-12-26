@@ -40,7 +40,7 @@ export class AppMessages extends LitElement {
     render() {
         return html`
             <ul>
-
+                <h2>Coming soon...</h2>
             </ul>
         `;
     }
