@@ -25,7 +25,7 @@ import '../components/notifications';
 import './app-messages';
 
 import { styles } from '../styles/shared-styles';
-import { getCurrentUser } from '../services/account';
+import { getCurrentUser, getInstanceInfo } from '../services/account';
 import { publishPost, uploadImageAsFormData } from '../services/posts';
 import { Router } from '@vaadin/router';
 import { reply } from '../services/timeline';
@@ -43,6 +43,7 @@ export class AppHome extends LitElement {
   @state() replies: any[] = [];
   @state() replyID: string | null = null;
   @state() primary_color: string = '#000000';
+  @state() instanceInfo: any | null = null;
 
   static get styles() {
     return [
@@ -53,6 +54,19 @@ export class AppHome extends LitElement {
         justify-content: center;
         align-items: center;
         flex-direction: column;
+      }
+
+      #instanceInfo {
+        border-radius: 6px;
+        background: #0000001a;
+        padding-left: 12px;
+        padding-top: 1px;
+        padding-right: 12px;
+        margin-top: 2em;
+      }
+
+      #instanceInfo img {
+        width: 160px;
       }
 
       main {
@@ -259,6 +273,8 @@ export class AppHome extends LitElement {
     console.log('This is your home page');
     this.user = await getCurrentUser();
 
+    console.log("user", this.user);
+
     const potentialColor = localStorage.getItem("primary_color");
 
     if (potentialColor) {
@@ -316,6 +332,8 @@ export class AppHome extends LitElement {
   }
 
   async openSettingsDrawer() {
+    this.instanceInfo = await getInstanceInfo();
+    console.log("instanceInfo", this.instanceInfo)
     const drawer = this.shadowRoot?.getElementById('settings-drawer') as any;
     drawer.show();
   }
@@ -368,6 +386,17 @@ export class AppHome extends LitElement {
             Theme Color
             <sl-color-picker @sl-change="${($event: any) => this.handlePrimaryColor($event.target.value)}" .value="${this.primary_color}"></sl-color-picker>
           </label>
+
+          ${this.instanceInfo ? html`
+            <div id="instanceInfo">
+              <h3>Instance Info</h3>
+
+              <img src="${this.instanceInfo.thumbnail}">
+              <p>${this.instanceInfo.title}</p>
+
+              <div .innerHTML="${this.instanceInfo.description}"></div>
+            </div>
+          ` : null}
 
       </sl-drawer>
 

@@ -27,3 +27,9 @@ export const followUser = async (id: string) => {
     const data = await response.json();
     return data;
 }
+
+export const getInstanceInfo = async () => {
+    const response = await fetch('http://localhost:8080/instance');
+    const data = await response.json();
+    return data;
+}
