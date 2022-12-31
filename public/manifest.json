@@ -4,33 +4,33 @@
   "name": "Mammoth",
   "display": "standalone",
   "start_url": "/",
-  "short_name": "starter",
-  "theme_color": "#E1477E",
+  "short_name": "Mammoth",
+  "theme_color": "#181818",
   "description": "This is a Mammoth app",
   "orientation": "any",
-  "background_color": "#E1477E",
+  "background_color": "#181818",
   "related_applications": [],
   "prefer_related_applications": false,
   "display_override": ["window-controls-overlay"],
   "icons": [
     {
-      "src": "assets/icons/512x512.png",
+      "src": "assets/icons/512-icon.png",
       "sizes": "512x512",
       "type": "image/png"
     },
     {
-      "src": "assets/icons/192x192.png",
-      "sizes": "192x192",
+      "src": "assets/icons/256-icon.png",
+      "sizes": "256x256",
       "type": "image/png"
     },
     {
-      "src": "assets/icons/48x48.png",
-      "sizes": "48x48",
+      "src": "assets/icons/128-icon.png",
+      "sizes": "128x128",
       "type": "image/png"
     },
     {
-      "src": "assets/icons/24x24.png",
-      "sizes": "24x24",
+      "src": "assets/icons/64-icon.png",
+      "sizes": "64x64",
       "type": "image/png"
     }
   ],
@@ -50,12 +50,6 @@
     "utility"
   ],
   "shortcuts": [
-    {
-      "name": "Open About",
-      "short_name": "About",
-      "description": "Open the about page",
-      "url": "/about",
-      "icons": [{ "src": "assets/icons/192x192.png", "sizes": "192x192" }]
-    }
+
   ]
 }

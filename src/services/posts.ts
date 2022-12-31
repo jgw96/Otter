@@ -1,5 +1,8 @@
+let token = localStorage.getItem('token') || '';
+let server = localStorage.getItem('server') || '';
+
 export async function publishPost(post: string, id?: string) {
-    const correctURL = id ? `https://mammoth-server.azurewebsites.net/status?status=${post}&id=${id}` : `https://mammoth-server.azurewebsites.net/status?status=${post}`;
+    const correctURL = id ? `http://localhost:8080/status?status=${post}&id=${id}&code=${token}&server=${server}` : `http://localhost:8080/status?status=${post}&code=${token}&server=${server}`;
     const response = await fetch(correctURL, {
         method: 'POST',
         headers: {
@@ -29,7 +32,7 @@ export async function uploadImageAsFormData() {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await fetch('https://mammoth-server.azurewebsites.net/uploadAttachment', {
+    const response = await fetch('http://localhost:8080/uploadAttachment?code=${token}&server=${server}', {
         method: 'POST',
         body: formData,
     });

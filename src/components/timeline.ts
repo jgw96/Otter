@@ -1,15 +1,16 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js'
-import { getPaginatedHomeTimeline, getPublicTimeline } from '../services/timeline';
+import { getPaginatedHomeTimeline, getPublicTimeline, mediaTimeline } from '../services/timeline';
 
 import '../components/timeline-item';
+import '../components/search';
 
 @customElement('app-timeline')
 export class Timeline extends LitElement {
     @state() timeline: any[] = [];
     @state() loadingData: boolean = false;
 
-    @property({ type: String }) type: "Home" | "Public" = "Home";
+    @property({ type: String }) type: "Home" | "Public" | "Media" = "Home";
 
     static styles = [
         css`
@@ -19,12 +20,14 @@ export class Timeline extends LitElement {
 
             #list-actions {
                 display: flex;
-                justify-content: flex-end;
                 margin-bottom: 12px;
 
                 background: #242428;
                 padding: 8px;
                 border-radius: 4px;
+
+                align-items: center;
+                justify-content: space-between;
             }
 
             ul {
@@ -46,10 +49,6 @@ export class Timeline extends LitElement {
 
             sl-card {
                 --padding: 10px;
-            }
-
-            sl-card img {
-                height: 302px;
             }
 
             .header-block {
@@ -104,6 +103,7 @@ export class Timeline extends LitElement {
     }
 
     async refreshTimeline() {
+        console.log("refreshing timeline", this.type)
         switch (this.type) {
             case "Home":
                 const timelineData = await getPaginatedHomeTimeline();
@@ -116,6 +116,12 @@ export class Timeline extends LitElement {
                 console.log(timelineData);
 
                 this.timeline = timelineDataPub;
+                break;
+            case "Media":
+               const timelineDataMedia = await mediaTimeline();
+                console.log(timelineData);
+
+                this.timeline = timelineDataMedia;
                 break;
 
             default:
@@ -144,6 +150,7 @@ export class Timeline extends LitElement {
     render() {
         return html`
         <div id="list-actions">
+            <app-search></app-search>
             <sl-button @click="${() => this.refreshTimeline()}" circle size="small">
               <sl-icon src="/assets/refresh-circle-outline.svg"></sl-icon>
             </sl-button>

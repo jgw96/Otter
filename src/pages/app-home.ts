@@ -56,6 +56,10 @@ export class AppHome extends LitElement {
         flex-direction: column;
       }
 
+      #reply-drawer {
+        --size: 100vh;
+      }
+
       #instanceInfo {
         border-radius: 6px;
         background: #0000001a;
@@ -268,8 +272,6 @@ export class AppHome extends LitElement {
   }
 
   async firstUpdated() {
-    // this method is a lifecycle even in lit
-    // for more info check out the lit docs https://lit.dev/docs/components/lifecycle/
     console.log('This is your home page');
     this.user = await getCurrentUser();
 
@@ -308,8 +310,15 @@ export class AppHome extends LitElement {
   }
 
   openNewDialog() {
+    // if on desktop, open the dialog
+    if (window.innerWidth > 600) {
     const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
     dialog.show();
+    }
+    else {
+      const drawer = this.shadowRoot?.getElementById('reply-drawer') as any;
+      drawer.show();
+    }
   }
 
   async publish() {
@@ -332,10 +341,11 @@ export class AppHome extends LitElement {
   }
 
   async openSettingsDrawer() {
+    const drawer = this.shadowRoot?.getElementById('settings-drawer') as any;
+    await drawer.show();
+
     this.instanceInfo = await getInstanceInfo();
     console.log("instanceInfo", this.instanceInfo)
-    const drawer = this.shadowRoot?.getElementById('settings-drawer') as any;
-    drawer.show();
   }
 
   async attachFile() {
@@ -374,40 +384,53 @@ export class AppHome extends LitElement {
         <sl-textarea placeholder="What's on your mind?"></sl-textarea>
 
         ${this.attachmentPreview ? html`
-          <img src="${this.attachmentPreview}" />
+        <img src="${this.attachmentPreview}" />
         ` : html``}
 
         <sl-button @click="${() => this.publish()}" slot="footer" variant="primary">Publish</sl-button>
       </sl-dialog>
 
+      <sl-drawer id="reply-drawer" placement="bottom" label="Reply">
+        <sl-button circle slot="footer" @click="${() => this.attachFile()}">
+          <sl-icon src="/assets/attach-outline.svg"></sl-icon>
+        </sl-button>
+        <sl-textarea placeholder="What's on your mind?"></sl-textarea>
+
+        ${this.attachmentPreview ? html`
+        <img src="${this.attachmentPreview}" />
+        ` : html``}
+
+        <sl-button @click="${() => this.publish()}" slot="footer" variant="primary">Publish</sl-button>
+      </sl-drawer>
+
       <sl-drawer id="settings-drawer" placement="end" label="Settings">
 
-          <label>
-            Theme Color
-            <sl-color-picker @sl-change="${($event: any) => this.handlePrimaryColor($event.target.value)}" .value="${this.primary_color}"></sl-color-picker>
-          </label>
+        <label>
+          Theme Color
+          <sl-color-picker @sl-change="${($event: any) => this.handlePrimaryColor($event.target.value)}"
+            .value="${this.primary_color}"></sl-color-picker>
+        </label>
 
-          ${this.instanceInfo ? html`
-            <div id="instanceInfo">
-              <h3>Instance Info</h3>
+        ${this.instanceInfo ? html`
+        <div id="instanceInfo">
+          <h3>Instance Info</h3>
 
-              <img src="${this.instanceInfo.thumbnail}">
-              <p>${this.instanceInfo.title}</p>
+          <img src="${this.instanceInfo.thumbnail}">
+          <p>${this.instanceInfo.title}</p>
 
-              <div .innerHTML="${this.instanceInfo.description}"></div>
-            </div>
-          ` : null}
+          <div .innerHTML="${this.instanceInfo.description}"></div>
+        </div>
+        ` : null}
 
       </sl-drawer>
 
       <sl-drawer id="replies-drawer" placement="end" label="Comments">
         <ul>
-        ${
-          this.replies.map((reply: any) => {
-            return html`
-              <timeline-item ?show="${false}" .tweet="${reply}"></timeline-item>
-            `
-          })
+          ${this.replies.map((reply: any) => {
+    return html`
+          <timeline-item ?show="${false}" .tweet="${reply}"></timeline-item>
+          `
+    })
         }
         </ul>
 
@@ -418,16 +441,11 @@ export class AppHome extends LitElement {
       </sl-drawer>
 
       <main>
-        <sl-tab-group .placement="${window.matchMedia(" (max-width: 600px)").matches ? "bottom" : "start" }">
+        <sl-tab-group .placement="${window.matchMedia(" (max-width: 600px)").matches ? "bottom" : "start"}">
           <sl-tab slot="nav" panel="general">
             <sl-icon src="/assets/home-outline.svg"></sl-icon>
 
             <span class="tab-label">Home</span>
-          </sl-tab>
-          <sl-tab slot="nav" panel="custom">
-            <sl-icon src="/assets/planet-outline.svg"></sl-icon>
-
-            <span class="tab-label">Town Hall</span>
           </sl-tab>
           <sl-tab slot="nav" panel="notifications">
             <sl-icon src="/assets/notifications-outline.svg"></sl-icon>
@@ -452,7 +470,11 @@ export class AppHome extends LitElement {
 
 
           <sl-tab-panel name="general">
-            <app-timeline .type="Home" @replies="${($event: any) => this.handleReplies($event.detail.data, $event.detail.id)}"></app-timeline>
+            <app-timeline .type="Home"
+              @replies="${($event: any) => this.handleReplies($event.detail.data, $event.detail.id)}"></app-timeline>
+          </sl-tab-panel>
+          <sl-tab-panel name="media">
+            <app-timeline .type="Media"></app-timeline>
           </sl-tab-panel>
           <sl-tab-panel name="messages">
             <app-messages></app-messages>
@@ -488,7 +510,7 @@ export class AppHome extends LitElement {
 
             <p id="user-url">${this.user ? this.user.url : "Loading..."}</p>
 
-            <div .innerHTML=${this.user ? this.user.note : "Loading..."}></div>
+            <div .innerHTML=${this.user ? this.user.note : "Loading..." }></div>
 
             <sl-badge @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count : "Loading..."} followers
             </sl-badge>
