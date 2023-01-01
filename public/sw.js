@@ -7,7 +7,7 @@ importScripts(
 
 // runtime caching
 workbox.routing.registerRoute(
-    ({request}) => request.href.includes('/timelinePaginated'),
+    ({request}) => request.url.includes('/timelinePaginated'),
     new workbox.strategies.StaleWhileRevalidate({
         cacheName: 'timeline',
         plugins: [
@@ -20,7 +20,7 @@ workbox.routing.registerRoute(
 );
 
 workbox.routing.registerRoute(
-    ({request}) => request.href.includes('/bookmarks'),
+    ({request}) => request.url.includes('/bookmarks'),
     new workbox.strategies.StaleWhileRevalidate({
         cacheName: 'bookmarks',
         plugins: [
@@ -33,7 +33,7 @@ workbox.routing.registerRoute(
 );
 
 workbox.routing.registerRoute(
-    ({request}) => request.href.includes('/favorites'),
+    ({request}) => request.url.includes('/favorites'),
     new workbox.strategies.StaleWhileRevalidate({
         cacheName: 'favorites',
         plugins: [
@@ -46,9 +46,22 @@ workbox.routing.registerRoute(
 );
 
 workbox.routing.registerRoute(
-    ({request}) => request.href.includes('/notifications'),
+    ({request}) => request.url.includes('/notifications'),
     new workbox.strategies.StaleWhileRevalidate({
         cacheName: 'notifications',
+        plugins: [
+            new workbox.expiration.ExpirationPlugin({
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
+            }),
+        ],
+    })
+);
+
+workbox.routing.registerRoute(
+    ({request}) => request.url.includes('/search'),
+    new workbox.strategies.StaleWhileRevalidate({
+        cacheName: 'search',
         plugins: [
             new workbox.expiration.ExpirationPlugin({
                 maxEntries: 50,

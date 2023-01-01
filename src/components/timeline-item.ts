@@ -34,7 +34,7 @@ export class TimelineItem extends LitElement {
 
             sl-card img {
                 height: 420px;
-                object-fit: cover;
+                object-fit: contain;
             }
 
             .header-block {

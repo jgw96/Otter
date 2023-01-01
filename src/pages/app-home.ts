@@ -23,6 +23,7 @@ import '../components/bookmarks';
 import '../components/favorites';
 import '../components/notifications';
 import './app-messages';
+import './search-page';
 
 import { styles } from '../styles/shared-styles';
 import { getCurrentUser, getInstanceInfo } from '../services/account';
@@ -340,6 +341,10 @@ export class AppHome extends LitElement {
     Router.go(`/followers?id=${this.user.id}`)
   }
 
+  async goToFollowing() {
+    Router.go(`/following?id=${this.user.id}`)
+  }
+
   async openSettingsDrawer() {
     const drawer = this.shadowRoot?.getElementById('settings-drawer') as any;
     await drawer.show();
@@ -447,16 +452,21 @@ export class AppHome extends LitElement {
 
             <span class="tab-label">Home</span>
           </sl-tab>
+          <sl-tab slot="nav" panel="search">
+            <sl-icon src="/assets/search-outline.svg"></sl-icon>
+
+            <span class="tab-label">Explore</span>
+          </sl-tab>
           <sl-tab slot="nav" panel="notifications">
             <sl-icon src="/assets/notifications-outline.svg"></sl-icon>
 
             <span class="tab-label">Notifications</span>
           </sl-tab>
-          <sl-tab slot="nav" panel="messages">
+          <!-- <sl-tab slot="nav" panel="messages">
             <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
 
             <span class="tab-label">Messages</span>
-          </sl-tab>
+          </sl-tab> -->
           <sl-tab id="bookmarks-tab" slot="nav" panel="bookmarks">
             <sl-icon src="/assets/bookmark-outline.svg"></sl-icon>
 
@@ -491,6 +501,9 @@ export class AppHome extends LitElement {
           <sl-tab-panel name="notifications">
             <app-notifications></app-notifications>
           </sl-tab-panel>
+          <sl-tab-panel name="search">
+            <search-page></search-page>
+          </sl-tab-panel>
         </sl-tab-group>
 
         <div id="mobile-actions">
@@ -514,7 +527,7 @@ export class AppHome extends LitElement {
 
             <sl-badge @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count : "Loading..."} followers
             </sl-badge>
-            <sl-badge>${this.user ? this.user.following_count : "Loading..."} following</sl-badge>
+            <sl-badge @click="${() => this.goToFollowing()}">${this.user ? this.user.following_count : "Loading..."} following</sl-badge>
 
           </div>
 

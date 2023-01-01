@@ -150,7 +150,6 @@ export class Timeline extends LitElement {
     render() {
         return html`
         <div id="list-actions">
-            <app-search></app-search>
             <sl-button @click="${() => this.refreshTimeline()}" circle size="small">
               <sl-icon src="/assets/refresh-circle-outline.svg"></sl-icon>
             </sl-button>

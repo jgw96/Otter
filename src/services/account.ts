@@ -27,8 +27,19 @@ export const getUsersFollowers = async (id: string) => {
     return data;
 }
 
+export const getFollowing = async (id: string) => {
+    const response = await fetch(`https://mammoth-server.azurewebsites.net/following?id=${id}&code=${token}&server=${server}`);
+    const data = await response.json();
+    return data;
+}
+
 export const followUser = async (id: string) => {
-    const response = await fetch(`https://mammoth-server.azurewebsites.net/follow?id=${id}&code=${token}&server=${server}`);
+    const response = await fetch(`https://mammoth-server.azurewebsites.net/follow?id=${id}&code=${token}&server=${server}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
     const data = await response.json();
     return data;
 }

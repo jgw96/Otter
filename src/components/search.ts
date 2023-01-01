@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit';
+import { LitElement, html, css, PropertyValueMap } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
 import '@shoelace-style/shoelace/dist/components/input/input.js';
@@ -32,17 +32,40 @@ export class Search extends LitElement {
         `
     ];
 
+    protected async firstUpdated() {
+        const searchData = await searchTimeline("Mastodon");
+        console.log("searchData", searchData);
+
+        this.searchData = searchData;
+
+        // fire custom event
+        const event = new CustomEvent('search', {
+            detail: {
+                searchData
+            }
+        });
+        this.dispatchEvent(event);
+    }
+
     async handleSearch(value: string) {
         console.log(value);
 
-        const dropdown: any = this.shadowRoot?.querySelector('sl-dropdown');
+        // const dropdown: any = this.shadowRoot?.querySelector('sl-dropdown');
 
         const searchData = await searchTimeline(value);
         console.log("searchData", searchData);
 
         this.searchData = searchData;
 
-        await dropdown?.show();
+        // fire custom event
+        const event = new CustomEvent('search', {
+            detail: {
+                searchData
+            }
+        });
+        this.dispatchEvent(event);
+
+        // await dropdown?.show();
     }
 
     openAccount(id: string) {
@@ -51,28 +74,9 @@ export class Search extends LitElement {
 
     render() {
         return html`
-          <sl-dropdown placement="bottom">
-            <sl-input slot="trigger" @sl-change="${($event: any) => this.handleSearch($event.target.value)}" placeholder="Search" type="search"></sl-input>
 
-            <sl-menu>
-                <sl-menu-label>Accounts</sl-menu-label>
-                ${
-                    this.searchData && this.searchData.accounts ? this.searchData.accounts.map((account: any) => {
-                        return html`<sl-menu-item @click="${() => this.openAccount(account.id)}">
-                            <div class="account">
-                                <img class="avatar" src="${account.avatar}">
-                                ${account.username}
-                            </div>
-                        </sl-menu-item>`
-                    }) : null}
+            <sl-input @sl-change="${($event: any) => this.handleSearch($event.target.value)}" placeholder="Search" type="search"></sl-input>
 
-                <sl-menu-label>Hashtags</sl-menu-label>
-                ${
-                    this.searchData && this.searchData.hashtags ? this.searchData.hashtags.map((hashtag: any) => {
-                        return html`<sl-menu-item>#${hashtag.name}</sl-menu-item>`
-                    }) : null}
-            </sl-menu>
-          </sl-dropdown>
         `;
     }
 }

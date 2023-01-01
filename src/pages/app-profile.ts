@@ -9,6 +9,7 @@ export class AppProfile extends LitElement {
 
     @state() user: any;
     @state() posts: any[] = [];
+    @state() followed: boolean = false;
 
     static styles = [
         css`
@@ -113,6 +114,7 @@ export class AppProfile extends LitElement {
 
     async follow() {
         await followUser(this.user.id);
+        this.followed = true;
     }
 
     render() {
@@ -136,8 +138,7 @@ export class AppProfile extends LitElement {
                     <sl-badge>${this.user ? this.user.following_count : "Loading..."} following</sl-badge>
 
                     <div id="profile-card-actions">
-                        <sl-button @click="${() => this.follow()}">Follow</sl-button>
-                        <sl-button>Message</sl-button>
+                        ${this.followed ? html`<sl-button>Following</sl-button>` : html`<sl-button @click="${() => this.follow()}">Follow</sl-button>` }
                     </div>
                 </div>
             </div>

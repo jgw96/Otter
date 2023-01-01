@@ -82,6 +82,13 @@ export class AppIndex extends LitElement {
             }
           },
           {
+            path: 'search',
+            component: 'search-page',
+            action: async () => {
+              await import('./pages/search-page.js');
+            }
+          },
+          {
             path: "account",
             component: "app-profile",
             action: async () => {
@@ -108,6 +115,13 @@ export class AppIndex extends LitElement {
             component: 'app-messages',
             action: async () => {
               await import('./pages/app-messages.js');
+            }
+          },
+          {
+            path: 'following',
+            component: 'app-following',
+            action: async () => {
+              await import('./pages/app-following.js');
             }
           }
         ],
