@@ -82,3 +82,9 @@ export const searchTimeline = async (query: string) => {
     const data = await response.json();
     return data;
 }
+
+export const getHashtagTimeline = async (hashtag: string) => {
+    const response = await fetch(`http://localhost:3000/hashtag?tag=${hashtag}&code=${token}&server=${server}`);
+    const data = await response.json();
+    return data;
+}

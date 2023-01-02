@@ -17,6 +17,10 @@ export class AppProfile extends LitElement {
                 display: block;
             }
 
+            sl-badge {
+                cursor: pointer;
+              }
+
             main {
                 margin-top: 80px;
                 display: grid;

@@ -123,6 +123,13 @@ export class AppIndex extends LitElement {
             action: async () => {
               await import('./pages/app-following.js');
             }
+          },
+          {
+            path: 'hashtag',
+            component: 'app-hashtags',
+            action: async () => {
+              await import('./pages/app-hashtags.js');
+            }
           }
         ],
       } as any,

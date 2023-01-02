@@ -15,6 +15,7 @@ export class TimelineItem extends LitElement {
 
     @state() isBoosted = false;
     @state() isReblogged = false;
+    @state() isBookmarked = false;
 
     static styles = [
         css`
@@ -96,6 +97,8 @@ export class TimelineItem extends LitElement {
     async bookmark(id: string) {
         console.log("bookmark", id);
         await addBookmark(id);
+
+        this.isBookmarked = true;
     }
 
     async replies(id: string) {
@@ -129,7 +132,7 @@ export class TimelineItem extends LitElement {
                           ${this.show === true ? html`<sl-button pill @click="${() => this.replies(this.tweet.id)}">
                             <sl-icon src="/assets/albums-outline.svg"></sl-icon>
                         </sl-button>` : null}
-                          <sl-button ?disabled="${this.isBoosted || this.tweet.favourited}" pill @click="${() => this.bookmark(this.tweet.id)}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></sl-button>
+                          <sl-button ?disabled="${this.isBookmarked || this.tweet.bookmarked}" pill @click="${() => this.bookmark(this.tweet.id)}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></sl-button>
                           <sl-button ?disabled="${this.isBoosted || this.tweet.favourited}" pill @click="${() => this.favorite(this.tweet.id)}">${this.tweet.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></sl-button>
                           <sl-button ?disabled="${this.isReblogged || this.tweet.reblogged}" pill @click="${() => this.reblog(this.tweet.id)}">${this.tweet.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></sl-button>
                         </div>

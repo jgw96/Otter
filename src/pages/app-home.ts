@@ -57,6 +57,10 @@ export class AppHome extends LitElement {
         flex-direction: column;
       }
 
+      sl-badge {
+        cursor: pointer;
+      }
+
       #reply-drawer {
         --size: 100vh;
       }

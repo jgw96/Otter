@@ -81,6 +81,10 @@ export class SearchPage extends LitElement {
         Router.go(`/account?id=${id}`);
     }
 
+    handleHashtagClick(hashtag: string) {
+        Router.go(`/hashtag?tag=${hashtag}`);
+    }
+
     render() {
         return html`
         <main>
@@ -111,7 +115,7 @@ export class SearchPage extends LitElement {
                     <ul>
                     ${
                         this.searchData && this.searchData.hashtags ? this.searchData.hashtags.map((hashtag: any) => {
-                            return html`<li>
+                            return html`<li @click="${() => this.handleHashtagClick(hashtag.name)}">
                                 <div class="account">
                                     #${hashtag.name}
                                 </div>
