@@ -76,7 +76,7 @@ export class AppHeader extends LitElement {
             Back
           </sl-button>` : null}
 
-          <h1>${this.title}</h1>
+          <img src="/assets/icons/64-icon.png" alt="Mammoth" width="32" height="32">
         </div>
 
         <sl-button @click="${() => this.openSettings()}" circle size="small">

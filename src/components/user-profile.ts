@@ -25,11 +25,13 @@ export class UserProfile extends LitElement {
 
             .headerBlock img {
                 height: 62px;
+                width: 62px;
                 border-radius: 50%;
             }
 
             div.small img {
                 height: 36px;
+                width: 36px;
             }
 
             div.small p {

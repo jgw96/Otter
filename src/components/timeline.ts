@@ -19,10 +19,10 @@ export class Timeline extends LitElement {
             }
 
             #list-actions {
-                display: flex;
+                display: none;
                 margin-bottom: 12px;
 
-                background: #242428;
+                background: var(--sl-panel-background-color);
                 padding: 8px;
                 border-radius: 4px;
 
@@ -33,12 +33,13 @@ export class Timeline extends LitElement {
             ul {
                 display: flex;
                 flex-direction: column;
+                border-radius: 6px;
                 gap: 14px;
                 margin: 0;
                 padding: 0;
                 list-style: none;
 
-                height: 81vh;
+                height: 90vh;
                 overflow-y: scroll;
                 overflow-x: hidden;
             }

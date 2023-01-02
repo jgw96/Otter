@@ -5,6 +5,9 @@
 */
 :root {
   --font-family: sans-serif;
+
+  --sl-color-primary-600: rgb(92 134 255);
+  --sl-panel-background-color: #5c86ff1f;
 }
 
 html, body {
@@ -17,7 +20,7 @@ html, body {
 
   html,
   body {
-    background-color: #181818;
+    background-color: #0f1118;
     color: white;
   }
 }
@@ -30,3 +33,5 @@ html, body {
     color: black;
   }
 }
+
+

@@ -74,7 +74,7 @@ export class Appfollowing extends LitElement {
 
         <main>
 
-            <h2>Your Following</h2>
+            <h2>You are Following</h2>
             <ul>
                 ${
                     this.following.map((follower: any) => {

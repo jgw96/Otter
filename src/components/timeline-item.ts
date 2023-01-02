@@ -27,6 +27,11 @@ export class TimelineItem extends LitElement {
             sl-card {
                 --padding: 10px;
                 width: 100%;
+                --sl-panel-background-color: #5c86ff1f;
+            }
+
+            sl-card a {
+                color: var(--sl-color-primary-600);
             }
 
             sl-card::part(base) {
@@ -58,6 +63,16 @@ export class TimelineItem extends LitElement {
                 align-items: center;
                 justify-content: flex-end;
                 gap: 6px;
+            }
+
+            sl-card::part(footer) {
+                border-top: none;
+            }
+
+            @media(max-width: 600px) {
+                .actions {
+                    justify-content: space-between;
+                }
             }
         `
     ];

@@ -21,7 +21,7 @@ export class Favorites extends LitElement {
                 padding: 0;
                 list-style: none;
 
-                height: 88vh;
+                height: 90vh;
                 overflow-y: scroll;
                 overflow-x: hidden;
             }

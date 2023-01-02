@@ -25,7 +25,7 @@ export class Notifications extends LitElement {
                 padding: 0;
                 list-style: none;
 
-                height: 83vh;
+                height: 90vh;
                 overflow-y: scroll;
                 overflow-x: hidden;
             }

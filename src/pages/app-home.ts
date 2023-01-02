@@ -57,12 +57,29 @@ export class AppHome extends LitElement {
         flex-direction: column;
       }
 
+      @media(prefers-color-scheme: light) {
+        sl-tab-group::part(nav) {
+          background: #ffffff !important;
+        }
+      }
+
+      sl-tab-group::part(nav) {
+        background: var(--sl-panel-background-color);
+        border-radius: 6px;
+      }
+
       sl-badge {
         cursor: pointer;
       }
 
       #reply-drawer {
         --size: 100vh;
+      }
+
+      #reply-drawer::part(footer) {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
       }
 
       #instanceInfo {
@@ -93,7 +110,7 @@ export class AppHome extends LitElement {
       #profile {
         padding: 12px;
         padding-top: 14px;
-        background: #242428;
+        background: var(--sl-panel-background-color);
         border-radius: 6px;
 
         display: flex;
@@ -187,6 +204,21 @@ export class AppHome extends LitElement {
 
       sl-drawer::part(panel) {
         overflow-x: hidden;
+
+        backdrop-filter: blur(40px);
+
+      }
+
+      sl-dialog {
+        --width: 38em;
+      }
+
+      sl-dialog sl-textarea::part(textarea) {
+        height: 14em;
+      }
+
+      sl-dialog::part(panel) {
+        backdrop-filter: blur(40px);
       }
 
       pwa-install {
@@ -229,6 +261,21 @@ export class AppHome extends LitElement {
         display: flex;
       }
 
+      #mobile-actions sl-button::part(base) {
+        border-radius: 16px;
+        height: 56px;
+        width: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-top: 4px;
+      }
+
+      #mobile-actions sl-button sl-icon {
+        height: 24px;
+        width: 24px;
+      }
+
       .tab-label {
         display: none;
       }
@@ -244,7 +291,7 @@ export class AppHome extends LitElement {
         bottom: 0;
         right: 0;
         left: 0;
-        background: #181818;
+        background: rgb(15 17 24);
         z-index: 2;
       }
 
@@ -254,7 +301,13 @@ export class AppHome extends LitElement {
     }
 
     sl-tab-group::part(tabs) {
-      width: 18vw;
+      width: 20vw;
+    }
+
+    @media(max-width: 600px) {
+      sl-tab-group::part(tabs) {
+        width: initial;
+      }
     }
 
 
@@ -512,7 +565,6 @@ export class AppHome extends LitElement {
 
         <div id="mobile-actions">
           <sl-button size="large" pill variant="primary" @click="${() => this.openNewDialog()}">
-            New Post
             <sl-icon src="/assets/add-outline.svg"></sl-icon>
           </sl-button>
         </div>
@@ -529,9 +581,9 @@ export class AppHome extends LitElement {
 
             <div .innerHTML=${this.user ? this.user.note : "Loading..." }></div>
 
-            <sl-badge @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count : "Loading..."} followers
+            <sl-badge @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count : "0"} followers
             </sl-badge>
-            <sl-badge @click="${() => this.goToFollowing()}">${this.user ? this.user.following_count : "Loading..."} following</sl-badge>
+            <sl-badge @click="${() => this.goToFollowing()}">${this.user ? this.user.following_count : "0"} following</sl-badge>
 
           </div>
 
