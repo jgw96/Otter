@@ -2,7 +2,7 @@ import { Router } from '@vaadin/router';
 import { LitElement, html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-import {classMap} from 'lit/directives/class-map.js';
+import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('user-profile')
 export class UserProfile extends LitElement {
@@ -60,6 +60,41 @@ export class UserProfile extends LitElement {
         `
     ];
 
+    async firstUpdated() {
+        // set up intersection observer
+        const options = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    this.loadImage();
+
+                    observer.unobserve(entry.target);
+                }
+            });
+        }
+            , options);
+
+        observer.observe(this.shadowRoot?.querySelector('div') as Element);
+    }
+
+    loadImage() {
+        window.requestIdleCallback(() => {
+            const img = this.shadowRoot?.querySelector('img');
+            if (img) {
+                const src = img.getAttribute('data-src');
+                if (src) {
+                    img.setAttribute('src', src);
+                    img.removeAttribute('data-src');
+                }
+            }
+        })
+    }
+
     openUser() {
         Router.go(`/account?id=${this.account.id}`);
     }
@@ -67,7 +102,7 @@ export class UserProfile extends LitElement {
     render() {
         return html`
         <div @click="${() => this.openUser()}" class=${classMap({ small: this.small === true, headerBlock: true })} slot="header">
-            <img .src="${this.account.avatar_static}">
+            <img data-src="${this.account.avatar_static}">
             <div>
                 <h4>${this.account.display_name}</h4>
                 <p>${this.account.acct}</p>

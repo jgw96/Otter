@@ -54,6 +54,7 @@ export class Notifications extends LitElement {
                 align-items: center;
                 gap: 10px;
                 justify-content: space-between;
+                cursor: pointer;
 
                 background: var(--sl-panel-background-color);
                 border-radius: 6px;
@@ -63,9 +64,15 @@ export class Notifications extends LitElement {
             }
 
             li.follow {
-                justify-content: flex-start;
-                gap: 20p;
-                font-weight: bold;
+              gap: 20p;
+              justify-content: space-between;
+              font-weight: bold;
+            }
+
+            li.follow div {
+                display: flex;
+                align-items: center;
+                gap: 20px;
             }
 
             li.reblog, li.favourite, li.mention, li.edit {
@@ -77,7 +84,7 @@ export class Notifications extends LitElement {
                 display: flex;
                 align-items: center;
                 gap: 20px;
-                width: 97%;
+                width: 100%;
                 font-weight: bold;
             }
 
@@ -136,9 +143,12 @@ export class Notifications extends LitElement {
                         notification.type === "follow" ? html`
                           <li class="follow">
 
-                            <user-profile .account=${notification.account}></user-profile>
+                            <div>
+                                <user-profile small .account=${notification.account}></user-profile>
 
-                            <p>followed you</p>
+                                <p>followed you</p>
+                            </div>
+
                           </li>
                         ` : null
                     }
@@ -147,9 +157,11 @@ export class Notifications extends LitElement {
                         notification.type === "reblog" ? html`
                           <li class="reblog">
                             <div>
-                                <user-profile .account=${notification.account}></user-profile>
 
-                                <p>boosted your post</p>
+                                    <user-profile small .account=${notification.account}></user-profile>
+
+                                    <p>boosted your post</p>
+
                             </div>
 
                             <timeline-item .tweet=${notification.status}></timeline-item>
@@ -161,7 +173,7 @@ export class Notifications extends LitElement {
                         notification.type === "favourite" ? html`
                           <li class="favourite">
                             <div>
-                                <user-profile .account=${notification.account}></user-profile>
+                                <user-profile small .account=${notification.account}></user-profile>
 
                                 <p>liked your post</p>
                             </div>
@@ -175,7 +187,7 @@ export class Notifications extends LitElement {
                         notification.type === "mention" ? html`
                             <li class="mention">
                                 <div>
-                                    <user-profile .account=${notification.account}></user-profile>
+                                    <user-profile small .account=${notification.account}></user-profile>
 
                                     <p>mentioned you</p>
                                 </div>
@@ -188,7 +200,7 @@ export class Notifications extends LitElement {
                         notification.type === "update" ? html`
                             <li class="edit">
                                 <div>
-                                    <user-profile .account=${notification.account}></user-profile>
+                                    <user-profile small .account=${notification.account}></user-profile>
 
                                     <p>edited a post</p>
                                 </div>

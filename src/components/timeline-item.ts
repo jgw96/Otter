@@ -21,6 +21,10 @@ export class TimelineItem extends LitElement {
         css`
             :host {
                 display: block;
+
+                width: 100%;
+
+                margin-bottom: 10px;
             }
 
 
@@ -36,6 +40,10 @@ export class TimelineItem extends LitElement {
 
             sl-card::part(base) {
                 border: none;
+            }
+
+            sl-card::part(body) {
+                padding-top: 0;
             }
 
             sl-card img {
@@ -74,11 +82,55 @@ export class TimelineItem extends LitElement {
                     justify-content: space-between;
                 }
             }
+
+            @keyframes slideUp {
+                0% {
+                    transform: translateY(30%);
+                    opacity: 0;
+                }
+                100% {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
         `
     ];
 
     firstUpdated( ) {
-        console.log("this.showreplies", this.show);
+        // set up intersection observer
+        const options = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    this.loadImage();
+
+                    observer.unobserve(entry.target);
+                }
+            });
+        }
+        , options);
+
+        observer.observe(this.shadowRoot?.querySelector('sl-card') as Element);
+    }
+
+    async loadImage() {
+        window.requestIdleCallback(() => {
+            const img = this.shadowRoot?.querySelector('img');
+            if (img) {
+                const src = img.getAttribute('data-src');
+                if (src) {
+                    img.setAttribute('src', src);
+                    img.removeAttribute('data-src');
+                }
+            }
+        }, {
+            timeout: 1000
+        })
     }
 
     async favorite(id: string) {
@@ -135,7 +187,7 @@ export class TimelineItem extends LitElement {
                 <sl-card>
                       ${
                         this.tweet.media_attachments.length > 0 ? html`
-                         <img slot="image" src="${this.tweet.media_attachments[0].preview_url}">
+                         <img slot="image" data-src="${this.tweet.media_attachments[0].preview_url}">
                         ` : html``
                       }
 
@@ -156,7 +208,7 @@ export class TimelineItem extends LitElement {
                     <sl-card>
                     ${
                         this.tweet.reblog.media_attachments.length > 0 ? html`
-                         <img slot="image" src="${this.tweet.reblog.media_attachments[0].preview_url}">
+                         <img slot="image" data-src="${this.tweet.reblog.media_attachments[0].preview_url}">
                         ` : html``
                       }
 

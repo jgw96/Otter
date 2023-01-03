@@ -50,7 +50,6 @@ export class AppProfile extends LitElement {
             #profile {
                 padding: 12px;
                 padding-top: 14px;
-                background: rgb(24 31 52);
                 border-radius: 6px;
 
                 display: flex;

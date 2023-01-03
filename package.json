@@ -15,6 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@lit-labs/virtualizer": "^1.0.1",
     "@pwabuilder/pwainstall": "^1.6.7",
     "@shoelace-style/shoelace": "^2.0.0-beta.87",
     "@vaadin/router": "^1.7.4",

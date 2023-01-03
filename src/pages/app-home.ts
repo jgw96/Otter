@@ -63,11 +63,6 @@ export class AppHome extends LitElement {
         }
       }
 
-      sl-tab-group::part(nav) {
-        background: var(--sl-panel-background-color);
-        border-radius: 6px;
-      }
-
       sl-badge {
         cursor: pointer;
       }
@@ -110,7 +105,6 @@ export class AppHome extends LitElement {
       #profile {
         padding: 12px;
         padding-top: 14px;
-        background: var(--sl-panel-background-color);
         border-radius: 6px;
 
         display: flex;

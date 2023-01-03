@@ -2,6 +2,10 @@ import { LitElement, html, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js'
 import { getPaginatedHomeTimeline, getPublicTimeline, mediaTimeline } from '../services/timeline';
 
+import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
+
+import '@lit-labs/virtualizer';
+
 import '../components/timeline-item';
 import '../components/search';
 
@@ -44,7 +48,12 @@ export class Timeline extends LitElement {
                 overflow-x: hidden;
             }
 
-            ul::-webkit-scrollbar {
+            lit-virtualizer {
+                height: 90vh;
+                overflow-x: hidden !important;
+            }
+
+            ul::-webkit-scrollbar, lit-virtualizer::-webkit-scrollbar {
                 display: none;
             }
 
@@ -71,6 +80,25 @@ export class Timeline extends LitElement {
                 display: flex;
                 align-items: center;
                 justify-content: flex-end;
+            }
+
+            .fake sl-skeleton {
+                height: 241px;
+                --border-radius: var(--sl-border-radius-medium);
+            }
+
+            .fake {
+                animation-name: fadein;
+                animation-duration: 0.3s;
+            }
+
+            @keyframes fadein {
+                0% {
+                    opacity: 0;
+                }
+                100% {
+                    opacity: 1;
+                }
             }
         `
     ];
@@ -157,16 +185,58 @@ export class Timeline extends LitElement {
         </div>
 
         <ul>
+        <lit-virtualizer scroller .items="${this.timeline}" .renderItem="${
+            (tweet: any) => html`
+              <timeline-item ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
+            `
+        }"></lit-virtualizer>
+        </ul>
+
+        <!-- <sl-button ?loading="${this.loadingData}" id="load-more" @click="${() => this.loadMore()}">Load More</sl-button> -->
+
+        <!-- <ul>
           ${
-            this.timeline.map((tweet: any) => {
+            this.timeline.length > 0 ? this.timeline.map((tweet: any) => {
                 return html`
                   <timeline-item ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
                 `
             })
-           }
+           : html`<sl-card class="fake">
+              <sl-skeleton effect="pulse"></sl-skeleton>
+           </sl-card>
+
+           <sl-card class="fake">
+              <sl-skeleton effect="pulse"></sl-skeleton>
+           </sl-card>
+
+           <sl-card class="fake">
+              <sl-skeleton effect="pulse"></sl-skeleton>
+           </sl-card>
+
+           <sl-card class="fake">
+              <sl-skeleton effect="pulse"></sl-skeleton>
+           </sl-card>
+
+           <sl-card class="fake">
+              <sl-skeleton effect="pulse"></sl-skeleton>
+           </sl-card>
+
+           <sl-card class="fake">
+              <sl-skeleton effect="pulse"></sl-skeleton>
+           </sl-card>
+
+           <sl-card class="fake">
+              <sl-skeleton effect="pulse"></sl-skeleton>
+           </sl-card>
+
+           <sl-card class="fake">
+              <sl-skeleton effect="pulse"></sl-skeleton>
+           </sl-card>
+
+           `}
 
             <sl-button ?loading="${this.loadingData}" id="load-more" @click="${() => this.loadMore()}">Load More</sl-button>
-        </ul>
+        </ul> -->
         `;
     }
 }
