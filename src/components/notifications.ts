@@ -4,6 +4,7 @@ import { customElement, state } from 'lit/decorators.js';
 import { clearNotifications, getNotifications } from '../services/notifications';
 
 import './user-profile';
+import './timeline-item';
 
 import '@shoelace-style/shoelace/dist/components/divider/divider';
 
@@ -14,24 +15,33 @@ export class Notifications extends LitElement {
     static styles = [
         css`
             :host {
-                display: block;
+                height: 91vh;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
             }
 
             ul {
                 display: flex;
                 flex-direction: column;
-                gap: 14px;
-                margin: 0;
+                gap: 8px;
                 padding: 0;
                 list-style: none;
+                margin-top: 0px;
 
-                height: 90vh;
+                height: 87.5vh;
                 overflow-y: scroll;
                 overflow-x: hidden;
             }
 
             ul::-webkit-scrollbar {
                 display: none;
+            }
+
+            @media(max-width: 600px) {
+                ul {
+                    height: initial;
+                }
             }
 
             .notify-header img {
@@ -44,6 +54,35 @@ export class Notifications extends LitElement {
                 align-items: center;
                 gap: 10px;
                 justify-content: space-between;
+
+                background: var(--sl-panel-background-color);
+                border-radius: 6px;
+                padding: 10px;
+                padding-right: 15px;
+                padding-left: 15px;
+            }
+
+            li.follow {
+                justify-content: flex-start;
+                gap: 20p;
+                font-weight: bold;
+            }
+
+            li.reblog, li.favourite, li.mention, li.edit {
+                display: flex;
+                flex-direction: column;
+            }
+
+            li.reblog div, li.favourite div, li.mention div, li.edit div {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                width: 97%;
+                font-weight: bold;
+            }
+
+            li.reblog timeline-item, li.favourite timeline-item, li.mention timeline-item, li.edit timeline-item {
+                width: 100%;
             }
 
             #no {
@@ -59,7 +98,7 @@ export class Notifications extends LitElement {
             #notify-actions {
                 padding: 8px;
                 border-radius: 6px;
-                background: var(--sl-color-gray-50);
+                background: transparent;
                 display: flex;
                 justify-content: flex-end;
                 align-items: center;
@@ -95,13 +134,66 @@ export class Notifications extends LitElement {
                     return html`
                     ${
                         notification.type === "follow" ? html`
-                          <li>
+                          <li class="follow">
+
                             <user-profile .account=${notification.account}></user-profile>
 
                             <p>followed you</p>
                           </li>
+                        ` : null
+                    }
 
-                          <sl-divider></sl-divider>
+                    ${
+                        notification.type === "reblog" ? html`
+                          <li class="reblog">
+                            <div>
+                                <user-profile .account=${notification.account}></user-profile>
+
+                                <p>boosted your post</p>
+                            </div>
+
+                            <timeline-item .tweet=${notification.status}></timeline-item>
+                          </li>
+                        ` : null
+                    }
+
+                    ${
+                        notification.type === "favourite" ? html`
+                          <li class="favourite">
+                            <div>
+                                <user-profile .account=${notification.account}></user-profile>
+
+                                <p>liked your post</p>
+                            </div>
+
+                            <timeline-item .tweet=${notification.status}></timeline-item>
+                          </li>
+                        ` : null
+                    }
+
+                    ${
+                        notification.type === "mention" ? html`
+                            <li class="mention">
+                                <div>
+                                    <user-profile .account=${notification.account}></user-profile>
+
+                                    <p>mentioned you</p>
+                                </div>
+
+                                <timeline-item .tweet=${notification.status}></timeline-item>
+                        ` : null
+                    }
+
+                    ${
+                        notification.type === "update" ? html`
+                            <li class="edit">
+                                <div>
+                                    <user-profile .account=${notification.account}></user-profile>
+
+                                    <p>edited a post</p>
+                                </div>
+
+                                <timeline-item .tweet=${notification.status}></timeline-item>
                         ` : null
                     }
                     `;

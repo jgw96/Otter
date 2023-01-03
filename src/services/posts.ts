@@ -1,3 +1,5 @@
+import { fileOpen } from "browser-fs-access";
+
 let token = localStorage.getItem('token') || '';
 let server = localStorage.getItem('server') || '';
 
@@ -15,19 +17,10 @@ export async function publishPost(post: string, id?: string) {
 }
 
 export async function uploadImageAsFormData() {
-    // open image using file system access api
-    // @ts-ignore
-    const fileHandle = await window.showOpenFilePicker({
-        types: [
-            {
-                description: 'Images',
-                accept: {
-                    'image/*': ['.png', '.jpg', '.jpeg'],
-                },
-            },
-        ],
-    });
-    const file = await fileHandle[0].getFile();
+    const file = await fileOpen({
+        mimeTypes: ['image/*'],
+        multiple: false,
+    })
 
     const formData = new FormData();
     formData.append('file', file);

@@ -161,9 +161,9 @@ export class Timeline extends LitElement {
             this.timeline.map((tweet: any) => {
                 return html`
                   <timeline-item ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
-                    `
+                `
             })
-            }
+           }
 
             <sl-button ?loading="${this.loadingData}" id="load-more" @click="${() => this.loadMore()}">Load More</sl-button>
         </ul>

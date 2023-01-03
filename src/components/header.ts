@@ -44,6 +44,7 @@ export class AppHeader extends LitElement {
         justify-content: space-between;
         align-items: center;
         width: 12em;
+        gap: 16px;
       }
 
       @media(prefers-color-scheme: light) {

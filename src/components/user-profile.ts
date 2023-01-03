@@ -17,6 +17,12 @@ export class UserProfile extends LitElement {
                 display: block;
             }
 
+            p, h4 {
+                max-width: 160px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
             .headerBlock {
                 display: flex;
                 align-items: center;

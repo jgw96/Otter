@@ -179,7 +179,7 @@ export class AppHome extends LitElement {
       }
 
       sl-dialog img {
-        width: 98%;
+        height: 160px;
         margin-top: 16px;
         background: #0e0e0e45;
         padding: 5px;
