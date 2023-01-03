@@ -38,9 +38,15 @@ export class AppLogin extends LitElement {
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
 
+        let token = localStorage.getItem('token') || '';
+        let server = localStorage.getItem('server') || '';
+
         if (code) {
             await authToClient(code);
 
+            await Router.go("/home");
+        }
+        else if (token && server) {
             await Router.go("/home");
         }
     }
