@@ -125,7 +125,12 @@ export class TimelineItem extends LitElement {
                 const src = img.getAttribute('data-src');
                 if (src) {
                     img.setAttribute('src', src);
-                    img.removeAttribute('data-src');
+
+                    window.requestIdleCallback(() => {
+                        img.removeAttribute('data-src');
+                    }, {
+                        timeout: 1000
+                    })
                 }
             }
         }, {

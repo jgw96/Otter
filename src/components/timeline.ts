@@ -108,27 +108,18 @@ export class Timeline extends LitElement {
         await this.refreshTimeline();
         this.loadingData = false;
 
-        // setup intersection observer
-        const options = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 1.0
-        };
+        // update data when the user scrolls to the bottom of the page
+        const scroller = this.shadowRoot?.querySelector('lit-virtualizer') as any;
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    this.loadingData = true;
-                    this.loadMore();
-                    this.loadingData = false;
-                }
-            });
+        scroller.onoverscroll = async (e: any) => {
+            if (e.deltaY > 0) {
+                if (this.loadingData) return;
+
+                this.loadingData = true;
+                await this.loadMore();
+                this.loadingData = false;
+            }
         }
-
-        , options);
-
-        const target = this.shadowRoot?.querySelector('#load-more');
-        observer.observe(target!);
     }
 
     async refreshTimeline() {
@@ -189,10 +180,9 @@ export class Timeline extends LitElement {
             (tweet: any) => html`
               <timeline-item ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
             `
-        }"></lit-virtualizer>
+        }">
+        </lit-virtualizer>
         </ul>
-
-        <!-- <sl-button ?loading="${this.loadingData}" id="load-more" @click="${() => this.loadMore()}">Load More</sl-button> -->
 
         <!-- <ul>
           ${

@@ -4,9 +4,17 @@ let token = localStorage.getItem('token') || '';
 let server = localStorage.getItem('server') || '';
 
 export const getCurrentUser = async () => {
-    const response = await fetch('https://mammoth-server.azurewebsites.net/user?code=' + token + '&server=' + server);
-    const data = await response.json();
-    return data;
+    try {
+        console.log("calling")
+        const response = await fetch('https://mammoth-server.azurewebsites.net/user?code=' + token + '&server=' + server);
+        const data = await response.json();
+        return data;
+    }
+    catch (err) {
+        if (server) {
+            await initAuth(server);
+        }
+    }
 }
 
 export const getAccount = async (id: string) => {
@@ -70,13 +78,30 @@ export const initAuth = async (serverURL: string) => {
 }
 
 export const authToClient = async (code: string) => {
-    token = code;
-    localStorage.setItem('token', code);
+    try {
+        token = code;
+        localStorage.setItem('token', code);
 
-    await fetch(`https://mammoth-server.azurewebsites.net/client?code=${code}&code=${token}&server=${server}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
+        await fetch(`https://mammoth-server.azurewebsites.net/client?code=${code}&code=${token}&server=${server}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        // try to get user info
+        try {
+             await getCurrentUser();
+             return;
         }
-    });
+        catch (err) {
+            console.error("prrrrrrrrroblems", err)
+            await initAuth(server);
+        }
+
+    }
+    catch (err) {
+        console.error("prrrrrrrrroblems", err)
+        await initAuth(server);
+    }
 }

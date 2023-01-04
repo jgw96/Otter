@@ -4,6 +4,8 @@ import { followUser, getAccount, getUsersPosts } from '../services/account';
 
 import '../components/timeline-item';
 
+import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
+
 @customElement('app-profile')
 export class AppProfile extends LitElement {
 
@@ -19,6 +21,12 @@ export class AppProfile extends LitElement {
 
             sl-badge {
                 cursor: pointer;
+              }
+
+              #avatarSkel {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
               }
 
             main {
@@ -128,7 +136,7 @@ export class AppProfile extends LitElement {
             ${this.user ? html`
             <div id="profile">
                 <div id="profile-top">
-                    ${this.user ? html`<img src="${this.user.avatar}" />` : html`<img src="https://via.placeholder.com/150" />`}
+                    ${this.user ? html`<img src="${this.user.avatar}" />` : null}
                     <div id="username-block">
                         <h3>${this.user ? this.user.display_name : "Loading..."}</h3>
                     </div>
