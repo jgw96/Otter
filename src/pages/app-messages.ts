@@ -15,7 +15,6 @@ export class AppMessages extends LitElement {
             ul {
                 display: flex;
                 flex-direction: column;
-                gap: 14px;
                 margin: 0;
                 padding: 0;
                 list-style: none;

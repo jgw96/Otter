@@ -31,7 +31,7 @@ export class TimelineItem extends LitElement {
             sl-card {
                 --padding: 10px;
                 width: 100%;
-                --sl-panel-background-color: #5c86ff1f;
+                --sl-panel-background-color: #5c86ff69;
             }
 
             sl-card a {
@@ -71,6 +71,16 @@ export class TimelineItem extends LitElement {
                 align-items: center;
                 justify-content: flex-end;
                 gap: 6px;
+            }
+
+            .actions sl-button::part(base) {
+                background: transparent;
+                border: none;
+                font-size: 1.2em;
+            }
+
+            actions sl-button sl-icon {
+                font-size: 1.2em;
             }
 
             sl-card::part(footer) {

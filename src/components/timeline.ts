@@ -38,7 +38,6 @@ export class Timeline extends LitElement {
                 display: flex;
                 flex-direction: column;
                 border-radius: 6px;
-                gap: 14px;
                 margin: 0;
                 padding: 0;
                 list-style: none;

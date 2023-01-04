@@ -24,8 +24,11 @@ export class AppHeader extends LitElement {
         top: env(titlebar-area-y, 0);
         right: 0;
         height: env(titlebar-area-height, 33px);
-        width: env(titlebar-area-width, initial);
         app-region: drag;
+
+        width: calc(env(titlebar-area-width, intitial) + -23px);
+        padding-top: 4px;
+        padding-left: 6px;
       }
 
       header h1 {
@@ -43,7 +46,6 @@ export class AppHeader extends LitElement {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        width: 12em;
         gap: 16px;
       }
 

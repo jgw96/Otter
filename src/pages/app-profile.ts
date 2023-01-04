@@ -47,12 +47,15 @@ export class AppProfile extends LitElement {
 
                 display: flex;
                 flex-direction: column;
-                gap: 14px;
                 margin: 0px;
                 padding: 0px;
                 list-style: none;
                 height: 88vh;
                 overflow: hidden scroll;
+            }
+
+            ul::-webkit-scrollbar {
+                display: none;
             }
 
             #profile {
@@ -69,7 +72,6 @@ export class AppProfile extends LitElement {
                 display: flex;
                 align-items: center;
                 gap: 14px;
-                justify-content: space-between;
                 margin-top: 8px;
               }
 
@@ -80,6 +82,8 @@ export class AppProfile extends LitElement {
             #profile img {
                 height: 5em;
                 border-radius: 50%;
+
+                border: solid var(--sl-color-primary-600) 4px;
               }
 
               #profile-top h3 {

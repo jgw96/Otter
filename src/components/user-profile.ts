@@ -15,6 +15,7 @@ export class UserProfile extends LitElement {
         css`
             :host {
                 display: block;
+                cursor: pointer;
             }
 
             p, h4 {
@@ -33,6 +34,8 @@ export class UserProfile extends LitElement {
                 height: 62px;
                 width: 62px;
                 border-radius: 50%;
+
+                border: solid var(--sl-color-primary-600) 2px;
             }
 
             div.small img {

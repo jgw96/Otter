@@ -116,7 +116,6 @@ export class AppHome extends LitElement {
         display: flex;
         align-items: center;
         gap: 14px;
-        justify-content: space-between;
         margin-top: 8px;
       }
 
@@ -153,8 +152,11 @@ export class AppHome extends LitElement {
       }
 
       #profile img {
-        height: 5em;
+        height: 88px;
+        width: 88px;
         border-radius: 50%;
+
+        border: solid var(--sl-color-primary-600) 4px;
       }
 
       #profile-top h3 {
@@ -568,7 +570,9 @@ export class AppHome extends LitElement {
             ${this.user ? html`<img src="${this.user.avatar}" />` : html`<img src="https://via.placeholder.com/150" />`}
             <div id="username-block">
               <h3>${this.user ? this.user.display_name : "Loading..."}</h3>
-              <sl-button size="small" id="share-button">Share Profile</sl-button>
+              <sl-button circle size="small" id="share-button">
+                <sl-icon src="/assets/share-social-outline.svg"></sl-icon>
+              </sl-button>
             </div>
 
             <p id="user-url">${this.user ? this.user.url : "Loading..."}</p>
@@ -582,7 +586,11 @@ export class AppHome extends LitElement {
           </div>
 
           <div id="profile-card-actions">
-            <sl-button pill variant="primary" @click="${() => this.openNewDialog()}">New Post</sl-button>
+            <sl-button pill size="large" variant="primary" @click="${() => this.openNewDialog()}">
+              New Post
+
+              <sl-icon slot="suffix" src="/assets/add-outline.svg"></sl-icon>
+            </sl-button>
           </div>
         </div>
       </main>
