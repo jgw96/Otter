@@ -31,11 +31,12 @@ export class TimelineItem extends LitElement {
             sl-card {
                 --padding: 10px;
                 width: 100%;
-                --sl-panel-background-color: #5c86ff69;
+                --sl-panel-background-color: var(--sl-color-primary-600);
+                color: black;
             }
 
             sl-card a {
-                color: var(--sl-color-primary-600);
+                color: var(--sl-color-secondary-700);
             }
 
             sl-card::part(base) {
@@ -44,6 +45,11 @@ export class TimelineItem extends LitElement {
 
             sl-card::part(body) {
                 padding-top: 0;
+            }
+
+            sl-card sl-icon {
+                fill: black;
+                color: black;
             }
 
             sl-card img {
@@ -77,6 +83,7 @@ export class TimelineItem extends LitElement {
                 background: transparent;
                 border: none;
                 font-size: 1.2em;
+                color: black;
             }
 
             actions sl-button sl-icon {
@@ -90,6 +97,21 @@ export class TimelineItem extends LitElement {
             @media(max-width: 600px) {
                 .actions {
                     justify-content: space-between;
+                }
+            }
+
+            @media(prefers-color-scheme: light) {
+                sl-card {
+                    color: white;
+                }
+
+                sl-card sl-icon {
+                    fill: white;
+                    color: white;
+                }
+
+                .actions sl-button::part(base) {
+                    color: white;
                 }
             }
 

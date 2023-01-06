@@ -1,10 +1,12 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js'
+import { styleMap } from 'lit/directives/style-map.js';
 import { followUser, getAccount, getUsersPosts } from '../services/account';
 
 import '../components/timeline-item';
 
 import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
+import '@shoelace-style/shoelace/dist/components/badge/badge.js';
 
 @customElement('app-profile')
 export class AppProfile extends LitElement {
@@ -60,7 +62,7 @@ export class AppProfile extends LitElement {
 
             #profile {
                 padding: 12px;
-                padding-top: 14px;
+                padding-top: 0;
                 border-radius: 6px;
 
                 display: flex;
@@ -81,9 +83,32 @@ export class AppProfile extends LitElement {
 
             #profile img {
                 height: 5em;
-                border-radius: 50%;
+
 
                 border: solid var(--sl-color-primary-600) 4px;
+
+                position: relative;
+                top: 6px;
+                right: 2px;
+                border-radius: 4px;
+              }
+
+              #profile-top {
+                    background: #2f41776b;
+                    padding: 0px;
+                    padding-left: 8px;
+                    padding-right: 8px;
+                    padding-bottom: 8px;
+                    padding-top: 8px;
+                    border-radius: 4px;
+              }
+
+              #avatar-block {
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: cover;
+                padding: 6px;
+                border-radius: 4px;
               }
 
               #profile-top h3 {
@@ -105,6 +130,10 @@ export class AppProfile extends LitElement {
                 main {
                     display: flex;
                     flex-direction: column;
+                }
+
+                ul {
+                    height: initial;
                 }
               }
         `
@@ -140,20 +169,39 @@ export class AppProfile extends LitElement {
             ${this.user ? html`
             <div id="profile">
                 <div id="profile-top">
-                    ${this.user ? html`<img src="${this.user.avatar}" />` : null}
+                    ${this.user ? html`
+                    <div id="avatar-block" style=${styleMap({backgroundImage: `url(${this.user.header})`})}>
+                        <img src="${this.user.avatar}" />
+                    </div>
+                    ` : null}
                     <div id="username-block">
                         <h3>${this.user ? this.user.display_name : "Loading..."}</h3>
                     </div>
 
                     <p id="user-url">${this.user ? this.user.url : "Loading..."}</p>
 
-                    <div .innerHTML=${this.user ? this.user.note : "Loading..."}></div>
+                    <div .innerHTML=${this.user ? this.user.note : "Loading..." }></div>
 
                     <sl-badge>${this.user ? this.user.followers_count : "Loading..."} followers</sl-badge>
                     <sl-badge>${this.user ? this.user.following_count : "Loading..."} following</sl-badge>
 
+                    <div id="fields">
+                        ${this.user ? this.user.fields.map((field: any) => html`
+                        <div>
+                            <sl-badge>
+                                ${
+                                    field.name.toLowerCase() === "twitter" ? html`<img src="/assets/logo-twitter.svg" alt="twitter logo">` : null
+                                }
+
+                               <span .innerHTML="${field.value}"></span>
+                            </sl-badge>
+                        </div>
+                        `) : null}
+                    </div>
+
                     <div id="profile-card-actions">
-                        ${this.followed ? html`<sl-button>Following</sl-button>` : html`<sl-button @click="${() => this.follow()}">Follow</sl-button>` }
+                        ${this.followed ? html`<sl-button>Following</sl-button>` : html`<sl-button
+                            @click="${() => this.follow()}">Follow</sl-button>`}
                     </div>
                 </div>
             </div>

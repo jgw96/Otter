@@ -6,7 +6,7 @@ import '@shoelace-style/shoelace/dist/components/button/button.js';
 export class AppHeader extends LitElement {
   @property({ type: String }) title = 'Mammoth';
 
-  @property({ type: Boolean}) enableBack: boolean = false;
+  @property({ type: Boolean }) enableBack: boolean = false;
 
   static get styles() {
     return css`
@@ -70,21 +70,33 @@ export class AppHeader extends LitElement {
     this.dispatchEvent(new CustomEvent('open-settings'));
   }
 
+  handleTheming() {
+    // fire custom event
+    this.dispatchEvent(new CustomEvent('open-theming'));
+  }
+
   render() {
     return html`
       <header>
 
         <div id="back-button-block">
-          ${this.enableBack ? html`<sl-button href="/home">
+          ${this.enableBack ? html`<sl-button size="small" href="/home">
             Back
           </sl-button>` : null}
 
           <img src="/assets/icons/64-icon.png" alt="Mammoth" width="32" height="32">
         </div>
 
-        <sl-button @click="${() => this.openSettings()}" circle size="small">
-          <sl-icon src="/assets/settings-outline.svg"></sl-icon>
-        </sl-button>
+        <div>
+          <sl-button id="open-button" circle size="small" @click="${() => this.handleTheming()}">
+            <sl-icon src="/assets/color-palette-outline.svg" alt="Theme"></sl-icon>
+          </sl-button>
+
+          <sl-button @click="${() => this.openSettings()}" circle size="small">
+            <sl-icon src="/assets/settings-outline.svg"></sl-icon>
+          </sl-button>
+        </div>
+
       </header>
     `;
   }

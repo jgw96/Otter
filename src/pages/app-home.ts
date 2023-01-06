@@ -22,6 +22,7 @@ import '../components/timeline-item';
 import '../components/bookmarks';
 import '../components/favorites';
 import '../components/notifications';
+import '../components/app-theme';
 import './app-messages';
 import './search-page';
 
@@ -55,6 +56,10 @@ export class AppHome extends LitElement {
         justify-content: center;
         align-items: center;
         flex-direction: column;
+      }
+
+      #theming-drawer {
+
       }
 
       @media(prefers-color-scheme: light) {
@@ -265,6 +270,8 @@ export class AppHome extends LitElement {
         align-items: center;
         justify-content: center;
         padding-top: 4px;
+
+        box-shadow: #0000008a 0px 1px 13px 0px;
       }
 
       #mobile-actions sl-button sl-icon {
@@ -330,18 +337,6 @@ export class AppHome extends LitElement {
     this.user = await getCurrentUser();
 
     console.log("user", this.user);
-
-    const potentialColor = localStorage.getItem("primary_color");
-
-    if (potentialColor) {
-      this.primary_color = potentialColor;
-      document.documentElement.style.setProperty('--sl-color-primary-600', potentialColor);
-    }
-    else {
-      // get css variable color
-      const color = getComputedStyle(document.documentElement).getPropertyValue('--sl-color-primary-600');
-      this.primary_color = color;
-    }
   }
 
   handlePrimaryColor(color: string) {
@@ -431,9 +426,18 @@ export class AppHome extends LitElement {
     }
   }
 
+  async openThemingDrawer() {
+    const drawer = this.shadowRoot?.getElementById('theming-drawer') as any;
+    await drawer.show();
+  }
+
   render() {
     return html`
-      <app-header @open-settings="${() => this.openSettingsDrawer()}"></app-header>
+      <app-header @open-settings="${() => this.openSettingsDrawer()}" @open-theming="${() => this.openThemingDrawer()}"></app-header>
+
+      <sl-drawer label="Theming" id="theming-drawer">
+        <app-theme @color-chosen="${($event: any) => this.handlePrimaryColor($event.detail.color)}"></app-theme>
+      </sl-drawer>
 
       <sl-dialog id="notify-dialog" label="New Post">
         <sl-button circle slot="header-actions" @click="${() => this.attachFile()}">
@@ -462,13 +466,6 @@ export class AppHome extends LitElement {
       </sl-drawer>
 
       <sl-drawer id="settings-drawer" placement="end" label="Settings">
-
-        <label>
-          Theme Color
-          <sl-color-picker @sl-change="${($event: any) => this.handlePrimaryColor($event.target.value)}"
-            .value="${this.primary_color}"></sl-color-picker>
-        </label>
-
         ${this.instanceInfo ? html`
         <div id="instanceInfo">
           <h3>Instance Info</h3>
