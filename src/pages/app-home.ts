@@ -29,7 +29,6 @@ import './search-page';
 import { styles } from '../styles/shared-styles';
 import { getCurrentUser, getInstanceInfo } from '../services/account';
 import { publishPost, uploadImageAsFormData } from '../services/posts';
-import { Router } from '@vaadin/router';
 import { reply } from '../services/timeline';
 import { router } from '../utils/router';
 

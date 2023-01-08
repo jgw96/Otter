@@ -1,4 +1,3 @@
-import { Router } from '@vaadin/router';
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 

@@ -12,7 +12,7 @@ export const router = new Router({
       {
         path: '',
         title: 'login',
-        render: (context: any) => html`<app-login></app-login>`
+        render: () => html`<app-login></app-login>`
       },
       {
         path: 'home',
@@ -20,7 +20,7 @@ export const router = new Router({
         plugins: [
           lazy(() => import('../pages/app-home.js')),
         ],
-        render: (context: any) => html`<app-home></app-home>`
+        render: () => html`<app-home></app-home>`
       },
       {
         path: 'search',
@@ -28,7 +28,7 @@ export const router = new Router({
         plugins: [
           lazy(() => import('../pages/search-page.js')),
         ],
-        render: (context: any) => html`<search-page></search-page>`
+        render: () => html`<search-page></search-page>`
       },
       {
         path: "account",
@@ -36,7 +36,7 @@ export const router = new Router({
         plugins: [
           lazy(() => import('../pages/app-profile.js')),
         ],
-        render: (context: any) => html`<app-profile></app-profile>`
+        render: () => html`<app-profile></app-profile>`
       },
       {
         path: 'followers',
@@ -44,7 +44,7 @@ export const router = new Router({
         plugins: [
           lazy(() => import('../pages/app-followers.js')),
         ],
-        render: (context: any) => html`<app-followers></app-followers>`
+        render: () => html`<app-followers></app-followers>`
       },
       {
         path: 'about',
@@ -52,7 +52,7 @@ export const router = new Router({
         plugins: [
           lazy(() => import('../pages/app-about/app-about.js')),
         ],
-        render: (context: any) => html`<app-about></app-about>`
+        render: () => html`<app-about></app-about>`
       },
       {
         path: 'messages',
@@ -60,7 +60,7 @@ export const router = new Router({
         plugins: [
           lazy(() => import('../pages/app-messages.js')),
         ],
-        render: (context: any) => html`<app-messages></app-messages>`
+        render: () => html`<app-messages></app-messages>`
       },
       {
         path: 'following',
@@ -68,7 +68,7 @@ export const router = new Router({
         plugins: [
           lazy(() => import('../pages/app-following.js')),
         ],
-        render: (context: any) => html`<app-following></app-following>`
+        render: () => html`<app-following></app-following>`
       },
       {
         path: 'hashtag',
@@ -76,7 +76,7 @@ export const router = new Router({
         plugins: [
           lazy(() => import('../pages/app-following.js')),
         ],
-        render: (context: any) => html`<app-hashtags></app-hashtags>`
+        render: () => html`<app-hashtags></app-hashtags>`
       }
       // {
       //   path: 'bar/:id',
