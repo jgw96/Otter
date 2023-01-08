@@ -175,57 +175,13 @@ export class Timeline extends LitElement {
         </div>
 
         <ul>
-        <lit-virtualizer scroller .items="${this.timeline}" .renderItem="${
-            (tweet: any) => html`
-              <timeline-item ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
-            `
-        }">
-        </lit-virtualizer>
-        </ul>
-
-        <!-- <ul>
-          ${
-            this.timeline.length > 0 ? this.timeline.map((tweet: any) => {
-                return html`
-                  <timeline-item ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
+            <lit-virtualizer scroller .items="${this.timeline}" .renderItem="${
+                (tweet: any) => html`
+                <timeline-item ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
                 `
-            })
-           : html`<sl-card class="fake">
-              <sl-skeleton effect="pulse"></sl-skeleton>
-           </sl-card>
-
-           <sl-card class="fake">
-              <sl-skeleton effect="pulse"></sl-skeleton>
-           </sl-card>
-
-           <sl-card class="fake">
-              <sl-skeleton effect="pulse"></sl-skeleton>
-           </sl-card>
-
-           <sl-card class="fake">
-              <sl-skeleton effect="pulse"></sl-skeleton>
-           </sl-card>
-
-           <sl-card class="fake">
-              <sl-skeleton effect="pulse"></sl-skeleton>
-           </sl-card>
-
-           <sl-card class="fake">
-              <sl-skeleton effect="pulse"></sl-skeleton>
-           </sl-card>
-
-           <sl-card class="fake">
-              <sl-skeleton effect="pulse"></sl-skeleton>
-           </sl-card>
-
-           <sl-card class="fake">
-              <sl-skeleton effect="pulse"></sl-skeleton>
-           </sl-card>
-
-           `}
-
-            <sl-button ?loading="${this.loadingData}" id="load-more" @click="${() => this.loadMore()}">Load More</sl-button>
-        </ul> -->
+            }">
+            </lit-virtualizer>
+        </ul>
         `;
     }
 }

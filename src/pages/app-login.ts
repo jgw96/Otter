@@ -6,6 +6,7 @@ import { authToClient, initAuth } from '../services/account';
 
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
+import { router } from '../utils/router';
 
 @customElement('app-login')
 export class AppLogin extends LitElement {
@@ -81,10 +82,10 @@ export class AppLogin extends LitElement {
         if (code) {
             await authToClient(code);
 
-            await Router.go("/home");
+            await router.navigate("/home");
         }
         else if (token && server) {
-            await Router.go("/home");
+            await router.navigate("/home");
         }
     }
 

@@ -3,6 +3,7 @@ import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
 import '../components/search';
+import { router } from '../utils/router';
 
 @customElement('search-page')
 export class SearchPage extends LitElement {
@@ -78,11 +79,11 @@ export class SearchPage extends LitElement {
     }
 
     openAccount(id: string) {
-        Router.go(`/account?id=${id}`);
+        router.navigate(`/account?id=${id}`);
     }
 
     handleHashtagClick(hashtag: string) {
-        Router.go(`/hashtag?tag=${hashtag}`);
+        router.navigate(`/hashtag?tag=${hashtag}`);
     }
 
     render() {

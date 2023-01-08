@@ -228,7 +228,6 @@ export class TimelineItem extends LitElement {
                         ` : html``
                       }
 
-
                         <user-profile .account="${this.tweet.account}"></user-profile>
                         <div .innerHTML="${this.tweet.content}"></div>
 

@@ -8,6 +8,7 @@ import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
 import '@shoelace-style/shoelace/dist/components/menu-label/menu-label.js';
 import { searchTimeline } from '../services/timeline';
 import { Router } from '@vaadin/router';
+import { router } from '../utils/router';
 
 @customElement('app-search')
 export class Search extends LitElement {
@@ -69,7 +70,7 @@ export class Search extends LitElement {
     }
 
     openAccount(id: string) {
-        Router.go(`/account?id=${id}`);
+        router.navigate(`/account?id=${id}`);
     }
 
     render() {

@@ -31,6 +31,13 @@ export class AppProfile extends LitElement {
                 border-radius: 50%;
               }
 
+            #fields {
+                display: flex;
+                flex-direction: column;
+                overflow-x: auto;
+                margin-top: 12px;
+            }
+
             main {
                 margin-top: 80px;
                 display: grid;

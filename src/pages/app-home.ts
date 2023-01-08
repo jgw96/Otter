@@ -31,6 +31,7 @@ import { getCurrentUser, getInstanceInfo } from '../services/account';
 import { publishPost, uploadImageAsFormData } from '../services/posts';
 import { Router } from '@vaadin/router';
 import { reply } from '../services/timeline';
+import { router } from '../utils/router';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -98,6 +99,14 @@ export class AppHome extends LitElement {
       main {
         display: grid;
         grid-template-columns: 75vw 22vw;
+      }
+
+      main.focus {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding-left: 10vw;
+        padding-right: 10vw;
       }
 
       #settings-drawer label {
@@ -307,6 +316,12 @@ export class AppHome extends LitElement {
       width: 20vw;
     }
 
+    #focusModeButton {
+      position: fixed;
+      bottom: 18px;
+      left: 12px;
+    }
+
     @media(max-width: 600px) {
       sl-tab-group::part(tabs) {
         width: initial;
@@ -386,11 +401,11 @@ export class AppHome extends LitElement {
   }
 
   async goToFollowers() {
-    Router.go(`/followers?id=${this.user.id}`)
+    router.navigate(`/followers?id=${this.user.id}`)
   }
 
   async goToFollowing() {
-    Router.go(`/following?id=${this.user.id}`)
+    router.navigate(`/following?id=${this.user.id}`)
   }
 
   async openSettingsDrawer() {
@@ -431,9 +446,27 @@ export class AppHome extends LitElement {
     await drawer.show();
   }
 
+  doFocusMode() {
+    const main = this.shadowRoot?.querySelector('main') as any;
+
+    main.classList.toggle('focus');
+
+    const profile = this.shadowRoot?.querySelector('#profile') as any;
+    profile.style.display = profile.style.display === 'none' ? 'flex' : 'none';
+
+    const appTimeline = this.shadowRoot?.querySelector('app-timeline') as any;
+    appTimeline.style.position = appTimeline.style.position === 'fixed' ? 'relative' : 'fixed';
+    appTimeline.style.left = appTimeline.style.left === '11vw' ? '0' : '11vw';
+    appTimeline.style.right = appTimeline.style.right === '11vw' ? '0' : '11vw';
+  }
+
   render() {
     return html`
       <app-header @open-settings="${() => this.openSettingsDrawer()}" @open-theming="${() => this.openThemingDrawer()}"></app-header>
+
+      <sl-button @click="${() => this.doFocusMode()}" circle size="small" id="focusModeButton">
+        <sl-icon src="/assets/eye-outline.svg"></sl-icon>
+      </sl-button>
 
       <sl-drawer label="Theming" id="theming-drawer">
         <app-theme @color-chosen="${($event: any) => this.handlePrimaryColor($event.detail.color)}"></app-theme>

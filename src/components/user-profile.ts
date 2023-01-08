@@ -3,6 +3,7 @@ import { LitElement, html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 import { classMap } from 'lit/directives/class-map.js';
+import { router } from '../utils/router';
 
 @customElement('user-profile')
 export class UserProfile extends LitElement {
@@ -99,7 +100,7 @@ export class UserProfile extends LitElement {
     }
 
     openUser() {
-        Router.go(`/account?id=${this.account.id}`);
+        router.navigate(`/account?id=${this.account.id}`);
     }
 
     render() {
