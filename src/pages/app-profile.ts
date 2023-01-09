@@ -77,6 +77,23 @@ export class AppProfile extends LitElement {
                 justify-content: space-between;
               }
 
+            #fake-profile {
+                padding: 12px;
+                padding-top: 0;
+                border-radius: 6px;
+
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                height: 400px
+            }
+
+            #fake-profile sl-skeleton {
+                display: block;
+                height: 400px;
+                --border-radius: 4px;
+            }
+
               #username-block {
                 display: flex;
                 align-items: center;
@@ -212,7 +229,9 @@ export class AppProfile extends LitElement {
                     </div>
                 </div>
             </div>
-            ` : null}
+            ` : html`<div id="fake-profile">
+                <sl-skeleton></sl-skeleton>
+            </div>`}
 
             <ul>
                 ${this.posts.map(post => html`

@@ -41,8 +41,6 @@ export const router = new Router({
           lazy(() => import('../pages/app-profile.js')),
         ],
         render: () => {
-       //  {(document as any).startViewTransition(() => {return html`<app-profile></app-profile>`})}
-          // (document as any).startViewTransition()
           return html`<app-profile></app-profile>`
         }
 

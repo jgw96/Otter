@@ -33,6 +33,8 @@ export class TimelineItem extends LitElement {
                 width: 100%;
                 --sl-panel-background-color: var(--sl-color-primary-600);
                 color: black;
+
+                animation: slideUp 0.3s ease-in-out;
             }
 
             sl-card a {
@@ -117,7 +119,7 @@ export class TimelineItem extends LitElement {
 
             @keyframes slideUp {
                 0% {
-                    transform: translateY(30%);
+                    transform: translateY(30px);
                     opacity: 0;
                 }
                 100% {
