@@ -51,29 +51,64 @@
   ],
   "shortcuts": [
     {
-      "name":"home",
+      "name":"Home",
       "url":"/",
-      "description":"Head straight to the home page"
+      "description":"Head straight to the home page",
+      "icons": [
+        {
+          "src": "assets/shortcuts/home-outline.png",
+          "sizes": "64x64",
+          "type": "image/png"
+        }
+      ]
     },
     {
-      "name":"explore",
+      "name":"Explore",
       "url":"/search",
-      "description":"Head straight to the explore page"
+      "description":"Head straight to the explore page",
+      "icons": [
+        {
+          "src": "assets/shortcuts/search-outline.png",
+          "sizes": "64x64",
+          "type": "image/png"
+        }
+      ]
     },
     {
       "name":"My Profile",
       "url":"/account",
-      "description":"Head straight to your account"
+      "description":"Head straight to your account",
+      "icons": [
+        {
+          "src": "assets/shortcuts/eye-outline.png",
+          "sizes": "64x64",
+          "type": "image/png"
+        }
+      ]
     },
     {
       "name":"My Followers",
       "url":"/followers",
-      "description":"Head straight to your followers"
+      "description":"Head straight to your followers",
+      "icons": [
+        {
+          "src": "assets/shortcuts/eye-outline.png",
+          "sizes": "64x64",
+          "type": "image/png"
+        }
+      ]
     },
     {
       "name":"My Following",
       "url":"/following",
-      "description":"Head straight to your following"
+      "description":"Head straight to your following",
+      "icons": [
+        {
+          "src": "assets/shortcuts/eye-outline.png",
+          "sizes": "64x64",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }
