@@ -31,11 +31,15 @@ export class UserProfile extends LitElement {
             }
 
             .headerBlock img {
-                height: 62px;
-                width: 62px;
+                height: 50px;
+                width: 50px;
                 border-radius: 50%;
 
                 border: solid var(--sl-color-primary-600) 2px;
+            }
+
+            .headerBlock p {
+                margin-top: 0;
             }
 
             div.small img {

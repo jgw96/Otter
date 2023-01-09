@@ -1,11 +1,13 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js'
-import { boostPost, getReplies, reblogPost } from '../services/timeline';
+import { classMap } from 'lit/directives/class-map.js';
+import { boostPost, getAStatus, getReplies, reblogPost } from '../services/timeline';
 
 import '../components/user-profile';
 
 import '@shoelace-style/shoelace/dist/components/card/card.js';
 import '@shoelace-style/shoelace/dist/components/icon/icon.js';
+
 import { addBookmark } from '../services/bookmarks';
 
 @customElement('timeline-item')
@@ -25,6 +27,8 @@ export class TimelineItem extends LitElement {
                 width: 100%;
 
                 margin-bottom: 10px;
+
+                background: var(--sl-color-primary-600);
             }
 
 
@@ -96,6 +100,21 @@ export class TimelineItem extends LitElement {
                 border-top: none;
             }
 
+            .replyCard {
+                margin-left: 15px;
+            }
+
+            #reply-to {
+                height: 33px;
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                padding-left: 16px;
+                font-size: 18px;
+                color: black;
+                margin-top: 14px;
+            }
+
             @media(max-width: 600px) {
                 .actions {
                     justify-content: space-between;
@@ -130,7 +149,7 @@ export class TimelineItem extends LitElement {
         `
     ];
 
-    firstUpdated( ) {
+    async firstUpdated( ) {
         // set up intersection observer
         const options = {
             root: null,
@@ -139,9 +158,9 @@ export class TimelineItem extends LitElement {
         };
 
         const observer = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
+            entries.forEach(async entry => {
                 if (entry.isIntersecting) {
-                    this.loadImage();
+                    await this.loadImage();
 
                     observer.unobserve(entry.target);
                 }
@@ -150,6 +169,13 @@ export class TimelineItem extends LitElement {
         , options);
 
         observer.observe(this.shadowRoot?.querySelector('sl-card') as Element);
+
+        if(this.tweet.in_reply_to_id !== null) {
+          // this.replies(this.tweet.reply_to_id);
+          const replyStatus = await getAStatus(this.tweet.in_reply_to_id);
+
+          this.tweet.reply_to = replyStatus;
+        }
     }
 
     async loadImage() {
@@ -223,7 +249,36 @@ export class TimelineItem extends LitElement {
     render() {
         return html`
           ${this.tweet.reblog === null || this.tweet.reblog === undefined ? html`
-                <sl-card>
+                ${
+                    this.tweet.reply_to !== null && this.tweet.reply_to !== undefined ? html`
+                      <sl-card>
+                      <!-- ${
+                        this.tweet.reply_to.media_attachments.length > 0 ? html`
+                         <img slot="image" data-src="${this.tweet.reply_to.media_attachments[0].preview_url}">
+                        ` : html``
+                      } -->
+
+                        <user-profile .account="${this.tweet.reply_to.account}"></user-profile>
+                        <div .innerHTML="${this.tweet.reply_to.content}"></div>
+
+                        <div class="actions" slot="footer">
+                          ${this.show === true ? html`<sl-button pill @click="${() => this.replies(this.tweet.reply_to.id)}">
+                            <sl-icon src="/assets/albums-outline.svg"></sl-icon>
+                        </sl-button>` : null}
+                          <sl-button ?disabled="${this.isBookmarked || this.tweet.reply_to.bookmarked}" pill @click="${() => this.bookmark(this.tweet.reply_to.id)}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></sl-button>
+                          <sl-button ?disabled="${this.isBoosted || this.tweet.reply_to.favourited}" pill @click="${() => this.favorite(this.tweet.reply_to.id)}">${this.tweet.reply_to.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></sl-button>
+                          <sl-button ?disabled="${this.isReblogged || this.tweet.reply_to.reblogged}" pill @click="${() => this.reblog(this.tweet.reply_to.id)}">${this.tweet.reply_to.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></sl-button>
+                        </div>
+                      </sl-card>
+
+                      <div id="reply-to">
+                        <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
+                      </div>
+                    ` : null
+                }
+
+
+                <sl-card class="${classMap({ replyCard: this.tweet.reply_to ? true : false})}">
                       ${
                         this.tweet.media_attachments.length > 0 ? html`
                          <img slot="image" data-src="${this.tweet.media_attachments[0].preview_url}">

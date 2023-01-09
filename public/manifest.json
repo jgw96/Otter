@@ -30,7 +30,7 @@
     },
     {
       "src": "assets/icons/64-icon.png",
-      "sizes": "64x64",
+      "sizes": "96x96",
       "type": "image/png"
     }
   ],
@@ -57,7 +57,7 @@
       "icons": [
         {
           "src": "assets/shortcuts/home-outline.png",
-          "sizes": "64x64",
+          "sizes": "96x96",
           "type": "image/png"
         }
       ]
@@ -69,7 +69,7 @@
       "icons": [
         {
           "src": "assets/shortcuts/search-outline.png",
-          "sizes": "64x64",
+          "sizes": "96x96",
           "type": "image/png"
         }
       ]
@@ -81,7 +81,7 @@
       "icons": [
         {
           "src": "assets/shortcuts/eye-outline.png",
-          "sizes": "64x64",
+          "sizes": "96x96",
           "type": "image/png"
         }
       ]
@@ -93,7 +93,7 @@
       "icons": [
         {
           "src": "assets/shortcuts/eye-outline.png",
-          "sizes": "64x64",
+          "sizes": "96x96",
           "type": "image/png"
         }
       ]
@@ -105,7 +105,7 @@
       "icons": [
         {
           "src": "assets/shortcuts/eye-outline.png",
-          "sizes": "64x64",
+          "sizes": "96x96",
           "type": "image/png"
         }
       ]
