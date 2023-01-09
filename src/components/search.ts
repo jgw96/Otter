@@ -17,6 +17,9 @@ export class Search extends LitElement {
         css`
             :host {
                 display: block;
+
+                contain: paint layout style;
+                content-visibility: auto;
             }
 
             .avatar {
@@ -34,18 +37,36 @@ export class Search extends LitElement {
     ];
 
     protected async firstUpdated() {
-        const searchData = await searchTimeline("Mastodon");
-        console.log("searchData", searchData);
+        const options = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
 
-        this.searchData = searchData;
+        const observer = new IntersectionObserver((entries, observer) => {
 
-        // fire custom event
-        const event = new CustomEvent('search', {
-            detail: {
-                searchData
-            }
-        });
-        this.dispatchEvent(event);
+            entries.forEach(async entry => {
+                if (entry.isIntersecting) {
+                    const searchData = await searchTimeline("Mastodon");
+                    console.log("searchData", searchData);
+
+                    this.searchData = searchData;
+
+                    // fire custom event
+                    const event = new CustomEvent('search', {
+                        detail: {
+                            searchData
+                        }
+                    });
+                    this.dispatchEvent(event);
+
+                    observer.disconnect();
+                }
+            });
+        }
+            , options);
+
+        observer.observe(this);
     }
 
     async handleSearch(value: string) {
@@ -76,7 +97,8 @@ export class Search extends LitElement {
     render() {
         return html`
 
-            <sl-input @sl-change="${($event: any) => this.handleSearch($event.target.value)}" placeholder="Search" type="search"></sl-input>
+            <sl-input @sl-change="${($event: any) => this.handleSearch($event.target.value)}" placeholder="Search" type="search">
+            </sl-input>
 
         `;
     }

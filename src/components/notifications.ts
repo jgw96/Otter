@@ -19,6 +19,9 @@ export class Notifications extends LitElement {
                 display: flex;
                 flex-direction: column;
                 gap: 8px;
+
+                contain: paint layout style;
+                content-visibility: auto;
             }
 
             ul {
@@ -114,10 +117,30 @@ export class Notifications extends LitElement {
     ];
 
     async firstUpdated() {
-        const notificationsData = await getNotifications();
-        console.log(notificationsData);
+        //load notifications when this component is visible using intersectionObserver
 
-        this.notifications = notificationsData;
+        const options = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+
+            entries.forEach(async entry => {
+                if (entry.isIntersecting) {
+                    const notificationsData = await getNotifications();
+                    console.log(notificationsData);
+
+                    this.notifications = notificationsData;
+
+                    observer.disconnect();
+                }
+            });
+        }
+        , options);
+
+        observer.observe(this);
     }
 
     async clear() {

@@ -7,21 +7,32 @@ export const getHomeTimeline = async () => {
     return data;
 }
 
-let lastPageID = "";
+let latestData: any[] | undefined;
 
 export const getPaginatedHomeTimeline = async () => {
+    let lastPageID = "";
+
     if (lastPageID && lastPageID.length > 0) {
         const response = await fetch(`https://mammoth-server.azurewebsites.net/timelinePaginated?since_id=${lastPageID}&limit=40&code=${token}&server=${server}`);
         const data = await response.json();
 
         lastPageID = data[data.length - 1].id;
+
+        latestData = data;
+
         return data;
+    }
+    else if (latestData) {
+        console.log("latestData");
+        return latestData;
     }
     else {
         const response = await fetch(`https://mammoth-server.azurewebsites.net/timelinePaginated?limit=40&code=${token}&server=${server}`);
         const data = await response.json();
 
         lastPageID = data[data.length - 1].id;
+
+        latestData = data;
         return data;
     }
 }

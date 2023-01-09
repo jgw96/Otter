@@ -32,8 +32,26 @@ export class AppMessages extends LitElement {
     ];
 
     async firstUpdated() {
-        const messages = await getMessages();
-        console.log("messages", messages);
+        const options = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+
+            entries.forEach(async entry => {
+                if (entry.isIntersecting) {
+                    const messages = await getMessages();
+                     console.log("messages", messages);
+
+                    observer.disconnect();
+                }
+            });
+        }
+        , options);
+
+        observer.observe(this);
     }
 
     render() {

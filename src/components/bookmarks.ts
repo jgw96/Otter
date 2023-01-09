@@ -12,6 +12,9 @@ export class Bookmarks extends LitElement {
         css`
             :host {
                 display: block;
+
+                contain: paint layout style;
+                content-visibility: auto;
             }
 
             ul {
@@ -33,10 +36,30 @@ export class Bookmarks extends LitElement {
     ];
 
     async firstUpdated() {
-        const bookmarksData = await getBookmarks();
-        console.log(bookmarksData);
 
-        this.bookmarks = bookmarksData;
+        const options = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+
+            entries.forEach(async entry => {
+                if (entry.isIntersecting) {
+                    const bookmarksData = await getBookmarks();
+                    console.log(bookmarksData);
+
+                    this.bookmarks = bookmarksData;
+
+                    observer.disconnect();
+                }
+            });
+        }
+        , options);
+
+        observer.observe(this);
+
     }
 
     render() {

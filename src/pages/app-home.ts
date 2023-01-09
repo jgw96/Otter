@@ -59,10 +59,6 @@ export class AppHome extends LitElement {
         flex-direction: column;
       }
 
-      #theming-drawer {
-
-      }
-
       @media(prefers-color-scheme: light) {
         sl-tab-group::part(nav) {
           background: #ffffff !important;
@@ -349,9 +345,12 @@ export class AppHome extends LitElement {
 
   async firstUpdated() {
     console.log('This is your home page');
-    this.user = await getCurrentUser();
 
-    console.log("user", this.user);
+    window.requestIdleCallback(async () => {
+      this.user = await getCurrentUser();
+
+      console.log("user", this.user);
+    }, { timeout: 3000 });
   }
 
   handlePrimaryColor(color: string) {
@@ -570,15 +569,15 @@ export class AppHome extends LitElement {
             <app-timeline .type="Home"
               @replies="${($event: any) => this.handleReplies($event.detail.data, $event.detail.id)}"></app-timeline>
           </sl-tab-panel>
-          <sl-tab-panel name="media">
+          <!-- <sl-tab-panel name="media">
             <app-timeline .type="Media"></app-timeline>
-          </sl-tab-panel>
+          </sl-tab-panel> -->
           <sl-tab-panel name="messages">
             <app-messages></app-messages>
           </sl-tab-panel>
-          <sl-tab-panel name="custom">
+          <!-- <sl-tab-panel name="custom">
             <app-timeline .type="Public"></app-timeline>
-          </sl-tab-panel>
+          </sl-tab-panel> -->
           <sl-tab-panel name="bookmarks">
             <app-bookmarks></app-bookmarks>
           </sl-tab-panel>

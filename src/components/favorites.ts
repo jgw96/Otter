@@ -11,6 +11,8 @@ export class Favorites extends LitElement {
         css`
             :host {
                 display: block;
+
+                content-visibility: auto;
             }
 
             ul {
@@ -32,10 +34,28 @@ export class Favorites extends LitElement {
     ];
 
     async firstUpdated() {
-        const favoritesData = await getFavorites();
-        console.log(favoritesData);
+        const options = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
 
-        this.favorites = favoritesData;
+        const observer = new IntersectionObserver((entries, observer) => {
+
+            entries.forEach(async entry => {
+                if (entry.isIntersecting) {
+                    const favoritesData = await getFavorites();
+                    console.log(favoritesData);
+
+                    this.favorites = favoritesData;
+
+                    observer.disconnect();
+                }
+            });
+        }
+        , options);
+
+        observer.observe(this);
     }
 
     render() {
