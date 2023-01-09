@@ -29,13 +29,23 @@ export class AppHeader extends LitElement {
         width: calc(env(titlebar-area-width, intitial) + -23px);
         padding-top: 4px;
         padding-left: 6px;
+
+        view-transition-name: full-embed;
+        contain: layout;
       }
+
 
       header h1 {
         margin-top: 0;
         margin-bottom: 0;
         font-size: 20px;
         font-weight: bold;
+      }
+
+      header img {
+        view-transition-name: main-header-icon;
+        contain: layout;
+        width: fit-content;
       }
 
       nav a {

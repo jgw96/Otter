@@ -6,8 +6,12 @@ import { Router } from '@thepassle/app-tools/router.js';
 import { lazy } from '@thepassle/app-tools/router/plugins/lazy.js';
 // @ts-ignore
 import { title } from '@thepassle/app-tools/router/plugins/title.js';
+import { myPlugin } from './transition-plugin.js';
 
 export const router = new Router({
+    plugins: [
+      myPlugin
+    ],
     routes: [
       {
         path: '',
@@ -36,7 +40,12 @@ export const router = new Router({
         plugins: [
           lazy(() => import('../pages/app-profile.js')),
         ],
-        render: () => html`<app-profile></app-profile>`
+        render: () => {
+       //  {(document as any).startViewTransition(() => {return html`<app-profile></app-profile>`})}
+          // (document as any).startViewTransition()
+          return html`<app-profile></app-profile>`
+        }
+
       },
       {
         path: 'followers',

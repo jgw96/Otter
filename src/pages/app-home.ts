@@ -23,6 +23,7 @@ import '../components/bookmarks';
 import '../components/favorites';
 import '../components/notifications';
 import '../components/app-theme';
+import '../components/post-dialog';
 import './app-messages';
 import './search-page';
 
@@ -375,8 +376,10 @@ export class AppHome extends LitElement {
   openNewDialog() {
     // if on desktop, open the dialog
     if (window.innerWidth > 600) {
-    const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
-    dialog.show();
+    // const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
+    // dialog.show();
+      const dialog: any = this.shadowRoot?.querySelector("post-dialog");
+      dialog?.openNewDialog();
     }
     else {
       const drawer = this.shadowRoot?.getElementById('reply-drawer') as any;
@@ -471,7 +474,9 @@ export class AppHome extends LitElement {
         <app-theme @color-chosen="${($event: any) => this.handlePrimaryColor($event.detail.color)}"></app-theme>
       </sl-drawer>
 
-      <sl-dialog id="notify-dialog" label="New Post">
+      <post-dialog></post-dialog>
+
+      <!-- <sl-dialog id="notify-dialog" label="New Post">
         <sl-button circle slot="header-actions" @click="${() => this.attachFile()}">
           <sl-icon src="/assets/attach-outline.svg"></sl-icon>
         </sl-button>
@@ -482,7 +487,7 @@ export class AppHome extends LitElement {
         ` : html``}
 
         <sl-button @click="${() => this.publish()}" slot="footer" variant="primary">Publish</sl-button>
-      </sl-dialog>
+      </sl-dialog> -->
 
       <sl-drawer id="reply-drawer" placement="bottom" label="Reply">
         <sl-button circle slot="footer" @click="${() => this.attachFile()}">

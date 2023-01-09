@@ -65,81 +65,15 @@ export class AppIndex extends LitElement {
   firstUpdated() {
 
     router.addEventListener('route-changed', () => {
-      this.requestUpdate();
+      if ("startViewTransition" in document) {
+        return (document as any).startViewTransition(() => {
+          this.requestUpdate();
+        });
+      }
+      else {
+        this.requestUpdate();
+      }
     });
-
-    // this method is a lifecycle even in lit
-    // for more info check out the lit docs https://lit.dev/docs/components/lifecycle/
-
-    // For more info on using the @vaadin/router check here https://vaadin.com/router
-    // const router = new Router(this.shadowRoot?.querySelector('#routerOutlet'));
-    // router.setRoutes([
-    //   // temporarily cast to any because of a Type bug with the router
-    //   {
-    //     path: (import.meta as any).env.BASE_URL,
-    //     animate: true,
-    //     children: [
-    //       { path: '', component: 'app-login' },
-    //       {
-    //         path: 'home',
-    //         component: 'app-home',
-    //         action: async () => {
-    //           await import('./pages/app-home.js');
-    //         }
-    //       },
-    //       {
-    //         path: 'search',
-    //         component: 'search-page',
-    //         action: async () => {
-    //           await import('./pages/search-page.js');
-    //         }
-    //       },
-    //       {
-    //         path: "account",
-    //         component: "app-profile",
-    //         action: async () => {
-    //           await import("./pages/app-profile.js");
-    //         }
-    //       },
-
-    //       {
-    //         path: 'followers',
-    //         component: 'app-followers',
-    //         action: async () => {
-    //           await import('./pages/app-followers.js');
-    //         }
-    //       },
-    //       {
-    //         path: 'about',
-    //         component: 'app-about',
-    //         action: async () => {
-    //           await import('./pages/app-about/app-about.js');
-    //         },
-    //       },
-    //       {
-    //         path: 'messages',
-    //         component: 'app-messages',
-    //         action: async () => {
-    //           await import('./pages/app-messages.js');
-    //         }
-    //       },
-    //       {
-    //         path: 'following',
-    //         component: 'app-following',
-    //         action: async () => {
-    //           await import('./pages/app-following.js');
-    //         }
-    //       },
-    //       {
-    //         path: 'hashtag',
-    //         component: 'app-hashtags',
-    //         action: async () => {
-    //           await import('./pages/app-hashtags.js');
-    //         }
-    //       }
-    //     ],
-    //   } as any,
-    // ]);
   }
 
 

@@ -25,7 +25,7 @@ export async function uploadImageAsFormData() {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await fetch('https://mammoth-server.azurewebsites.net/uploadAttachment?code=${token}&server=${server}', {
+    const response = await fetch(`https://mammoth-server.azurewebsites.net/uploadAttachment?code=${token}&server=${server}`, {
         method: 'POST',
         body: formData,
     });
