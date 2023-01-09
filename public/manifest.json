@@ -50,6 +50,30 @@
     "utility"
   ],
   "shortcuts": [
-
+    {
+      "name":"home",
+      "url":"/",
+      "description":"Head straight to the home page"
+    },
+    {
+      "name":"explore",
+      "url":"/search",
+      "description":"Head straight to the explore page"
+    },
+    {
+      "name":"My Profile",
+      "url":"/account",
+      "description":"Head straight to your account"
+    },
+    {
+      "name":"My Followers",
+      "url":"/followers",
+      "description":"Head straight to your followers"
+    },
+    {
+      "name":"My Following",
+      "url":"/following",
+      "description":"Head straight to your following"
+    }
   ]
 }

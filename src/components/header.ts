@@ -59,6 +59,11 @@ export class AppHeader extends LitElement {
         gap: 16px;
       }
 
+      sl-button {
+        -webkit-app-region: no-drag;
+        app-region: no-drag;
+      }
+
       @media(prefers-color-scheme: light) {
         header {
           color: black;
