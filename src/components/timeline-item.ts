@@ -92,6 +92,14 @@ export class TimelineItem extends LitElement {
                 color: black;
             }
 
+            .actions sl-button::part(base):hover {
+                background: #ffffff4f;
+            }
+
+            img {
+                background: #ffffff4f;
+            }
+
             actions sl-button sl-icon {
                 font-size: 1.2em;
             }
@@ -252,12 +260,6 @@ export class TimelineItem extends LitElement {
                 ${
                     this.tweet.reply_to !== null && this.tweet.reply_to !== undefined ? html`
                       <sl-card>
-                      <!-- ${
-                        this.tweet.reply_to.media_attachments.length > 0 ? html`
-                         <img slot="image" data-src="${this.tweet.reply_to.media_attachments[0].preview_url}">
-                        ` : html``
-                      } -->
-
                         <user-profile .account="${this.tweet.reply_to.account}"></user-profile>
                         <div .innerHTML="${this.tweet.reply_to.content}"></div>
 

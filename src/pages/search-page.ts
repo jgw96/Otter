@@ -4,6 +4,8 @@ import { customElement, state } from 'lit/decorators.js';
 import '../components/search';
 import { router } from '../utils/router';
 
+import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
+
 @customElement('search-page')
 export class SearchPage extends LitElement {
 
@@ -24,6 +26,15 @@ export class SearchPage extends LitElement {
                 width: 24px;
                 height: 24px;
                 border-radius: 50%;
+            }
+
+            sl-skeleton {
+                height: 20px;
+                width: 138px;
+            }
+
+            .account sl-skeleton {
+                margin-bottom: 10px;
             }
 
             .account {
@@ -107,7 +118,27 @@ export class SearchPage extends LitElement {
                             </li>`
                         }) : null}
                     </ul>
-                ` : null}
+                ` : html`
+                  <div class="account">
+                    <sl-skeleton></sl-skeleton>
+                  </div>
+
+                  <div class="account">
+                    <sl-skeleton></sl-skeleton>
+                  </div>
+
+                  <div class="account">
+                    <sl-skeleton></sl-skeleton>
+                  </div>
+
+                  <div class="account">
+                    <sl-skeleton></sl-skeleton>
+                  </div>
+
+                  <div class="account">
+                    <sl-skeleton></sl-skeleton>
+                  </div>
+                `}
                 </sl-tab-panel>
 
                 <sl-tab-panel name="hashtags">
