@@ -123,4 +123,17 @@ workbox.routing.registerRoute(
     })
 );
 
+workbox.routing.registerRoute(
+    ({ request }) => request.url.includes('/user?code'),
+    new workbox.strategies.StaleWhileRevalidate({
+        cacheName: 'user',
+        plugins: [
+            new workbox.expiration.ExpirationPlugin({
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
+            }),
+        ],
+    })
+);
+
 workbox.precaching.precacheAndRoute(self.__WB_MANIFEST || []);

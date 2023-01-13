@@ -5,7 +5,6 @@ import { router } from './utils/router';
 
 import './pages/app-login';
 import './components/header';
-import './styles/global.css';
 
 @customElement('app-index')
 export class AppIndex extends LitElement {
@@ -80,6 +79,5 @@ export class AppIndex extends LitElement {
   render() {
 
     return router.render();
-    // ;
   }
 }

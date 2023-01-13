@@ -1,8 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
-import { authToClient, initAuth } from '../services/account';
-
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 import { router } from '../utils/router';
@@ -79,6 +77,7 @@ export class AppLogin extends LitElement {
         let server = localStorage.getItem('server');
 
         if (code) {
+            const { authToClient } = await import('../services/account');
             await authToClient(code);
 
             await router.navigate("/home");
@@ -92,6 +91,7 @@ export class AppLogin extends LitElement {
         const serverURL = (this.shadowRoot?.querySelector('sl-input[name="serverURL"]') as HTMLInputElement)?.value;
 
         try {
+            const { initAuth } = await import('../services/account');
             await initAuth(serverURL);
         }
         catch (err) {

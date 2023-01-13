@@ -1,12 +1,16 @@
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import copy from 'rollup-plugin-copy';
+
+import minifyHTML from 'rollup-plugin-minify-html-literals';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   base: "/",
   build: {
-    sourcemap: true,
+    sourcemap: false,
     assetsDir: "code",
+    cssCodeSplit: true,
   },
   plugins: [
     VitePWA({
@@ -16,12 +20,19 @@ export default defineConfig({
         swDest: 'dist/sw.js',
         globDirectory: 'dist',
         globPatterns: [
-          '**/*.{html,js,css,json, png}',
+          '**/*.{html,js,css,json,png,svg}',
         ],
       },
       devOptions: {
         enabled: true
-      }
-    })
-  ]
+      },
+    }),
+    minifyHTML(),
+    copy({
+      targets: [
+      { src: 'light.css', dest: 'dist/' },
+      { src: 'dark.css', dest: 'dist/' },
+      { src: 'global.css', dest: 'dist/' },
+    ]}),
+  ],
 })
