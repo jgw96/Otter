@@ -1,12 +1,14 @@
 import { LitElement, html, css } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
 
 import '@shoelace-style/shoelace/dist/components/input/input.js';
-import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 import { router } from '../utils/router';
 
 @customElement('app-login')
 export class AppLogin extends LitElement {
+
+    @state() loadIntro: boolean = false;
+
     static styles = [
         css`
             :host {
@@ -99,7 +101,12 @@ export class AppLogin extends LitElement {
         }
     }
 
-    openIntro() {
+    async openIntro() {
+        await import("@shoelace-style/shoelace/dist/components/dialog/dialog.js")
+        this.loadIntro = true;
+
+        await this.updateComplete;
+
         const dialog = this.shadowRoot?.querySelector('sl-dialog') as any;
 
         dialog.show();
@@ -107,7 +114,9 @@ export class AppLogin extends LitElement {
 
     render() {
         return html`
-        <sl-dialog label="Intro To Mastodon">
+        ${
+            this.loadIntro ? html`
+                      <sl-dialog label="Intro To Mastodon">
             <h2>What is Mammoth?</h2>
             <p>
                 Mammoth is the app your using 😊. It is an open source, cross-platform Mastodon client. Mammoth
@@ -147,6 +156,8 @@ export class AppLogin extends LitElement {
                 are joining before signing up.</p>
 
         </sl-dialog>
+            ` : null
+        }
 
         <main>
             <img src="/assets/icons/256-icon.png" alt="logo">

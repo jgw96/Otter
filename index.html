@@ -26,16 +26,15 @@
   <!-- Imports the manifest to represent the web application. A web app must have a manifest to be a PWA. -->
   <link rel="manifest" href="/manifest.json" />
 
-  <link rel="stylesheet" media="(prefers-color-scheme:dark)"
-  href="/dark.css"
-  onload="document.documentElement.classList.add('sl-theme-dark');">
-
   <!-- light mode and dark mode CSS -->
   <link rel="stylesheet" media="(prefers-color-scheme:light)"
     href="/light.css"
-    onload="document.documentElement.classList.add('sl-theme-light');">
+    >
+  <link rel="stylesheet" media="(prefers-color-scheme:dark)"
+    href="/dark.css"
+    >
 
-  <link rel="stylsheet" href="/global.css">
+    <link rel="stylesheet" href="/global.css">
 
   <script type="module" src="/src/app-index.ts"></script>
 </head>
@@ -43,6 +42,18 @@
 <body>
   <!-- Our app-index web component. This component is defined in src/pages/app-index.ts-->
   <app-index></app-index>
+
+  <script>
+    const themeSetting = window.matchMedia('(prefers-color-scheme: dark)');
+    const theme = themeSetting.matches ? 'dark' : 'light';
+
+    document.body.classList.add(`sl-theme-${theme}`);
+
+    themeSetting.addEventListener('change', e => {
+      document.body.classList.remove(`sl-theme-${theme}`);
+      document.body.classList.add(`sl-theme-${e.matches ? 'dark' : 'light'}`);
+    });
+  </script>
 
   <script>
     if ('serviceWorker' in navigator) {
