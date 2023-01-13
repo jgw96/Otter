@@ -16,6 +16,7 @@ import '@shoelace-style/shoelace/dist/components/drawer/drawer.js';
 import '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js';
 import '@shoelace-style/shoelace/dist/components/radio/radio.js';
 import '@shoelace-style/shoelace/dist/components/color-picker/color-picker.js';
+import '@shoelace-style/shoelace/dist/components/switch/switch.js';
 
 import '../components/timeline';
 import '../components/timeline-item';
@@ -57,6 +58,20 @@ export class AppHome extends LitElement {
         justify-content: center;
         align-items: center;
         flex-direction: column;
+      }
+
+      .setting sl-switch {
+        --sl-toggle-size-medium: 16px;
+      }
+
+      .setting div {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .setting p {
+        margin-top: 4px;
       }
 
       @media(prefers-color-scheme: light) {
@@ -502,9 +517,45 @@ export class AppHome extends LitElement {
       </sl-drawer>
 
       <sl-drawer id="settings-drawer" placement="end" label="Settings">
+        <div class="setting">
+          <div>
+            <h4>Wellness Mode</h4>
+
+            <sl-switch></sl-switch>
+          </div>
+
+          <p>
+            Coming Soon. Wellness Mode hides likes, boosts and follower count.
+          </p>
+        </div>
+
+        <div class="setting">
+          <div>
+            <h4>Focus Mode</h4>
+
+            <sl-switch></sl-switch>
+          </div>
+
+          <p>
+            Focus Mode hides your profile and other parts of the UI and lets you focus on your timeline.
+          </p>
+        </div>
+
+        <div class="setting">
+          <div>
+            <h4>Data Saver Mode</h4>
+
+            <sl-switch></sl-switch>
+          </div>
+
+          <p>
+            Coming Soon. Data Saver Mode reduces the amount of data used by Mammoth.
+          </p>
+        </div>
+
         ${this.instanceInfo ? html`
         <div id="instanceInfo">
-          <h3>Instance Info</h3>
+          <h4>Instance Info</h4>
 
           <img src="${this.instanceInfo.thumbnail}">
           <p>${this.instanceInfo.title}</p>
@@ -603,9 +654,17 @@ export class AppHome extends LitElement {
             ${this.user ? html`<img src="${this.user.avatar}" />` : html`<img src="https://via.placeholder.com/150" />`}
             <div id="username-block">
               <h3>${this.user ? this.user.display_name : "Loading..."}</h3>
+
+              <div>
               <sl-button circle size="small" id="share-button">
                 <sl-icon src="/assets/share-social-outline.svg"></sl-icon>
               </sl-button>
+
+              <sl-button circle size="small" id="settings-button">
+                <sl-icon src="/assets/ellipsis-vertical-outline.svg"></sl-icon>
+              </sl-button>
+              </div>
+
             </div>
 
             <p id="user-url">${this.user ? this.user.url : "Loading..."}</p>

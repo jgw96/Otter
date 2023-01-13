@@ -179,7 +179,6 @@ export class TimelineItem extends LitElement {
         observer.observe(this.shadowRoot?.querySelector('sl-card') as Element);
 
         if(this.tweet.in_reply_to_id !== null) {
-          // this.replies(this.tweet.reply_to_id);
           const replyStatus = await getAStatus(this.tweet.in_reply_to_id);
 
           this.tweet.reply_to = replyStatus;
@@ -265,7 +264,7 @@ export class TimelineItem extends LitElement {
 
                         <div class="actions" slot="footer">
                           ${this.show === true ? html`<sl-button pill @click="${() => this.replies(this.tweet.reply_to.id)}">
-                            <sl-icon src="/assets/albums-outline.svg"></sl-icon>
+                          <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
                         </sl-button>` : null}
                           <sl-button ?disabled="${this.isBookmarked || this.tweet.reply_to.bookmarked}" pill @click="${() => this.bookmark(this.tweet.reply_to.id)}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></sl-button>
                           <sl-button ?disabled="${this.isBoosted || this.tweet.reply_to.favourited}" pill @click="${() => this.favorite(this.tweet.reply_to.id)}">${this.tweet.reply_to.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></sl-button>
@@ -292,7 +291,7 @@ export class TimelineItem extends LitElement {
 
                         <div class="actions" slot="footer">
                           ${this.show === true ? html`<sl-button pill @click="${() => this.replies(this.tweet.id)}">
-                            <sl-icon src="/assets/albums-outline.svg"></sl-icon>
+                          <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
                         </sl-button>` : null}
                           <sl-button ?disabled="${this.isBookmarked || this.tweet.bookmarked}" pill @click="${() => this.bookmark(this.tweet.id)}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></sl-button>
                           <sl-button ?disabled="${this.isBoosted || this.tweet.favourited}" pill @click="${() => this.favorite(this.tweet.id)}">${this.tweet.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></sl-button>

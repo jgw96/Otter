@@ -6,11 +6,14 @@ import '@shoelace-style/shoelace/dist/components/color-picker/color-picker.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import '@shoelace-style/shoelace/dist/components/select/select.js';
 import '@shoelace-style/shoelace/dist/components/menu/menu.js';
+import { getSettings, setSettings, Settings } from '../services/settings';
 
 @customElement('app-theme')
 export class AppTheme extends LitElement {
     @state() primary_color: string = '#809bce';
     @state() font_size: string = '16px';
+
+    settings: Settings | undefined;
 
     static styles = [
         css`
@@ -90,8 +93,10 @@ export class AppTheme extends LitElement {
     ];
 
     firstUpdated() {
-        const potentialColor = localStorage.getItem("primary_color");
-        const potentialFontSize = localStorage.getItem("font_size");
+        this.settings = getSettings();
+
+        const potentialColor = this.settings.primary_color;
+        const potentialFontSize = this.settings.font_size;
 
         if (potentialColor) {
           this.primary_color = potentialColor;
@@ -119,17 +124,38 @@ export class AppTheme extends LitElement {
 
         this.primary_color = color;
 
+        setSettings({
+            primary_color: color,
+            font_size: this.font_size,
+            data_saver: this.settings!.data_saver,
+            wellness: this.settings!.wellness,
+            focus: this.settings!.focus
+        })
+
         // set css variable color
         document.documentElement.style.setProperty('--sl-color-primary-600', color);
-
-        localStorage.setItem("primary_color", color);
     }
 
     changeFontSize(size: string) {
+        setSettings({
+            primary_color: this.settings!.primary_color,
+            font_size: `${size}px`,
+            data_saver: this.settings!.data_saver,
+            wellness: this.settings!.wellness,
+            focus: this.settings!.focus
+        })
+
+        this.font_size = `${size}px`;
+
         // set css variable color
         document.documentElement.style.setProperty('--sl-font-size-medium', `${size}px`);
+    }
 
-        localStorage.setItem("font_size", `${size}px`);
+    async customColor() {
+        const eyeDropper = new (window as any).EyeDropper();
+
+        const color = await eyeDropper.open();
+        this.chooseColor(color);
     }
 
     render() {
@@ -148,6 +174,10 @@ export class AppTheme extends LitElement {
                     <div class="color" id="pink" @click="${() => this.chooseColor("#f8bbd0")}"></div>
                     <div class="color" id="brown" @click="${() => this.chooseColor("#d7ccc8")}"></div>
                     <div class="color" id="custom" @click="${() => this.chooseColor("#057dcd")}"></div>
+
+                    <sl-button circle @click="${() => this.customColor()}">
+                      <sl-icon src="/assets/add-outline.svg"></sl-icon>
+                    </sl-button>
                 </div>
             </div>
 
