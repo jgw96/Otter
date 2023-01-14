@@ -33,6 +33,7 @@ import { getCurrentUser, getInstanceInfo } from '../services/account';
 import { publishPost, uploadImageAsFormData } from '../services/posts';
 import { reply } from '../services/timeline';
 import { router } from '../utils/router';
+import { getSettings, setSettings } from '../services/settings';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -48,6 +49,9 @@ export class AppHome extends LitElement {
   @state() replyID: string | null = null;
   @state() primary_color: string = '#000000';
   @state() instanceInfo: any | null = null;
+
+  @state() wellnessMode: boolean = false;
+  @state() dataSaverMode: boolean = false;
 
   static get styles() {
     return [
@@ -366,6 +370,16 @@ export class AppHome extends LitElement {
 
       console.log("user", this.user);
     }, { timeout: 3000 });
+
+    window.requestIdleCallback(async () => {
+      const settings = await getSettings();
+
+      if (settings) {
+        this.handleWellnessMode(settings.wellness || false);
+
+        this.handleDataSaverMode(settings.data_saver || false);
+      }
+    }, { timeout: 3000 });
   }
 
   handlePrimaryColor(color: string) {
@@ -476,6 +490,20 @@ export class AppHome extends LitElement {
     appTimeline.style.right = appTimeline.style.right === '11vw' ? '0' : '11vw';
   }
 
+  handleWellnessMode(check: boolean) {
+    console.log("check", check);
+    this.wellnessMode = check;
+
+    setSettings({ wellness: check });
+  }
+
+  handleDataSaverMode(mode: boolean) {
+    console.log("mode", mode)
+    this.dataSaverMode = mode;
+
+    setSettings({ data_saver: mode });
+  }
+
   render() {
     return html`
       <app-header @open-settings="${() => this.openSettingsDrawer()}" @open-theming="${() => this.openThemingDrawer()}"></app-header>
@@ -521,23 +549,11 @@ export class AppHome extends LitElement {
           <div>
             <h4>Wellness Mode</h4>
 
-            <sl-switch></sl-switch>
+            <sl-switch @sl-change="${($event: any) => this.handleWellnessMode($event.target.checked)}" ?checked="${this.wellnessMode}"></sl-switch>
           </div>
 
           <p>
-            Coming Soon. Wellness Mode hides likes, boosts and follower count.
-          </p>
-        </div>
-
-        <div class="setting">
-          <div>
-            <h4>Focus Mode</h4>
-
-            <sl-switch></sl-switch>
-          </div>
-
-          <p>
-            Focus Mode hides your profile and other parts of the UI and lets you focus on your timeline.
+            Wellness Mode hides likes and boosts.
           </p>
         </div>
 
@@ -545,11 +561,11 @@ export class AppHome extends LitElement {
           <div>
             <h4>Data Saver Mode</h4>
 
-            <sl-switch></sl-switch>
+            <sl-switch @sl-change="${($event: any) => this.handleDataSaverMode($event.target.checked)}" ?checked="${this.dataSaverMode}"></sl-switch>
           </div>
 
           <p>
-            Coming Soon. Data Saver Mode reduces the amount of data used by Mammoth.
+            Data Saver Mode reduces the amount of data used by Mammoth.
           </p>
         </div>
 

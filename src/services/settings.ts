@@ -1,9 +1,9 @@
 export interface Settings {
-    primary_color: string;
-    font_size: string;
-    data_saver: boolean;
-    wellness: boolean;
-    focus: boolean;
+    primary_color?: string;
+    font_size?: string;
+    data_saver?: boolean;
+    wellness?: boolean;
+    focus?: boolean;
 }
 
 const defaultSettings = {
@@ -20,5 +20,14 @@ export function getSettings(): Settings {
 }
 
 export function setSettings(settings: Settings) {
-    localStorage.setItem('settings', JSON.stringify(settings));
+    const currentSettings = getSettings();
+
+    const savedSettings = {
+        primary_color: settings.primary_color || currentSettings.primary_color,
+        font_size: settings.font_size || currentSettings.font_size,
+        data_saver: Object.keys(settings).includes("data_saver") ? settings.data_saver : currentSettings.data_saver,
+        wellness: Object.keys(settings).includes("wellness") ? settings.wellness : currentSettings.wellness,
+        focus: Object.keys(settings).includes("focus") ? settings.focus : currentSettings.focus,
+    }
+    localStorage.setItem('settings', JSON.stringify(savedSettings));
 }

@@ -100,21 +100,21 @@ export class AppTheme extends LitElement {
 
         if (potentialColor) {
           this.primary_color = potentialColor;
-          document.documentElement.style.setProperty('--sl-color-primary-600', potentialColor);
+          document.body.style.setProperty('--sl-color-primary-600', potentialColor);
         }
         else {
           // get css variable color
-          const color = getComputedStyle(document.documentElement).getPropertyValue('--sl-color-primary-600');
+          const color = getComputedStyle(document.body).getPropertyValue('--sl-color-primary-600');
           this.primary_color = color;
         }
 
         if (potentialFontSize) {
             this.font_size = potentialFontSize;
-            document.documentElement.style.setProperty('--sl-font-size-medium', potentialFontSize);
+            document.body.style.setProperty('--sl-font-size-medium', potentialFontSize);
         }
         else {
             // get css variable size
-            const fontSize = getComputedStyle(document.documentElement).getPropertyValue('--sl-font-size-medium');
+            const fontSize = getComputedStyle(document.body).getPropertyValue('--sl-font-size-medium');
             this.font_size = fontSize;
         }
     }
@@ -133,7 +133,7 @@ export class AppTheme extends LitElement {
         })
 
         // set css variable color
-        document.documentElement.style.setProperty('--sl-color-primary-600', color);
+        document.body.style.setProperty('--sl-color-primary-600', color);
     }
 
     changeFontSize(size: string) {
@@ -175,9 +175,9 @@ export class AppTheme extends LitElement {
                     <div class="color" id="brown" @click="${() => this.chooseColor("#d7ccc8")}"></div>
                     <div class="color" id="custom" @click="${() => this.chooseColor("#057dcd")}"></div>
 
-                    <sl-button circle @click="${() => this.customColor()}">
+                    ${ "EyeDropper" in window ? html`<sl-button circle @click="${() => this.customColor()}">
                       <sl-icon src="/assets/add-outline.svg"></sl-icon>
-                    </sl-button>
+                    </sl-button>` : null}
                 </div>
             </div>
 

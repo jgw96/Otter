@@ -9,6 +9,7 @@ import '@shoelace-style/shoelace/dist/components/card/card.js';
 import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 
 import { addBookmark } from '../services/bookmarks';
+import { getSettings, Settings } from '../services/settings';
 
 @customElement('timeline-item')
 export class TimelineItem extends LitElement {
@@ -18,6 +19,8 @@ export class TimelineItem extends LitElement {
     @state() isBoosted = false;
     @state() isReblogged = false;
     @state() isBookmarked = false;
+
+    @state() settings: Settings | undefined;
 
     static styles = [
         css`
@@ -158,25 +161,29 @@ export class TimelineItem extends LitElement {
     ];
 
     async firstUpdated( ) {
-        // set up intersection observer
-        const options = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.1
-        };
+        this.settings = await getSettings();
 
-        const observer = new IntersectionObserver((entries, observer) => {
-            entries.forEach(async entry => {
-                if (entry.isIntersecting) {
-                    await this.loadImage();
+        if (!this.settings.data_saver) {
+            // set up intersection observer
+            const options = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
 
-                    observer.unobserve(entry.target);
-                }
-            });
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(async entry => {
+                    if (entry.isIntersecting) {
+                        await this.loadImage();
+
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }
+            , options);
+
+            observer.observe(this.shadowRoot?.querySelector('sl-card') as Element);
         }
-        , options);
-
-        observer.observe(this.shadowRoot?.querySelector('sl-card') as Element);
 
         if(this.tweet.in_reply_to_id !== null) {
           const replyStatus = await getAStatus(this.tweet.in_reply_to_id);
@@ -267,8 +274,8 @@ export class TimelineItem extends LitElement {
                           <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
                         </sl-button>` : null}
                           <sl-button ?disabled="${this.isBookmarked || this.tweet.reply_to.bookmarked}" pill @click="${() => this.bookmark(this.tweet.reply_to.id)}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></sl-button>
-                          <sl-button ?disabled="${this.isBoosted || this.tweet.reply_to.favourited}" pill @click="${() => this.favorite(this.tweet.reply_to.id)}">${this.tweet.reply_to.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></sl-button>
-                          <sl-button ?disabled="${this.isReblogged || this.tweet.reply_to.reblogged}" pill @click="${() => this.reblog(this.tweet.reply_to.id)}">${this.tweet.reply_to.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></sl-button>
+                          ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isBoosted || this.tweet.reply_to.favourited}" pill @click="${() => this.favorite(this.tweet.reply_to.id)}">${this.tweet.reply_to.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></sl-button>` : null}
+                          ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isReblogged || this.tweet.reply_to.reblogged}" pill @click="${() => this.reblog(this.tweet.reply_to.id)}">${this.tweet.reply_to.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></sl-button>` : null}
                         </div>
                       </sl-card>
 
@@ -282,7 +289,7 @@ export class TimelineItem extends LitElement {
                 <sl-card class="${classMap({ replyCard: this.tweet.reply_to ? true : false})}">
                       ${
                         this.tweet.media_attachments.length > 0 ? html`
-                         <img slot="image" data-src="${this.tweet.media_attachments[0].preview_url}">
+                         <img slot="image" @click="${() => this.loadImage()}" data-src="${this.tweet.media_attachments[0].preview_url}">
                         ` : html``
                       }
 
@@ -294,8 +301,8 @@ export class TimelineItem extends LitElement {
                           <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
                         </sl-button>` : null}
                           <sl-button ?disabled="${this.isBookmarked || this.tweet.bookmarked}" pill @click="${() => this.bookmark(this.tweet.id)}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></sl-button>
-                          <sl-button ?disabled="${this.isBoosted || this.tweet.favourited}" pill @click="${() => this.favorite(this.tweet.id)}">${this.tweet.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></sl-button>
-                          <sl-button ?disabled="${this.isReblogged || this.tweet.reblogged}" pill @click="${() => this.reblog(this.tweet.id)}">${this.tweet.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></sl-button>
+                          ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isBoosted || this.tweet.favourited}" pill @click="${() => this.favorite(this.tweet.id)}">${this.tweet.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></sl-button>` : null}
+                          ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isReblogged || this.tweet.reblogged}" pill @click="${() => this.reblog(this.tweet.id)}">${this.tweet.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></sl-button>` : null}
                         </div>
                     </sl-card>
                     ` : html`
@@ -321,8 +328,8 @@ export class TimelineItem extends LitElement {
                             <sl-icon src="/assets/albums-outline.svg"></sl-icon>
                         </sl-button>` : null}
                             <sl-button ?disabled="${this.isBoosted || this.tweet.favourited}" pill @click="${() => this.bookmark(this.tweet.id)}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></sl-button>
-                            <sl-button ?disabled="${this.isBoosted || this.tweet.favourited}" pill @click="${() => this.favorite(this.tweet.id)}">${this.tweet.reblog.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></sl-button>
-                            <sl-button ?disabled="${this.isReblogged || this.tweet.reblogged}"  pill @click="${() => this.reblog(this.tweet.id)}">${this.tweet.reblog.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></sl-button>
+                            ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isBoosted || this.tweet.favourited}" pill @click="${() => this.favorite(this.tweet.id)}">${this.tweet.reblog.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></sl-button>` : null}
+                            ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isReblogged || this.tweet.reblogged}"  pill @click="${() => this.reblog(this.tweet.id)}">${this.tweet.reblog.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></sl-button>` : null}
                         </div>
                     </sl-card>
 
