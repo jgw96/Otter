@@ -105,7 +105,7 @@ export class AppProfile extends LitElement {
                 width: 100%;
               }
 
-            #profile img {
+            #profile #avatar-block img {
                 height: 5em;
 
 
@@ -117,6 +117,17 @@ export class AppProfile extends LitElement {
                 border-radius: 4px;
               }
 
+              #fields sl-badge span {
+                max-width: 109px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+              }
+
+              #fields img {
+                height: 22px;
+              }
+
               #profile-top {
                     background: #2f41776b;
                     padding: 0px;
@@ -125,6 +136,9 @@ export class AppProfile extends LitElement {
                     padding-bottom: 8px;
                     padding-top: 8px;
                     border-radius: 4px;
+
+                    overflow-x: hidden;
+                    text-overflow: ellipsis;
               }
 
               #avatar-block {
