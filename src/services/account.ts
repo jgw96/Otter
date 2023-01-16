@@ -1,4 +1,4 @@
-// https://mammoth-server.azurewebsites.net
+// https://mammothserver.azurewebsites.net
 
 let token = localStorage.getItem('token') || '';
 let server = localStorage.getItem('server') || '';
@@ -6,7 +6,7 @@ let server = localStorage.getItem('server') || '';
 export const getCurrentUser = async () => {
     try {
         console.log("calling")
-        const response = await fetch('https://mammoth-server.azurewebsites.net/user?code=' + token + '&server=' + server);
+        const response = await fetch('https://mammothserver.azurewebsites.net/user?code=' + token + '&server=' + server);
         const data = await response.json();
         return data;
     }
@@ -18,31 +18,31 @@ export const getCurrentUser = async () => {
 }
 
 export const getAccount = async (id: string) => {
-    const response = await fetch(`https://mammoth-server.azurewebsites.net/account?id=${id}&code=${token}&server=${server}`);
+    const response = await fetch(`https://mammothserver.azurewebsites.net/account?id=${id}&code=${token}&server=${server}`);
     const data = await response.json();
     return data;
 };
 
 export const getUsersPosts = async (id: string) => {
-    const response = await fetch(`https://mammoth-server.azurewebsites.net/userPosts?id=${id}&code=${token}&server=${server}`);
+    const response = await fetch(`https://mammothserver.azurewebsites.net/userPosts?id=${id}&code=${token}&server=${server}`);
     const data = await response.json();
     return data;
 }
 
 export const getUsersFollowers = async (id: string) => {
-    const response = await fetch(`https://mammoth-server.azurewebsites.net/followers?id=${id}&code=${token}&server=${server}`);
+    const response = await fetch(`https://mammothserver.azurewebsites.net/followers?id=${id}&code=${token}&server=${server}`);
     const data = await response.json();
     return data;
 }
 
 export const getFollowing = async (id: string) => {
-    const response = await fetch(`https://mammoth-server.azurewebsites.net/following?id=${id}&code=${token}&server=${server}`);
+    const response = await fetch(`https://mammothserver.azurewebsites.net/following?id=${id}&code=${token}&server=${server}`);
     const data = await response.json();
     return data;
 }
 
 export const followUser = async (id: string) => {
-    const response = await fetch(`https://mammoth-server.azurewebsites.net/follow?id=${id}&code=${token}&server=${server}`, {
+    const response = await fetch(`https://mammothserver.azurewebsites.net/follow?id=${id}&code=${token}&server=${server}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -53,13 +53,13 @@ export const followUser = async (id: string) => {
 }
 
 export const getInstanceInfo = async () => {
-    const response = await fetch(`https://mammoth-server.azurewebsites.net/instance?code=${token}&server=${server}`);
+    const response = await fetch(`https://mammothserver.azurewebsites.net/instance?code=${token}&server=${server}`);
     const data = await response.json();
     return data;
 }
 
 export const initAuth = async (serverURL: string) => {
-    const response = await fetch(`https://mammoth-server.azurewebsites.net/authenticate?server=https://${serverURL}`, {
+    const response = await fetch(`https://mammothserver.azurewebsites.net/authenticate?server=https://${serverURL}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -82,7 +82,7 @@ export const authToClient = async (code: string) => {
         token = code;
         localStorage.setItem('token', code);
 
-        await fetch(`https://mammoth-server.azurewebsites.net/client?code=${code}&code=${token}&server=${server}`, {
+        await fetch(`https://mammothserver.azurewebsites.net/client?code=${code}&code=${token}&server=${server}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
