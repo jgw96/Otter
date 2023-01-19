@@ -2,12 +2,15 @@ import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
+import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 import { publishPost, uploadImageAsFormData } from '../services/posts';
 
 @customElement('post-dialog')
 export class PostDialog extends LitElement {
     @state() attachmentPreview: string | undefined;
     @state() attachmentID: string | undefined;
+
+    @state() attaching: boolean = false;
 
     static styles = [
         css`
@@ -32,6 +35,13 @@ export class PostDialog extends LitElement {
 
             .img-preview img {
                 width: 8em;
+                min-height: 6em;
+            }
+
+            sl-skeleton {
+                height: 8em;
+                width: 8em;
+                --sl-border-radius-pill: 4px;
             }
         `
     ];
@@ -42,11 +52,19 @@ export class PostDialog extends LitElement {
     }
 
     async attachFile() {
+        this.attaching = true;
         const attachmentData = await uploadImageAsFormData();
         console.log("attachmentData", attachmentData);
 
+        this.attaching = false;
+
         this.attachmentID = attachmentData.id;
         this.attachmentPreview = attachmentData.preview_url;
+    }
+
+    removeImage() {
+        this.attachmentID = undefined;
+        this.attachmentPreview = undefined;
     }
 
     async publish() {
@@ -72,14 +90,16 @@ export class PostDialog extends LitElement {
             </sl-button>
             <sl-textarea placeholder="What's on your mind?"></sl-textarea>
 
-            ${this.attachmentPreview ? html`
+            ${this.attachmentPreview && this.attaching === false ? html`
                 <div class="img-preview">
-                    <sl-button circle size="small">
+                    <sl-button circle size="small" @click="${() => this.removeImage()}">
                         <sl-icon src="/assets/close-outline.svg"></sl-icon>
                     </sl-button>
                   <img src="${this.attachmentPreview}" />
                 </div>
-            ` : html``}
+            ` : this.attaching === true ? html`<div class="img-preview">
+                <sl-skeleton></sl-skeleton>
+            </div>` : null}
 
             <sl-button @click="${() => this.publish()}" slot="footer" variant="primary">Publish</sl-button>
         </sl-dialog>

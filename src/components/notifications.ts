@@ -112,6 +112,7 @@ export class Notifications extends LitElement {
                 display: flex;
                 justify-content: flex-end;
                 align-items: center;
+                gap: 8px;
             }
         `
     ];
@@ -155,6 +156,7 @@ export class Notifications extends LitElement {
     render() {
         return html`
           <div id="notify-actions">
+            <sl-button pill size="small" variant="primary">Subscribe to Push Notifications</sl-button>
             <sl-button pill size="small" @click="${() => this.clear()}">Clear</sl-button>
           </div>
 

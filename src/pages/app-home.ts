@@ -615,11 +615,11 @@ export class AppHome extends LitElement {
 
             <span class="tab-label">Notifications</span>
           </sl-tab>
-          <!-- <sl-tab slot="nav" panel="messages">
+          <sl-tab slot="nav" panel="messages">
             <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
 
             <span class="tab-label">Messages</span>
-          </sl-tab> -->
+          </sl-tab>
           <sl-tab id="bookmarks-tab" slot="nav" panel="bookmarks">
             <sl-icon src="/assets/bookmark-outline.svg"></sl-icon>
 
@@ -633,18 +633,18 @@ export class AppHome extends LitElement {
 
 
           <sl-tab-panel name="general">
-            <app-timeline .type="Home"
+            <app-timeline .timelineType="Home"
               @replies="${($event: any) => this.handleReplies($event.detail.data, $event.detail.id)}"></app-timeline>
           </sl-tab-panel>
-          <!-- <sl-tab-panel name="media">
-            <app-timeline .type="Media"></app-timeline>
-          </sl-tab-panel> -->
+          <sl-tab-panel name="media">
+            <app-timeline .timelineType="Media"></app-timeline>
+          </sl-tab-panel>
           <sl-tab-panel name="messages">
             <app-messages></app-messages>
           </sl-tab-panel>
-          <!-- <sl-tab-panel name="custom">
-            <app-timeline .type="Public"></app-timeline>
-          </sl-tab-panel> -->
+          <sl-tab-panel name="custom">
+            <app-timeline .timelineType="Public"></app-timeline>
+          </sl-tab-panel>
           <sl-tab-panel name="bookmarks">
             <app-bookmarks></app-bookmarks>
           </sl-tab-panel>

@@ -2,6 +2,7 @@ import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
 import '../components/search';
+import '../components/media-timeline';
 import { router } from '../utils/router';
 
 import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
@@ -104,6 +105,7 @@ export class SearchPage extends LitElement {
             <sl-tab-group placement="top">
                 <sl-tab slot="nav" panel="accounts">Accounts</sl-tab>
                 <sl-tab slot="nav" panel="hashtags">Hashtags</sl-tab>
+                <sl-tab slot="nav" panel="media">Media</sl-tab>
 
                 <sl-tab-panel name="accounts">
                 ${ this.searchData && this.searchData.accounts ? html`
@@ -154,6 +156,10 @@ export class SearchPage extends LitElement {
                         }) : null}
                     </ul>
                 ` : null}
+                </sl-tab-panel>
+
+                <sl-tab-panel name="media">
+                  <media-timeline></media-timeline>
                 </sl-tab-panel>
             </sl-tab-group>
 

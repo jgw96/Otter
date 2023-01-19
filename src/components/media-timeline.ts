@@ -1,6 +1,6 @@
-import { LitElement, html, css, PropertyValueMap } from 'lit';
+import { LitElement, html, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js'
-import { getPaginatedHomeTimeline, getPublicTimeline, mediaTimeline } from '../services/timeline';
+import { getPaginatedHomeTimeline, mediaTimeline } from '../services/timeline';
 
 import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 
@@ -9,8 +9,8 @@ import '@lit-labs/virtualizer';
 import '../components/timeline-item';
 import '../components/search';
 
-@customElement('app-timeline')
-export class Timeline extends LitElement {
+@customElement('media-timeline')
+export class MediaTimeline extends LitElement {
     @state() timeline: any[] = [];
     @state() loadingData: boolean = false;
 
@@ -123,41 +123,24 @@ export class Timeline extends LitElement {
     }
 
     async refreshTimeline() {
-        console.log("refreshing timeline", this.timelineType)
-        switch (this.timelineType) {
-            case "Home":
-                const timelineData = await getPaginatedHomeTimeline();
-                console.log("timelineData", timelineData);
 
-                this.timeline = timelineData;
-                break;
-            case "Public":
-                const timelineDataPub = await getPublicTimeline();
-                console.log(timelineData);
-
-                this.timeline = timelineDataPub;
-                break;
-            case "Media":
-                console.log("media timeline")
                const timelineDataMedia = await getPaginatedHomeTimeline();
 
                // filter out tweets that don't have media
-                (timelineDataMedia as Array<any>).filter((tweet: any) => tweet.media_attachments.length > 0);
-                console.log(timelineData);
+                const updatedTimeline = (timelineDataMedia as Array<any>).filter((tweet: any) => tweet.media_attachments.length > 0);
+                console.log(timelineDataMedia);
 
-                this.timeline = timelineDataMedia;
-                break;
+                this.timeline = updatedTimeline;
 
-            default:
-                break;
-        }
     }
 
     async loadMore() {
-        const timelineData: any[] = await getPaginatedHomeTimeline();
+        const timelineData = await getPaginatedHomeTimeline();
+        // filter out tweets that don't have media
+        const updatedTimeline = (timelineData as Array<any>).filter((tweet: any) => tweet.media_attachments.length > 0);
         console.log(timelineData);
 
-        this.timeline = [...this.timeline, ...timelineData];
+        this.timeline = [...this.timeline, ...updatedTimeline];
     }
 
     handleReplies(data: any) {
@@ -173,12 +156,6 @@ export class Timeline extends LitElement {
 
     render() {
         return html`
-        <div id="list-actions">
-            <sl-button @click="${() => this.refreshTimeline()}" circle size="small">
-              <sl-icon src="/assets/refresh-circle-outline.svg"></sl-icon>
-            </sl-button>
-        </div>
-
         <ul>
             <lit-virtualizer scroller .items="${this.timeline}" .renderItem="${
                 (tweet: any) => html`
