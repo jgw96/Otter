@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js'
-import { getPaginatedHomeTimeline, mediaTimeline } from '../services/timeline';
+import { getPaginatedHomeTimeline } from '../services/timeline';
 
 import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 
