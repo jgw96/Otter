@@ -41,15 +41,24 @@ export class AppProfile extends LitElement {
             main {
                 margin-top: 80px;
                 display: grid;
-                grid-template-columns: 26vw 70vw;
                 gap: 14px;
+                grid-template-columns: auto;
+                padding-left: 14vw;
+                padding-right: 14vw;
             }
 
             #profile-card-actions {
                 margin-top: 2em;
-                display: flex;
-                flex-direction: column;
                 gap: 4px;
+
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                flex-direction: row;
+            }
+
+            #profile-card-actions sl-button::part(base) {
+                width: 110px;
             }
 
             ul {
@@ -59,8 +68,9 @@ export class AppProfile extends LitElement {
                 margin: 0px;
                 padding: 0px;
                 list-style: none;
-                height: 88vh;
                 overflow: hidden scroll;
+
+                border-radius: 6px;
             }
 
             ul::-webkit-scrollbar {
@@ -68,7 +78,6 @@ export class AppProfile extends LitElement {
             }
 
             #profile {
-                padding: 12px;
                 padding-top: 0;
                 border-radius: 6px;
 
@@ -101,10 +110,6 @@ export class AppProfile extends LitElement {
                 margin-top: 8px;
               }
 
-              #profile-card-actions sl-button {
-                width: 100%;
-              }
-
             #profile #avatar-block img {
                 height: 5em;
 
@@ -118,7 +123,6 @@ export class AppProfile extends LitElement {
               }
 
               #fields sl-badge span {
-                max-width: 109px;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
@@ -147,6 +151,13 @@ export class AppProfile extends LitElement {
                 background-size: cover;
                 padding: 6px;
                 border-radius: 4px;
+                height: 280px;
+
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                justify-content: flex-end;
+                padding-bottom: 10px;
               }
 
               #profile-top h3 {
@@ -155,8 +166,8 @@ export class AppProfile extends LitElement {
               }
 
               #profile-top p {
-                color: grey;
-                font-size: 14px;
+                color: white;
+                font-size: 15px;
               }
 
               #user-url {
@@ -168,6 +179,9 @@ export class AppProfile extends LitElement {
                 main {
                     display: flex;
                     flex-direction: column;
+
+                    padding-left: 0px;
+                    padding-right: 0px;
                 }
 
                 ul {
@@ -226,7 +240,7 @@ export class AppProfile extends LitElement {
                     <div id="fields">
                         ${this.user ? this.user.fields.map((field: any) => html`
                         <div>
-                            <sl-badge>
+                            <sl-badge variant="primary">
                                 ${
                                     field.name.toLowerCase() === "twitter" ? html`<img src="/assets/logo-twitter.svg" alt="twitter logo">` : null
                                 }
@@ -238,7 +252,7 @@ export class AppProfile extends LitElement {
                     </div>
 
                     <div id="profile-card-actions">
-                        ${this.followed ? html`<sl-button>Following</sl-button>` : html`<sl-button
+                        ${this.followed ? html`<sl-button>Following</sl-button>` : html`<sl-button pill variant="primary"
                             @click="${() => this.follow()}">Follow</sl-button>`}
                     </div>
                 </div>

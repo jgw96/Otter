@@ -18,6 +18,15 @@ export class PostDialog extends LitElement {
                 display: block;
             }
 
+            sl-dialog::part(panel) {
+                min-width: 60vw;
+                min-height: 60vh;
+              }
+
+              sl-dialog sl-textarea::part(textarea) {
+                height: 34vh;
+              }
+
             sl-dialog::part(header-actions) {
                 align-items: center;
             }

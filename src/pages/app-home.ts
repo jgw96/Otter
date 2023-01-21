@@ -107,7 +107,7 @@ export class AppHome extends LitElement {
         transform-origin: top left;
         transition: transform, opacity;
         transition-duration: 0.12s;
-        pointer-events: nnone;
+        pointer-events: none;
     }
 
     #context-menu sl-menu-item::part(checked-icon) {

@@ -24,7 +24,7 @@ export class RightClick extends LitElement {
 
             #context-menu.visible {
               display: block;
-            pointer-events: auto;
+              pointer-events: auto;
             }
 
         `
