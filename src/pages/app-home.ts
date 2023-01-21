@@ -17,6 +17,9 @@ import '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js';
 import '@shoelace-style/shoelace/dist/components/radio/radio.js';
 import '@shoelace-style/shoelace/dist/components/color-picker/color-picker.js';
 import '@shoelace-style/shoelace/dist/components/switch/switch.js';
+import '@shoelace-style/shoelace/dist/components/menu/menu.js';
+import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
+import '@shoelace-style/shoelace/dist/components/divider/divider.js';
 
 import '../components/timeline';
 import '../components/timeline-item';
@@ -25,6 +28,7 @@ import '../components/favorites';
 import '../components/notifications';
 import '../components/app-theme';
 import '../components/post-dialog';
+
 import './app-messages';
 import './search-page';
 
@@ -53,6 +57,8 @@ export class AppHome extends LitElement {
   @state() wellnessMode: boolean = false;
   @state() dataSaverMode: boolean = false;
 
+  @state() attaching: boolean = false;
+
   static get styles() {
     return [
       styles,
@@ -64,9 +70,56 @@ export class AppHome extends LitElement {
         flex-direction: column;
       }
 
+      #reply-drawer sl-skeleton {
+          height: 8em;
+          width: 8em;
+          --sl-border-radius-pill: 4px;
+      }
+
+      .img-preview {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 8em;
+        margin-top: 10px;
+        background: #00000040;
+        padding: 6px;
+        gap: 6px;
+    }
+
+    .img-preview img {
+        width: 8em;
+        min-height: 6em;
+    }
+
       .setting sl-switch {
         --sl-toggle-size-medium: 16px;
       }
+
+      #context-menu {
+        z-index: 10000;
+        width: 150px;
+        background: #1blala;
+        border-radius: 5px;
+        position: fixed;
+        transform: scale(0.9);
+        opacity: 0;
+        transform-origin: top left;
+        transition: transform, opacity;
+        transition-duration: 0.12s;
+        pointer-events: nnone;
+    }
+
+    #context-menu sl-menu-item::part(checked-icon) {
+      width: 8px;
+    }
+
+    #context-menu.visible {
+      display: block;
+      transform: scale(1);
+      opacity: 1;
+      pointer-events: auto;
+    }
 
       .setting div {
         display: flex;
@@ -380,133 +433,205 @@ export class AppHome extends LitElement {
         this.handleDataSaverMode(settings.data_saver || false);
       }
     }, { timeout: 3000 });
-  }
 
-  handlePrimaryColor(color: string) {
-    this.primary_color = color;
+    const contextMenu = this.shadowRoot?.getElementById("context-menu");
+    const scope = document.querySelector("body");
 
-    // set css variable color
-    document.documentElement.style.setProperty('--sl-color-primary-600', color);
+    console.log("contextMenu", contextMenu);
 
-    localStorage.setItem("primary_color", color);
-  }
+    if (scope && contextMenu) {
+      scope.addEventListener("contextmenu", (event) => {
+        event.preventDefault();
+        const { clientX: mouseX, clientY: mouseY } = event;
+        contextMenu.style.top = `${mouseY}px`;
+        contextMenu.style.left = `${mouseX}px`;
 
-  share() {
-    if ((navigator as any).share) {
-      (navigator as any).share({
-        title: 'PWABuilder pwa-starter',
-        text: 'Check out the PWABuilder pwa-starter!',
-        url: 'https://github.com/pwa-builder/pwa-starter',
+        contextMenu.classList.remove("visible");
+
+        setTimeout(() => {
+          contextMenu.classList.add("visible");
+        }, 300)
+
+        event.preventDefault();
+      });
+
+      scope.addEventListener("click", (e) => {
+        if ((e.target as any)!.offsetParent != contextMenu) {
+          contextMenu.classList.remove("visible");
+        }
       });
     }
   }
 
-  openNewDialog() {
-    // if on desktop, open the dialog
-    if (window.innerWidth > 600) {
-    // const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
-    // dialog.show();
-      const dialog: any = this.shadowRoot?.querySelector("post-dialog");
-      dialog?.openNewDialog();
+  handlePrimaryColor(color: string) {
+        this.primary_color = color;
+
+        // set css variable color
+        document.documentElement.style.setProperty('--sl-color-primary-600', color);
+
+        localStorage.setItem("primary_color", color);
+      }
+
+  share() {
+        if((navigator as any).share) {
+        (navigator as any).share({
+          title: 'PWABuilder pwa-starter',
+          text: 'Check out the PWABuilder pwa-starter!',
+          url: 'https://github.com/pwa-builder/pwa-starter',
+        });
+      }
     }
-    else {
-      const drawer = this.shadowRoot?.getElementById('reply-drawer') as any;
-      drawer.show();
+
+    openNewDialog() {
+      // if on desktop, open the dialog
+      if (window.innerWidth > 600) {
+        // const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
+        // dialog.show();
+        const dialog: any = this.shadowRoot?.querySelector("post-dialog");
+        dialog?.openNewDialog();
+      }
+      else {
+        const drawer = this.shadowRoot?.getElementById('reply-drawer') as any;
+        drawer.show();
+      }
     }
-  }
 
   async publish() {
-    const status = (this.shadowRoot?.querySelector('sl-textarea') as any).value;
-    console.log(status);
+      const status = (this.shadowRoot?.querySelector('sl-textarea') as any).value;
+      console.log(status);
 
-    if (this.attachmentID) {
-      await publishPost(status, this.attachmentID);
-    }
-    else {
-      await publishPost(status);
-    }
+      if (this.attachmentID) {
+        await publishPost(status, this.attachmentID);
+      }
+      else {
+        await publishPost(status);
+      }
 
-    const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
-    dialog.hide();
-  }
+      const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
+      dialog.hide();
+    }
 
   async goToFollowers() {
-    router.navigate(`/followers?id=${this.user.id}`)
-  }
+      router.navigate(`/followers?id=${this.user.id}`)
+    }
 
   async goToFollowing() {
-    router.navigate(`/following?id=${this.user.id}`)
-  }
+      router.navigate(`/following?id=${this.user.id}`)
+    }
 
   async openSettingsDrawer() {
-    const drawer = this.shadowRoot?.getElementById('settings-drawer') as any;
-    await drawer.show();
+      const drawer = this.shadowRoot?.getElementById('settings-drawer') as any;
+      await drawer.show();
 
-    this.instanceInfo = await getInstanceInfo();
-    console.log("instanceInfo", this.instanceInfo)
-  }
+      this.instanceInfo = await getInstanceInfo();
+      console.log("instanceInfo", this.instanceInfo)
+    }
 
   async attachFile() {
-    const attachmentData = await uploadImageAsFormData();
-    console.log("attachmentData", attachmentData);
+      this.attaching = true;
+      const attachmentData = await uploadImageAsFormData();
+      console.log("attachmentData", attachmentData);
 
-    this.attachmentID = attachmentData.id;
-    this.attachmentPreview = attachmentData.preview_url;
-  }
+      this.attaching = false;
+
+      this.attachmentID = attachmentData.id;
+      this.attachmentPreview = attachmentData.preview_url;
+    }
 
   async handleReplies(replies: any[], id: string) {
-    this.replies = replies;
+      this.replies = replies;
 
-    this.replyID = id;
+      this.replyID = id;
 
-    const drawer = this.shadowRoot?.getElementById('replies-drawer') as any;
-    await drawer.show();
-  }
+      const drawer = this.shadowRoot?.getElementById('replies-drawer') as any;
+      await drawer.show();
+    }
 
   async replyToAStatus() {
-    const replyValue = (this.shadowRoot?.querySelector('#reply-post-actions sl-input') as any).value;
+      const replyValue = (this.shadowRoot?.querySelector('#reply-post-actions sl-input') as any).value;
 
-    if (this.replyID && replyValue) {
-      await reply(this.replyID, replyValue);
+      if (this.replyID && replyValue) {
+        await reply(this.replyID, replyValue);
+      }
     }
-  }
 
   async openThemingDrawer() {
-    const drawer = this.shadowRoot?.getElementById('theming-drawer') as any;
-    await drawer.show();
-  }
+      const drawer = this.shadowRoot?.getElementById('theming-drawer') as any;
+      await drawer.show();
+    }
 
-  doFocusMode() {
-    const main = this.shadowRoot?.querySelector('main') as any;
+    doFocusMode() {
+      const main = this.shadowRoot?.querySelector('main') as any;
 
-    main.classList.toggle('focus');
+      main.classList.toggle('focus');
 
-    const profile = this.shadowRoot?.querySelector('#profile') as any;
-    profile.style.display = profile.style.display === 'none' ? 'flex' : 'none';
+      const profile = this.shadowRoot?.querySelector('#profile') as any;
+      profile.style.display = profile.style.display === 'none' ? 'flex' : 'none';
 
-    const appTimeline = this.shadowRoot?.querySelector('app-timeline') as any;
-    appTimeline.style.position = appTimeline.style.position === 'fixed' ? 'relative' : 'fixed';
-    appTimeline.style.left = appTimeline.style.left === '11vw' ? '0' : '11vw';
-    appTimeline.style.right = appTimeline.style.right === '11vw' ? '0' : '11vw';
-  }
+      const appTimeline = this.shadowRoot?.querySelector('app-timeline') as any;
+      appTimeline.style.position = appTimeline.style.position === 'fixed' ? 'relative' : 'fixed';
+      appTimeline.style.left = appTimeline.style.left === '11vw' ? '0' : '11vw';
+      appTimeline.style.right = appTimeline.style.right === '11vw' ? '0' : '11vw';
+    }
 
-  handleWellnessMode(check: boolean) {
-    console.log("check", check);
-    this.wellnessMode = check;
+    handleWellnessMode(check: boolean) {
+      console.log("check", check);
+      this.wellnessMode = check;
 
-    setSettings({ wellness: check });
-  }
+      setSettings({ wellness: check });
+    }
 
-  handleDataSaverMode(mode: boolean) {
-    console.log("mode", mode)
-    this.dataSaverMode = mode;
+    handleDataSaverMode(mode: boolean) {
+      console.log("mode", mode)
+      this.dataSaverMode = mode;
 
-    setSettings({ data_saver: mode });
-  }
+      setSettings({ data_saver: mode });
+    }
 
-  render() {
-    return html`
-      <app-header @open-settings="${() => this.openSettingsDrawer()}" @open-theming="${() => this.openThemingDrawer()}"></app-header>
+    removeImage() {
+      this.attachmentID = null;
+      this.attachmentPreview = null;
+    }
+
+    openATab(name: string) {
+      const tab = this.shadowRoot?.querySelector(`sl-tab[panel=${name}]`) as any;
+      tab.click();
+    }
+
+    render() {
+      return html`
+      <div id="context-menu">
+        <sl-menu>
+          <sl-menu-item @click="${() => this.openNewDialog()}">
+            <sl-icon slot="prefix" src="/assets/add-outline.svg"></sl-icon>
+            New Post
+          </sl-menu-item>
+          <sl-divider></sl-divider>
+          <sl-menu-item @click="${() => this.openATab("search")}">
+            <sl-icon src="/assets/search-outline.svg"></sl-icon>
+            Explore
+          </sl-menu-item>
+          <sl-menu-item @click="${() => this.openATab("notifications")}">
+            <sl-icon src="/assets/notifications-outline.svg"></sl-icon>
+            Notifications
+          </sl-menu-item>
+          <sl-menu-item @click="${() => this.openATab("messages")}">
+            <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
+            Messages
+          </sl-menu-item>
+          <sl-menu-item @click="${() => this.openATab("bookmarks")}">
+            <sl-icon src="/assets/bookmark-outline.svg"></sl-icon>
+            Bookmarks
+          </sl-menu-item>
+          <sl-menu-item @click="${() => this.openATab("faves")}">
+            <sl-icon src="/assets/heart-outline.svg"></sl-icon>
+            Favorites
+          </sl-menu-item>
+        </sl-menu>
+      </div>
+
+      <app-header @open-settings="${() => this.openSettingsDrawer()}" @open-theming="${() => this.openThemingDrawer()}">
+      </app-header>
 
       <sl-button @click="${() => this.doFocusMode()}" circle size="small" id="focusModeButton">
         <sl-icon src="/assets/eye-outline.svg"></sl-icon>
@@ -519,17 +644,17 @@ export class AppHome extends LitElement {
       <post-dialog></post-dialog>
 
       <!-- <sl-dialog id="notify-dialog" label="New Post">
-        <sl-button circle slot="header-actions" @click="${() => this.attachFile()}">
-          <sl-icon src="/assets/attach-outline.svg"></sl-icon>
-        </sl-button>
-        <sl-textarea placeholder="What's on your mind?"></sl-textarea>
+                                <sl-button circle slot="header-actions" @click="${() => this.attachFile()}">
+                                  <sl-icon src="/assets/attach-outline.svg"></sl-icon>
+                                </sl-button>
+                                <sl-textarea placeholder="What's on your mind?"></sl-textarea>
 
-        ${this.attachmentPreview ? html`
-        <img src="${this.attachmentPreview}" />
-        ` : html``}
+                                ${this.attachmentPreview ? html`
+                                <img src="${this.attachmentPreview}" />
+                                ` : html``}
 
-        <sl-button @click="${() => this.publish()}" slot="footer" variant="primary">Publish</sl-button>
-      </sl-dialog> -->
+                                <sl-button @click="${() => this.publish()}" slot="footer" variant="primary">Publish</sl-button>
+                              </sl-dialog> -->
 
       <sl-drawer id="reply-drawer" placement="bottom" label="Reply">
         <sl-button circle slot="footer" @click="${() => this.attachFile()}">
@@ -537,9 +662,16 @@ export class AppHome extends LitElement {
         </sl-button>
         <sl-textarea placeholder="What's on your mind?"></sl-textarea>
 
-        ${this.attachmentPreview ? html`
-        <img src="${this.attachmentPreview}" />
-        ` : html``}
+        ${this.attachmentPreview && this.attaching === false ? html`
+        <div class="img-preview">
+          <sl-button circle size="small" @click="${() => this.removeImage()}">
+            <sl-icon src="/assets/close-outline.svg"></sl-icon>
+          </sl-button>
+          <img src="${this.attachmentPreview}" />
+        </div>
+        ` : this.attaching === true ? html`<div class="img-preview">
+          <sl-skeleton></sl-skeleton>
+        </div>` : null}
 
         <sl-button @click="${() => this.publish()}" slot="footer" variant="primary">Publish</sl-button>
       </sl-drawer>
@@ -549,7 +681,8 @@ export class AppHome extends LitElement {
           <div>
             <h4>Wellness Mode</h4>
 
-            <sl-switch @sl-change="${($event: any) => this.handleWellnessMode($event.target.checked)}" ?checked="${this.wellnessMode}"></sl-switch>
+            <sl-switch @sl-change="${($event: any) => this.handleWellnessMode($event.target.checked)}"
+              ?checked="${this.wellnessMode}"></sl-switch>
           </div>
 
           <p>
@@ -561,7 +694,8 @@ export class AppHome extends LitElement {
           <div>
             <h4>Data Saver Mode</h4>
 
-            <sl-switch @sl-change="${($event: any) => this.handleDataSaverMode($event.target.checked)}" ?checked="${this.dataSaverMode}"></sl-switch>
+            <sl-switch @sl-change="${($event: any) => this.handleDataSaverMode($event.target.checked)}"
+              ?checked="${this.dataSaverMode}"></sl-switch>
           </div>
 
           <p>
@@ -585,11 +719,11 @@ export class AppHome extends LitElement {
       <sl-drawer id="replies-drawer" placement="end" label="Comments">
         <ul>
           ${this.replies.map((reply: any) => {
-    return html`
+      return html`
           <timeline-item ?show="${false}" .tweet="${reply}"></timeline-item>
           `
-    })
-        }
+      })
+          }
         </ul>
 
         <div slot="footer" id="reply-post-actions">
@@ -672,13 +806,13 @@ export class AppHome extends LitElement {
               <h3>${this.user ? this.user.display_name : "Loading..."}</h3>
 
               <div>
-              <sl-button circle size="small" id="share-button">
-                <sl-icon src="/assets/share-social-outline.svg"></sl-icon>
-              </sl-button>
+                <sl-button circle size="small" id="share-button">
+                  <sl-icon src="/assets/share-social-outline.svg"></sl-icon>
+                </sl-button>
 
-              <sl-button circle size="small" id="settings-button">
-                <sl-icon src="/assets/ellipsis-vertical-outline.svg"></sl-icon>
-              </sl-button>
+                <sl-button circle size="small" id="settings-button">
+                  <sl-icon src="/assets/ellipsis-vertical-outline.svg"></sl-icon>
+                </sl-button>
               </div>
 
             </div>
@@ -689,7 +823,8 @@ export class AppHome extends LitElement {
 
             <sl-badge @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count : "0"} followers
             </sl-badge>
-            <sl-badge @click="${() => this.goToFollowing()}">${this.user ? this.user.following_count : "0"} following</sl-badge>
+            <sl-badge @click="${() => this.goToFollowing()}">${this.user ? this.user.following_count : "0"} following
+            </sl-badge>
 
           </div>
 
@@ -703,5 +838,5 @@ export class AppHome extends LitElement {
         </div>
       </main>
     `;
+    }
   }
-}
