@@ -85,6 +85,13 @@ workbox.routing.registerRoute(
 
 workbox.routing.registerRoute(
     ({ request }) => request.url.includes('/notifications'),
+    () => {
+        self.setAppBadge()
+    }
+)
+
+workbox.routing.registerRoute(
+    ({ request }) => request.url.includes('/notifications'),
     new workbox.strategies.StaleWhileRevalidate({
         cacheName: 'notifications',
         plugins: [

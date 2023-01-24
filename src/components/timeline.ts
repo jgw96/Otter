@@ -104,7 +104,7 @@ export class Timeline extends LitElement {
 
     async firstUpdated() {
         this.loadingData = true;
-        await this.refreshTimeline();
+        await this.refreshTimeline(true);
         this.loadingData = false;
 
         // update data when the user scrolls to the bottom of the page
@@ -122,11 +122,11 @@ export class Timeline extends LitElement {
 
     }
 
-    async refreshTimeline() {
+    async refreshTimeline(cache: boolean) {
         console.log("refreshing timeline", this.timelineType)
         switch (this.timelineType) {
             case "Home":
-                const timelineData = await getPaginatedHomeTimeline();
+                const timelineData = await getPaginatedHomeTimeline(cache);
                 console.log("timelineData", timelineData);
 
                 this.timeline = timelineData;
@@ -174,7 +174,7 @@ export class Timeline extends LitElement {
     render() {
         return html`
         <div id="list-actions">
-            <sl-button @click="${() => this.refreshTimeline()}" circle size="small">
+            <sl-button @click="${() => this.refreshTimeline(false)}" circle size="small">
               <sl-icon src="/assets/refresh-circle-outline.svg"></sl-icon>
             </sl-button>
         </div>
