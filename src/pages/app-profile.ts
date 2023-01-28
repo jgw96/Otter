@@ -180,8 +180,8 @@ export class AppProfile extends LitElement {
                     display: flex;
                     flex-direction: column;
 
-                    padding-left: 0px;
-                    padding-right: 0px;
+                    padding-left: 10px;
+                    padding-right: 10px;
                 }
 
                 ul {

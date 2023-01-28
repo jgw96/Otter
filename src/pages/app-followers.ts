@@ -49,9 +49,20 @@ export class AppFollowers extends LitElement {
                 padding: 10px;
             }
 
+
             li a {
                 text-decoration: none;
                 color: white;
+            }
+
+            @media(prefers-color-scheme: light) {
+                ul li {
+                    color: black;
+                }
+
+                li a {
+                    color: black;
+                }
             }
 
         `

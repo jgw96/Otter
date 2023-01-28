@@ -27,6 +27,13 @@ export class Favorites extends LitElement {
                 overflow-x: hidden;
             }
 
+            @media (max-width: 768px) {
+                ul {
+                    padding-left: 10px;
+                    padding-right: 10px;
+                }
+            }
+
             ul::-webkit-scrollbar {
                 display: none;
             }

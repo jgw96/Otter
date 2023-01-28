@@ -335,6 +335,10 @@ export class AppHome extends LitElement {
         display: none;
       }
 
+      sl-tab-group::part(tabs) {
+        border-top: hidden;
+      }
+
       #mobile-actions {
         display: flex;
       }

@@ -91,6 +91,12 @@ export class Timeline extends LitElement {
                 animation-duration: 0.3s;
             }
 
+            @media(max-width: 768px) {
+                ul {
+                    padding: 0 10px;
+                }
+            }
+
             @keyframes fadein {
                 0% {
                     opacity: 0;

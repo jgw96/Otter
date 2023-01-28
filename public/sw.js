@@ -86,7 +86,7 @@ workbox.routing.registerRoute(
 workbox.routing.registerRoute(
     ({ request }) => request.url.includes('/notifications'),
     () => {
-        self.setAppBadge()
+        // self.setAppBadge()
     }
 )
 

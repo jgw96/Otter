@@ -30,8 +30,6 @@ export class TimelineItem extends LitElement {
                 width: 100%;
 
                 margin-bottom: 10px;
-
-                background: var(--sl-color-primary-600);
             }
 
 
@@ -64,6 +62,8 @@ export class TimelineItem extends LitElement {
             sl-card img {
                 height: 420px;
                 object-fit: contain;
+
+                border-radius: 6px 6px 0px 0px;
             }
 
             .header-block {
@@ -113,6 +113,7 @@ export class TimelineItem extends LitElement {
 
             .replyCard {
                 margin-left: 15px;
+                width: 96%;
             }
 
             #reply-to {
@@ -122,8 +123,8 @@ export class TimelineItem extends LitElement {
                 align-items: center;
                 padding-left: 16px;
                 font-size: 18px;
-                color: black;
-                margin-top: 14px;
+                color: white;
+                margin-top: 6px;
             }
 
             @media(max-width: 600px) {
@@ -135,6 +136,10 @@ export class TimelineItem extends LitElement {
             @media(prefers-color-scheme: light) {
                 sl-card {
                     color: white;
+                }
+
+                #reply-to {
+                    color: black;
                 }
 
                 sl-card sl-icon {
@@ -289,7 +294,8 @@ export class TimelineItem extends LitElement {
                 <sl-card class="${classMap({ replyCard: this.tweet.reply_to ? true : false})}">
                       ${
                         this.tweet.media_attachments.length > 0 ? html`
-                         <img slot="image" @click="${() => this.loadImage()}" data-src="${this.tweet.media_attachments[0].preview_url}">
+                          <img slot="image" @click="${() => this.loadImage()}" data-src="${this.tweet.media_attachments[0].preview_url}">
+
                         ` : html``
                       }
 
@@ -309,7 +315,8 @@ export class TimelineItem extends LitElement {
                     <sl-card>
                     ${
                         this.tweet.reblog.media_attachments.length > 0 ? html`
-                         <img slot="image" data-src="${this.tweet.reblog.media_attachments[0].preview_url}">
+
+<img slot="image" data-src="${this.tweet.reblog.media_attachments[0].preview_url}">
                         ` : html``
                       }
 
@@ -325,7 +332,7 @@ export class TimelineItem extends LitElement {
 
                         <div class="actions" slot="footer">
                         ${this.show === true ? html`<sl-button pill @click="${() => this.replies(this.tweet.id)}">
-                            <sl-icon src="/assets/albums-outline.svg"></sl-icon>
+                            <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
                         </sl-button>` : null}
                             <sl-button ?disabled="${this.isBoosted || this.tweet.favourited}" pill @click="${() => this.bookmark(this.tweet.id)}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></sl-button>
                             ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isBoosted || this.tweet.favourited}" pill @click="${() => this.favorite(this.tweet.id)}">${this.tweet.reblog.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></sl-button>` : null}

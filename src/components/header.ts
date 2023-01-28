@@ -34,6 +34,10 @@ export class AppHeader extends LitElement {
         contain: layout;
       }
 
+      #actions {
+        display: flex;
+        gap: 4px;
+      }
 
       header h1 {
         margin-top: 0;
@@ -102,7 +106,7 @@ export class AppHeader extends LitElement {
           <img src="/assets/icons/64-icon.png" alt="Mammoth" width="32" height="32">
         </div>
 
-        <div>
+        <div id="actions">
           <sl-button id="open-button" circle size="small" @click="${() => this.handleTheming()}">
             <sl-icon src="/assets/color-palette-outline.svg" alt="Theme"></sl-icon>
           </sl-button>
