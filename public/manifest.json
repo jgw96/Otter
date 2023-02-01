@@ -6,12 +6,13 @@
   "start_url": "/",
   "short_name": "Mammoth",
   "theme_color": "#181818",
-  "description": "This is a Mammoth app",
+  "description": "Discover a simpler way to socialize online with Mammoth, the Mastodon app that prioritizes ease-of-use and clean design. Experience the open-source, decentralized social network without the clutter. Join communities, share your thoughts, and connect with like-minded individuals all with just a few taps. Say goodbye to overwhelming feeds and complicated features, Mammoth simplifies the social media experience.",
   "orientation": "any",
   "background_color": "#181818",
   "related_applications": [],
   "prefer_related_applications": false,
   "display_override": ["window-controls-overlay"],
+  "categories": ["social"],
   "icons": [
     {
       "src": "assets/icons/512-icon.png",
