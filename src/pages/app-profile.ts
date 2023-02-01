@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js'
 import { styleMap } from 'lit/directives/style-map.js';
-import { followUser, getAccount, getUsersPosts } from '../services/account';
+import { checkFollowing, followUser, getAccount, getUsersPosts } from '../services/account';
 
 import '../components/timeline-item';
 
@@ -197,6 +197,10 @@ export class AppProfile extends LitElement {
         const id = urlParams.get('id');
 
         if (id) {
+            const followCheck = await checkFollowing(id);
+            console.log('followCheck', followCheck)
+            this.followed = followCheck[0].following;
+
             const accountData = await getAccount(id);
             console.log(accountData);
             this.user = accountData;
@@ -252,7 +256,7 @@ export class AppProfile extends LitElement {
                     </div>
 
                     <div id="profile-card-actions">
-                        ${this.followed ? html`<sl-button>Following</sl-button>` : html`<sl-button pill variant="primary"
+                        ${this.followed ? html`<sl-button pill disabled>Following</sl-button>` : html`<sl-button pill variant="primary"
                             @click="${() => this.follow()}">Follow</sl-button>`}
                     </div>
                 </div>

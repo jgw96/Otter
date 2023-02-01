@@ -3,6 +3,20 @@
 let token = localStorage.getItem('token') || '';
 let server = localStorage.getItem('server') || '';
 
+export const checkFollowing = async (id: string)  => {
+    try {
+        const response = await fetch(`https://mammoth-server.azurewebsites.net/isfollowing?id=${id}`);
+        const data = await response.json();
+
+        return data;
+    }
+    catch(err) {
+        if (server) {
+            await initAuth(server);
+        }
+    }
+}
+
 export const getCurrentUser = async () => {
     try {
         console.log("calling")
