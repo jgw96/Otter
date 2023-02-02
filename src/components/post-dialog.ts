@@ -94,10 +94,8 @@ export class PostDialog extends LitElement {
     render() {
         return html`
         <sl-dialog id="notify-dialog" label="New Post">
-            <sl-button size="small" circle slot="header-actions" @click="${() => this.attachFile()}">
-                <sl-icon src="/assets/attach-outline.svg"></sl-icon>
-            </sl-button>
-            <sl-textarea placeholder="What's on your mind?"></sl-textarea>
+
+            <sl-textarea autofocus placeholder="What's on your mind?"></sl-textarea>
 
             ${this.attachmentPreview && this.attaching === false ? html`
                 <div class="img-preview">
@@ -110,7 +108,10 @@ export class PostDialog extends LitElement {
                 <sl-skeleton></sl-skeleton>
             </div>` : null}
 
-            <sl-button @click="${() => this.publish()}" slot="footer" variant="primary">Publish</sl-button>
+            <sl-button pill slot="footer" @click="${() => this.attachFile()}">
+                <sl-icon src="/assets/albums-outline.svg"></sl-icon>
+            </sl-button>
+            <sl-button pill @click="${() => this.publish()}" slot="footer" variant="primary">Publish</sl-button>
         </sl-dialog>
         `;
     }
