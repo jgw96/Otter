@@ -91,10 +91,10 @@ export const initAuth = async (serverURL: string) => {
     return;
 }
 
-export const authToClient = async () => {
+export const authToClient = async (code: string) => {
     try {
 
-        const response = await fetch(`https://mammoth-server.azurewebsites.net/client?code=${token}&server=${server}`, {
+        const response = await fetch(`https://mammoth-server.azurewebsites.net/client?code=${code}&server=${server}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
