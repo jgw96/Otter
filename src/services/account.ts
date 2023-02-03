@@ -93,8 +93,10 @@ export const initAuth = async (serverURL: string) => {
 
 export const authToClient = async (code: string) => {
     try {
+        token = code;
+        localStorage.setItem('token', code);
 
-        const response = await fetch(`https://mammoth-server.azurewebsites.net/client?code=${code}&server=${server}`, {
+        const response = await fetch(`https://mammoth-server.azurewebsites.net/client?code=${token}&server=${server}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -104,9 +106,6 @@ export const authToClient = async (code: string) => {
         const tokenData = await response.json();
 
         console.log("tokenData", tokenData)
-
-        token = tokenData;
-        localStorage.setItem('token', tokenData);
 
         // try to get user info
         try {
