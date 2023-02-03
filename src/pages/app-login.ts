@@ -80,7 +80,7 @@ export class AppLogin extends LitElement {
 
         if (code) {
             const { authToClient } = await import('../services/account');
-            await authToClient(code);
+            await authToClient();
 
             await router.navigate("/home");
         }
