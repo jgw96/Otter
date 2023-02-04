@@ -21,6 +21,9 @@ export class PostDialog extends LitElement {
             sl-dialog::part(panel) {
                 min-width: 60vw;
                 min-height: 60vh;
+
+                content-visibility: auto;
+                contain: layout style paint;
               }
 
               sl-dialog sl-textarea::part(textarea) {

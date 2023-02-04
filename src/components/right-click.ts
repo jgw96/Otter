@@ -1,6 +1,8 @@
 import { LitElement, html, css } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
+import { cache } from 'lit/directives/cache.js';
+
 import '@shoelace-style/shoelace/dist/components/menu/menu.js';
 import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
 
@@ -10,6 +12,9 @@ export class RightClick extends LitElement {
         css`
             :host {
                 display: block;
+
+                content-visibility: auto;
+                contain: layout style paint;
             }
 
             #context-menu {

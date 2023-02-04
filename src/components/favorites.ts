@@ -13,6 +13,7 @@ export class Favorites extends LitElement {
                 display: block;
 
                 content-visibility: auto;
+                contain: layout style paint;
             }
 
             ul {

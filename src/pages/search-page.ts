@@ -16,6 +16,9 @@ export class SearchPage extends LitElement {
         css`
             :host {
                 display: block;
+
+                content-visibility: auto;
+                contain: layout style paint;
             }
 
             main {

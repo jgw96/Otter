@@ -19,6 +19,9 @@ export class AppTheme extends LitElement {
         css`
             :host {
                 display: block;
+
+                content-visibility: auto;
+                contain: layout style paint;
             }
 
             #open-button {
