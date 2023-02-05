@@ -85,7 +85,7 @@ export class AppLogin extends LitElement {
             await router.navigate("/home");
         }
         else if (token && server) {
-            await router.navigate("/home");
+            // await router.navigate("/home");
         }
     }
 
@@ -160,7 +160,6 @@ export class AppLogin extends LitElement {
         }
 
         <main>
-            <img src="/assets/icons/256-icon.png" alt="logo">
 
             <div id="login-block">
                 <sl-input type="text" name="serverURL" label="Server URL"></sl-input>

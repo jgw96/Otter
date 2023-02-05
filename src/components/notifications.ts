@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
-import { clearNotifications, getNotifications } from '../services/notifications';
+import { clearNotifications, getNotifications, subToPush } from '../services/notifications';
 
 import './user-profile';
 import './timeline-item';
@@ -153,10 +153,14 @@ export class Notifications extends LitElement {
         this.notifications = notificationsData;
     }
 
+    async sub() {
+        await subToPush();
+    }
+
     render() {
         return html`
           <div id="notify-actions">
-            <sl-button pill size="small" variant="primary">Subscribe to Push Notifications</sl-button>
+            <sl-button pill size="small" variant="primary" @click="${() => this.sub()}">Subscribe to Push Notifications</sl-button>
             <sl-button pill size="small" @click="${() => this.clear()}">Clear</sl-button>
           </div>
 
