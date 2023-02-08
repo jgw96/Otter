@@ -1,6 +1,8 @@
 {
   "id": "/",
   "scope": "/",
+  "dir": "auto",
+  "lang": "en-US",
   "name": "Mammoth",
   "display": "standalone",
   "start_url": "/",
@@ -11,18 +13,24 @@
   "background_color": "#181818",
   "related_applications": [],
   "prefer_related_applications": false,
-  "display_override": ["window-controls-overlay"],
-  "categories": ["social"],
+  "display_override": [
+    "window-controls-overlay"
+  ],
+  "categories": [
+    "social"
+  ],
   "icons": [
     {
       "src": "assets/icons/512-icon.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "assets/icons/256-icon.png",
       "sizes": "256x256",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "assets/icons/128-icon.png",
@@ -37,8 +45,13 @@
   ],
   "screenshots": [
     {
-      "src": "assets/screenshots/screen.png",
-      "sizes": "1617x1012",
+      "src": "assets/screenshots/new/1280x800-screenshot.png",
+      "sizes": "1280x800",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/screenshots/new/750x1334-screenshot.png",
+      "sizes": "750x1334",
       "type": "image/png"
     }
   ],
@@ -49,9 +62,9 @@
   ],
   "shortcuts": [
     {
-      "name":"Home",
-      "url":"/",
-      "description":"Head straight to the home page",
+      "name": "Home",
+      "url": "/",
+      "description": "Head straight to the home page",
       "icons": [
         {
           "src": "assets/shortcuts/home-outline.png",
@@ -61,9 +74,9 @@
       ]
     },
     {
-      "name":"Explore",
-      "url":"/search",
-      "description":"Head straight to the explore page",
+      "name": "Explore",
+      "url": "/search",
+      "description": "Head straight to the explore page",
       "icons": [
         {
           "src": "assets/shortcuts/search-outline.png",
@@ -73,9 +86,9 @@
       ]
     },
     {
-      "name":"My Profile",
-      "url":"/account",
-      "description":"Head straight to your account",
+      "name": "My Profile",
+      "url": "/account",
+      "description": "Head straight to your account",
       "icons": [
         {
           "src": "assets/shortcuts/eye-outline.png",
@@ -85,9 +98,9 @@
       ]
     },
     {
-      "name":"My Followers",
-      "url":"/followers",
-      "description":"Head straight to your followers",
+      "name": "My Followers",
+      "url": "/followers",
+      "description": "Head straight to your followers",
       "icons": [
         {
           "src": "assets/shortcuts/eye-outline.png",
@@ -97,9 +110,9 @@
       ]
     },
     {
-      "name":"My Following",
-      "url":"/following",
-      "description":"Head straight to your following",
+      "name": "My Following",
+      "url": "/following",
+      "description": "Head straight to your following",
       "icons": [
         {
           "src": "assets/shortcuts/eye-outline.png",
