@@ -14,6 +14,7 @@ export class AppProfile extends LitElement {
     @state() user: any;
     @state() posts: any[] = [];
     @state() followed: boolean = false;
+    @state() showMiniProfile: boolean = false;
 
     static styles = [
         css`
@@ -36,6 +37,43 @@ export class AppProfile extends LitElement {
                 flex-direction: column;
                 overflow-x: auto;
                 margin-top: 12px;
+            }
+
+            #mini-profile {
+                position: fixed;
+                top: 10px;
+                background: rgb(98 99 105 / 19%);
+                left: 15vw;
+                right: 15vw;
+                border-radius: 6px;
+                backdrop-filter: blur(40px);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 8px;
+
+                z-index: 100;
+
+                animation-name: slidedown;
+                animation-duration: 0.3s;
+            }
+
+            #mini-profile p {
+                padding: 8px;
+                margin: 0;
+                font-weight: bold;
+            }
+
+            #avatar-mini {
+                display: flex;
+                align-items: center;
+                gap: 2px;
+            }
+
+            #avatar-mini img {
+                height: 40px;
+                border-radius: 50%;
+                border: solid 2px var(--sl-color-primary-600);
             }
 
             main {
@@ -126,6 +164,7 @@ export class AppProfile extends LitElement {
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
+                max-width: 400px;
               }
 
               #fields img {
@@ -133,13 +172,14 @@ export class AppProfile extends LitElement {
               }
 
               #profile-top {
-                    background: #2f41776b;
                     padding: 0px;
                     padding-left: 8px;
                     padding-right: 8px;
                     padding-bottom: 8px;
                     padding-top: 8px;
                     border-radius: 4px;
+
+                    background: #1b1d26;
 
                     overflow-x: hidden;
                     text-overflow: ellipsis;
@@ -187,6 +227,40 @@ export class AppProfile extends LitElement {
                 ul {
                     height: initial;
                 }
+
+                #mini-profile {
+                    right: 14px;
+                    left: 14px;
+                    bottom: 10px;
+                    top: initial;
+
+                    animation-name: slideup;
+                    animation-duration: 0.3s;
+                }
+              }
+
+              @keyframes slideup {
+                from {
+                    transform: translateY(100%);
+                    opacity: 0;
+                }
+
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+              }
+
+              @keyframes slidedown {
+                from {
+                    transform: translateY(-100%);
+                    opacity: 0;
+                }
+
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
               }
         `
     ];
@@ -210,6 +284,42 @@ export class AppProfile extends LitElement {
 
             this.posts = postsData;
         }
+
+        window.requestIdleCallback(() => {
+            // set up intersection observer
+            const options = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.5
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    // if (entry.isIntersecting) {
+                    //     const target = entry.target as HTMLElement;
+                    //     const src = target.getAttribute('data-src');
+                    //     if (src) {
+                    //         target.setAttribute('src', src);
+                    //         observer.unobserve(entry.target);
+                    //     }
+                    // }
+
+                    if (entry.isIntersecting) {
+                        console.log('intersecting');
+
+                        window.requestIdleCallback(async () => {
+                            this.showMiniProfile = !this.showMiniProfile;
+                        })
+                    }
+                })
+            }
+            , options);
+
+            // get second child element of postsList
+            const secondChild = this.shadowRoot!.querySelector('ul')!.children[1] as HTMLElement;
+
+            observer.observe(secondChild!);
+        })
     }
 
     async follow() {
@@ -264,6 +374,21 @@ export class AppProfile extends LitElement {
             ` : html`<div id="fake-profile">
                 <sl-skeleton></sl-skeleton>
             </div>`}
+
+            ${
+                this.showMiniProfile && this.user ? html`
+                <div id="mini-profile">
+                    <div id="avatar-mini">
+                        <img src="${this.user.avatar}" />
+
+                        <p>${this.user.display_name}</p>
+                    </div>
+
+                 ${this.followed ? html`<sl-button pill disabled>Following</sl-button>` : html`<sl-button pill variant="primary"
+                            @click="${() => this.follow()}">Follow</sl-button>`}
+            </div>
+                ` : null
+            }
 
             <ul>
                 ${this.posts.map(post => html`

@@ -1,10 +1,10 @@
 import { fileOpen } from "browser-fs-access";
 
-let token = localStorage.getItem('token') || '';
 let server = localStorage.getItem('server') || '';
+let accessToken = localStorage.getItem('accessToken') || '';
 
 export async function publishPost(post: string, id?: string) {
-    const correctURL = id ? `https://mammoth-backend.azurewebsites.net/status?status=${post}&id=${id}&code=${token}&server=${server}` : `https://mammoth-backend.azurewebsites.net/status?status=${post}&code=${token}&server=${server}`;
+    const correctURL = id ? `https://mammoth-backend.azurewebsites.net/status?status=${post}&id=${id}&code=${accessToken}&server=${server}` : `https://mammoth-backend.azurewebsites.net/status?status=${post}&code=${accessToken}&server=${server}`;
     const response = await fetch(correctURL, {
         method: 'POST',
         headers: {
@@ -25,7 +25,7 @@ export async function uploadImageAsFormData() {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await fetch(`https://mammoth-backend.azurewebsites.net/uploadAttachment?code=${token}&server=${server}`, {
+    const response = await fetch(`https://mammoth-backend.azurewebsites.net/uploadAttachment?code=${accessToken}&server=${server}`, {
         method: 'POST',
         body: formData,
     });

@@ -70,6 +70,12 @@ export class AppHome extends LitElement {
         flex-direction: column;
       }
 
+      #no-replies {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
       #reply-drawer sl-skeleton {
           height: 8em;
           width: 8em;
@@ -721,14 +727,18 @@ export class AppHome extends LitElement {
       </sl-drawer>
 
       <sl-drawer id="replies-drawer" placement="end" label="Comments">
-        <ul>
+        ${this.replies.length > 0 ? html`<ul>
           ${this.replies.map((reply: any) => {
       return html`
           <timeline-item ?show="${false}" .tweet="${reply}"></timeline-item>
           `
       })
           }
-        </ul>
+        </ul>` : html`
+          <div id="no-replies">
+            <p>No comments yet.</p>
+          </div>
+        `}
 
         <div slot="footer" id="reply-post-actions">
           <sl-input placeholder="Reply"></sl-input>

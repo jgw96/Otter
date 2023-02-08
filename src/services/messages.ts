@@ -1,8 +1,8 @@
-let token = localStorage.getItem('token') || '';
 let server = localStorage.getItem('server') || '';
+let accessToken = localStorage.getItem('accessToken') || '';
 
 export const getMessages = async () => {
-    const response = await fetch(`https://mammoth-backend.azurewebsites.net/messages?code=${token}&server=${server}`);
+    const response = await fetch(`https://mammoth-backend.azurewebsites.net/messages?code=${accessToken}&server=${server}`);
     const data = await response.json();
     return data;
 }

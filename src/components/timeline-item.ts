@@ -32,6 +32,39 @@ export class TimelineItem extends LitElement {
                 margin-bottom: 10px;
             }
 
+            .status-link-card {
+                display: flex;
+                align-items: center;
+                justify-content: space-around;
+                gap: 10px;
+                background: rgb(255 255 255 / 11%);
+                border-radius: 6px;
+                padding: 10px;
+            }
+
+            .status-link-card a {
+                display: flex;
+                align-items: center;
+                justify-content: space-around;
+                gap: 10px;
+            }
+
+            .status-link-card img {
+                width: 100%;
+                max-width: 300px;
+                border-radius: 6px;
+                height: initial;
+            }
+
+            .status-link-card__content p {
+                margin-top: 6px;
+            }
+
+            .status-link-card__title {
+                padding: 0;
+                margin: 0;
+            }
+
 
             sl-card {
                 --padding: 10px;
@@ -308,6 +341,21 @@ export class TimelineItem extends LitElement {
 
                         <user-profile .account="${this.tweet.account}"></user-profile>
                         <div .innerHTML="${this.tweet.content}"></div>
+
+                        ${this.tweet.card ? html`<div class="status-link-card">
+                            <a href="${this.tweet.card.url}" target="_blank" rel="noopener noreferrer">
+                                <div class="status-link-card__image">
+
+                                    <img src="${this.tweet.card.image}" alt="${this.tweet.card.title}">
+
+                    </div>
+                                <div class="status-link-card__content">
+                                    <h5 class="status-link-card__title">${this.tweet.card.title}</h5>
+                                    <p class="status-link-card__description">${this.tweet.card.description}</p>
+                                </div>
+                                </a>
+
+                        </div>` : null}
 
                         <div class="actions" slot="footer">
                           ${this.show === true ? html`<sl-button pill @click="${() => this.replies(this.tweet.id)}">
