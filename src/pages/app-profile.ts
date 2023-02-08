@@ -293,17 +293,8 @@ export class AppProfile extends LitElement {
                 threshold: 0.5
             };
 
-            const observer = new IntersectionObserver((entries, observer) => {
+            const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
-                    // if (entry.isIntersecting) {
-                    //     const target = entry.target as HTMLElement;
-                    //     const src = target.getAttribute('data-src');
-                    //     if (src) {
-                    //         target.setAttribute('src', src);
-                    //         observer.unobserve(entry.target);
-                    //     }
-                    // }
-
                     if (entry.isIntersecting) {
                         console.log('intersecting');
 
