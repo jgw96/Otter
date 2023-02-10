@@ -239,7 +239,7 @@ export class AppHome extends LitElement {
       }
 
       #profile-card-actions sl-button {
-        width: 64%;
+        width: 66%;
       }
 
       #profile img {
