@@ -104,11 +104,16 @@ export class AppTheme extends LitElement {
         if (potentialColor) {
           this.primary_color = potentialColor;
           document.body.style.setProperty('--sl-color-primary-600', potentialColor);
+
+          document.querySelector("html")!.style.setProperty('--primary-color', potentialColor);
         }
         else {
           // get css variable color
           const color = getComputedStyle(document.body).getPropertyValue('--sl-color-primary-600');
           this.primary_color = color;
+
+          document.querySelector("html")!.style.setProperty('--primary-color', color);
+
         }
 
         if (potentialFontSize) {
@@ -137,6 +142,7 @@ export class AppTheme extends LitElement {
 
         // set css variable color
         document.body.style.setProperty('--sl-color-primary-600', color);
+        document.querySelector("html")!.style.setProperty('--primary-color', color);
     }
 
     changeFontSize(size: string) {

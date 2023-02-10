@@ -24,6 +24,7 @@ export class SearchPage extends LitElement {
             main {
                 padding-left: 16px;
                 padding-right: 16px;
+                padding-top: 0px;
             }
 
             .avatar {

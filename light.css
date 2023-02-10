@@ -286,7 +286,7 @@
   --sl-border-radius-x-large: 1rem;
 
   --sl-border-radius-circle: 50%;
-  --sl-border-radius-pill: 9999px;
+  --sl-border-radius-default: 9999px;
 
   --sl-shadow-x-small: 0 1px 2px hsl(240 3.8% 46.1% / 6%);
   --sl-shadow-small: 0 1px 2px hsl(240 3.8% 46.1% / 12%);

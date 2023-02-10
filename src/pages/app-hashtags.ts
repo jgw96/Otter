@@ -14,7 +14,7 @@ export class AppHashtags extends LitElement {
             }
 
             main {
-                margin-top: 80px;
+                padding-top: 60px;
                 padding: 10px;
             }
 

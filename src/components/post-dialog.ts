@@ -53,7 +53,7 @@ export class PostDialog extends LitElement {
             sl-skeleton {
                 height: 8em;
                 width: 8em;
-                --sl-border-radius-pill: 4px;
+                --sl-border-radius-default: 4px;
             }
         `
     ];

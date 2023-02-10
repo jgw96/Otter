@@ -77,7 +77,7 @@ export class AppProfile extends LitElement {
             }
 
             main {
-                margin-top: 80px;
+                padding-top: 60px;
                 display: grid;
                 gap: 14px;
                 grid-template-columns: auto;
@@ -222,6 +222,7 @@ export class AppProfile extends LitElement {
 
                     padding-left: 10px;
                     padding-right: 10px;
+                    padding-top: 60px;
                 }
 
                 ul {

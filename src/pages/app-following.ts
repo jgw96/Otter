@@ -16,7 +16,7 @@ export class Appfollowing extends LitElement {
             }
 
             main {
-                margin-top: 80px;
+                padding-top: 60px;
             }
 
             ul {
@@ -52,6 +52,16 @@ export class Appfollowing extends LitElement {
             li a {
                 text-decoration: none;
                 color: white;
+            }
+
+            @media(prefers-color-scheme: light) {
+                ul li {
+                    color: black;
+                }
+
+                li a {
+                    color: black;
+                }
             }
 
         `

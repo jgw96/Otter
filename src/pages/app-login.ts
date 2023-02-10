@@ -75,7 +75,8 @@ export class AppLogin extends LitElement {
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
 
-        let token = localStorage.getItem('token');
+        let accessToken = localStorage.getItem('accessToken');
+
         let server = localStorage.getItem('server');
 
         if (code) {
@@ -84,8 +85,8 @@ export class AppLogin extends LitElement {
 
             await router.navigate("/home");
         }
-        else if (token && server) {
-            // await router.navigate("/home");
+        else if (accessToken && server) {
+            await router.navigate("/home");
         }
     }
 

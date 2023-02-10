@@ -16,7 +16,7 @@ export class AppFollowers extends LitElement {
             }
 
             main {
-                margin-top: 80px;
+                padding-top: 60px;
             }
 
             ul {

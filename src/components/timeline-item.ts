@@ -58,6 +58,11 @@ export class TimelineItem extends LitElement {
 
             .status-link-card__content p {
                 margin-top: 6px;
+
+                white-space: nowrap;
+                max-width: 40vw;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
 
             .status-link-card__title {
@@ -174,8 +179,8 @@ export class TimelineItem extends LitElement {
 
             @media(prefers-color-scheme: light) {
                 sl-card {
-                    color: white;
-                    --sl-panel-background-color: var(--sl-color-primary-600);
+                    --sl-panel-background-color: white;
+                    color: #000000e3;
                 }
 
                 #reply-to {
@@ -351,7 +356,6 @@ export class TimelineItem extends LitElement {
                     </div>
                                 <div class="status-link-card__content">
                                     <h5 class="status-link-card__title">${this.tweet.card.title}</h5>
-                                    <p class="status-link-card__description">${this.tweet.card.description}</p>
                                 </div>
                                 </a>
 

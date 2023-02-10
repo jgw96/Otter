@@ -10,6 +10,6 @@ export const styles = css`
   }
 
   main {
-    margin-top: 60px;
+    padding-top: 60px;
   }
 `;

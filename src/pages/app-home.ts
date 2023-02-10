@@ -79,7 +79,7 @@ export class AppHome extends LitElement {
       #reply-drawer sl-skeleton {
           height: 8em;
           width: 8em;
-          --sl-border-radius-pill: 4px;
+          --sl-border-radius-default: 4px;
       }
 
       .img-preview {
@@ -138,9 +138,7 @@ export class AppHome extends LitElement {
       }
 
       @media(prefers-color-scheme: light) {
-        sl-tab-group::part(nav) {
-          background: #ffffff !important;
-        }
+
       }
 
       sl-badge {
@@ -194,6 +192,7 @@ export class AppHome extends LitElement {
         padding: 12px;
         padding-top: 14px;
         border-radius: 6px;
+        height: fit-content;
 
         display: flex;
         flex-direction: column;
@@ -235,8 +234,12 @@ export class AppHome extends LitElement {
         flex: 2;
       }
 
+      #profile-card-actions {
+        margin-top: 22px;
+      }
+
       #profile-card-actions sl-button {
-        width: 100%;
+        width: 64%;
       }
 
       #profile img {
@@ -336,6 +339,12 @@ export class AppHome extends LitElement {
       display: none;
     }
 
+    @media(max-width: 1030px) {
+      #profile-card-actions sl-button {
+        width: 100%;
+      }
+    }
+
     @media(max-width: 600px) {
       #profile {
         display: none;
@@ -428,11 +437,10 @@ export class AppHome extends LitElement {
   async firstUpdated() {
     console.log('This is your home page');
 
-    window.requestIdleCallback(async () => {
       this.user = await getCurrentUser();
 
       console.log("user", this.user);
-    }, { timeout: 3000 });
+
 
     window.requestIdleCallback(async () => {
       const settings = await getSettings();
@@ -833,7 +841,7 @@ export class AppHome extends LitElement {
 
             <p id="user-url">${this.user ? this.user.url : "Loading..."}</p>
 
-            <div .innerHTML=${this.user ? this.user.note : "Loading..." }></div>
+            <!-- <div .innerHTML=${this.user ? this.user.note : "Loading..." }></div> -->
 
             <sl-badge @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count : "0"} followers
             </sl-badge>
