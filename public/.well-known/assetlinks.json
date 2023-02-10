@@ -1,6 +1,6 @@
 [{
         "relation": ["delegate_permission/common.handle_all_urls"],
         "target" : { "namespace": "android_app", "package_name": "com.mammoth.twa",
-                     "sha256_cert_fingerprints": ["8D:C9:A5:E6:B2:34:4B:DB:43:78:87:AC:42:E3:B6:CD:15:A6:54:2B:EF:44:C6:A5:2F:6C:54:0A:AF:C6:D9:28"] }
+                     "sha256_cert_fingerprints": ["94:FF:9F:DB:17:26:05:30:AB:D6:24:95:C9:7A:0A:3D:1F:5F:A9:AF:E2:5B:44:5B:B2:07:8E:EF:82:25:48:5E"] }
       }
 ]
