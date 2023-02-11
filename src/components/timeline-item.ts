@@ -310,6 +310,29 @@ export class TimelineItem extends LitElement {
         }));
     }
 
+    openInBox(imageURL: string) {
+        console.log("open image", imageURL)
+        this.dispatchEvent(new CustomEvent('openimage', {
+            detail: {
+                imageURL
+            }
+        }));
+    }
+
+    async analyzeStatus(content: string) {
+        const { analyzeStatusText } = await import('../services/ai');
+        const data = await analyzeStatusText(content);
+        if (data) {
+            console.log(data);
+
+            this.dispatchEvent(new CustomEvent('analyze', {
+                detail: {
+                    data
+                }
+            }));
+        }
+    }
+
     render() {
         return html`
           ${this.tweet.reblog === null || this.tweet.reblog === undefined ? html`
@@ -320,9 +343,14 @@ export class TimelineItem extends LitElement {
                         <div .innerHTML="${this.tweet.reply_to.content}"></div>
 
                         <div class="actions" slot="footer">
+                          <sl-button pill @click="${() => this.analyzeStatus(this.tweet.reply_to.content)}">
+                            <sl-icon src="/assets/search-outline.svg"></sl-icon>
+                          </sl-button>
+
                           ${this.show === true ? html`<sl-button pill @click="${() => this.replies(this.tweet.reply_to.id)}">
                           <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
-                        </sl-button>` : null}
+                          </sl-button>` : null}
+
                           <sl-button ?disabled="${this.isBookmarked || this.tweet.reply_to.bookmarked}" pill @click="${() => this.bookmark(this.tweet.reply_to.id)}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></sl-button>
                           ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isBoosted || this.tweet.reply_to.favourited}" pill @click="${() => this.favorite(this.tweet.reply_to.id)}">${this.tweet.reply_to.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></sl-button>` : null}
                           ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isReblogged || this.tweet.reply_to.reblogged}" pill @click="${() => this.reblog(this.tweet.reply_to.id)}">${this.tweet.reply_to.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></sl-button>` : null}
@@ -339,7 +367,7 @@ export class TimelineItem extends LitElement {
                 <sl-card class="${classMap({ replyCard: this.tweet.reply_to ? true : false})}">
                       ${
                         this.tweet.media_attachments.length > 0 ? html`
-                          <img slot="image" @click="${() => this.loadImage()}" data-src="${this.tweet.media_attachments[0].preview_url}">
+                          <img slot="image" @click="${() => this.openInBox(this.tweet.media_attachments[0].preview_url)}" data-src="${this.tweet.media_attachments[0].preview_url}">
 
                         ` : html``
                       }
@@ -351,7 +379,7 @@ export class TimelineItem extends LitElement {
                             <a href="${this.tweet.card.url}" target="_blank" rel="noopener noreferrer">
                                 <div class="status-link-card__image">
 
-                                    <img src="${this.tweet.card.image}" alt="${this.tweet.card.title}">
+                                    <img src="${this.tweet.card.image}" @click="${() => this.openInBox(this.tweet.media_attachments[0].preview_url)}" alt="${this.tweet.card.title}">
 
                     </div>
                                 <div class="status-link-card__content">
@@ -362,6 +390,9 @@ export class TimelineItem extends LitElement {
                         </div>` : null}
 
                         <div class="actions" slot="footer">
+                        <sl-button pill @click="${() => this.analyzeStatus(this.tweet.content)}">
+                            <sl-icon src="/assets/search-outline.svg"></sl-icon>
+                          </sl-button>
                           ${this.show === true ? html`<sl-button pill @click="${() => this.replies(this.tweet.id)}">
                           <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
                         </sl-button>` : null}
@@ -375,7 +406,7 @@ export class TimelineItem extends LitElement {
                     ${
                         this.tweet.reblog.media_attachments.length > 0 ? html`
 
-<img slot="image" data-src="${this.tweet.reblog.media_attachments[0].preview_url}">
+<img slot="image" @click="${() => this.openInBox(this.tweet.reblog.media_attachments[0].preview_url)}" data-src="${this.tweet.reblog.media_attachments[0].preview_url}">
                         ` : html``
                       }
 
@@ -390,6 +421,9 @@ export class TimelineItem extends LitElement {
                         <div .innerHTML="${this.tweet.reblog.content}"></div>
 
                         <div class="actions" slot="footer">
+                        <sl-button pill @click="${() => this.analyzeStatus(this.tweet.reblog.content)}">
+                            <sl-icon src="/assets/search-outline.svg"></sl-icon>
+                          </sl-button>
                         ${this.show === true ? html`<sl-button pill @click="${() => this.replies(this.tweet.id)}">
                             <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
                         </sl-button>` : null}

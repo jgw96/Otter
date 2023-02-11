@@ -14,6 +14,10 @@ export class Timeline extends LitElement {
     @state() timeline: any[] = [];
     @state() loadingData: boolean = false;
 
+    @state() imgPreview: string | undefined = undefined;
+
+    @state() analyzeData: any | undefined = undefined;
+
     @property({ type: String }) timelineType: "Home" | "Public" | "Media" = "Home";
 
     static styles = [
@@ -32,6 +36,20 @@ export class Timeline extends LitElement {
 
                 align-items: center;
                 justify-content: space-between;
+            }
+
+            #img-preview {
+                --width: 80vw;
+            }
+
+            #img-preview::part(panel) {
+                height: 90vh;
+            }
+
+            #img-preview img {
+                width: 100%;
+                height: max-content;
+                border-radius: 6px;
             }
 
             ul {
@@ -89,6 +107,21 @@ export class Timeline extends LitElement {
             .fake {
                 animation-name: fadein;
                 animation-duration: 0.3s;
+            }
+
+            #analyze ul {
+                max-height: 200px;
+                height: initial;
+            }
+
+            #analyze ul li {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 6px;
+                background: var(--primary-color);
+                border-radius: 6px;
+                padding: 8px;
             }
 
             @media(max-width: 768px) {
@@ -177,8 +210,52 @@ export class Timeline extends LitElement {
         }));
     }
 
+    async showImage(imageURL: string) {
+        console.log("show image", imageURL);
+        this.imgPreview = imageURL;
+
+        const dialog = this.shadowRoot?.querySelector('#img-preview') as any;
+        await dialog.show();
+    }
+
+    async showAnalyze(data: any) {
+        console.log("show analyze", data.results.documents[0].entities);
+
+        this.analyzeData = data.results.documents[0].entities;
+
+        const dialog = this.shadowRoot?.querySelector('#analyze') as any;
+        await dialog.show();
+    }
+
     render() {
         return html`
+
+        <sl-dialog label="Analyze" id="analyze">
+                <strong>Learn More</strong><br>
+                <p>Learn more about the subjects mentioned in this status</p>
+
+                ${
+                    this.analyzeData && this.analyzeData.length > 0 ?
+                    html`
+                        <ul>
+                            ${this.analyzeData!.map((entity: any) => html`
+                                <li>
+                                    <strong>${entity.name}</strong>
+
+                                    <sl-button size="small" pill .href="${entity.url}" target="_blank">
+                                      Open in ${entity.dataSource}
+                                    </sl-button>
+                                </li>
+                            `)}
+                        </ul>
+                    ` : null
+                }
+        </sl-dialog>
+
+        <sl-dialog id="img-preview">
+            ${ this.imgPreview ? html`<img .src="${this.imgPreview}">` : null}
+        </sl-dialog>
+
         <div id="list-actions">
             <sl-button @click="${() => this.refreshTimeline(false)}" circle size="small">
               <sl-icon src="/assets/refresh-circle-outline.svg"></sl-icon>
@@ -188,7 +265,7 @@ export class Timeline extends LitElement {
         <ul>
             <lit-virtualizer scroller .items="${this.timeline}" .renderItem="${
                 (tweet: any) => html`
-                <timeline-item ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
+                <timeline-item @analyze="${($event: any) => this.showAnalyze($event.detail.data)}" @openimage="${($event: any) => this.showImage($event.detail.imageURL)}" ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
                 `
             }">
             </lit-virtualizer>

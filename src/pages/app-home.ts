@@ -239,7 +239,7 @@ export class AppHome extends LitElement {
       }
 
       #profile-card-actions sl-button {
-        width: 66%;
+        width: 80%;
       }
 
       #profile img {
@@ -381,7 +381,7 @@ export class AppHome extends LitElement {
 
       main {
         display: block;
-        padding-top: 50px;
+        padding-top: 30px;
         margin-top: initial;
       }
 
