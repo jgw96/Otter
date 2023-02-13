@@ -240,6 +240,17 @@ export class AppProfile extends LitElement {
                 }
               }
 
+              @media(prefers-color-scheme: light) {
+                #profile-top {
+                    background: white;
+                    color: black;
+                }
+
+                #profile-top p {
+                    color: black;
+                }
+              }
+
               @keyframes slideup {
                 from {
                     transform: translateY(100%);

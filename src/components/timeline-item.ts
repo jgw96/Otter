@@ -147,6 +147,12 @@ export class TimelineItem extends LitElement {
                 background: #ffffff4f;
             }
 
+            @media(prefers-color-scheme: dark) {
+                img {
+                    background: rgb(24 25 31);
+                }
+            }
+
             actions sl-button sl-icon {
                 font-size: 1.2em;
             }

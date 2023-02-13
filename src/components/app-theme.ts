@@ -106,6 +106,12 @@ export class AppTheme extends LitElement {
           document.body.style.setProperty('--sl-color-primary-600', potentialColor);
 
           document.querySelector("html")!.style.setProperty('--primary-color', potentialColor);
+
+          const littleLighter = this.LightenDarkenColor(potentialColor, 40);
+          document.body.style.setProperty('--sl-color-primary-500', littleLighter);
+
+          const littleDarker = this.LightenDarkenColor(potentialColor, -40);
+          document.body.style.setProperty('--sl-color-primary-700', littleDarker);
         }
         else {
           // get css variable color
@@ -143,6 +149,39 @@ export class AppTheme extends LitElement {
         // set css variable color
         document.body.style.setProperty('--sl-color-primary-600', color);
         document.querySelector("html")!.style.setProperty('--primary-color', color);
+
+        const littleLighter = this.LightenDarkenColor(color, 40);
+        document.body.style.setProperty('--sl-color-primary-500', littleLighter);
+
+        const littleDarker = this.LightenDarkenColor(potentialColor, -40);
+        document.body.style.setProperty('--sl-color-primary-700', littleDarker);
+    }
+
+    LightenDarkenColor(col: string, amt: number) {
+        var usePound = false;
+        if ( col[0] == "#" ) {
+            col = col.slice(1);
+            usePound = true;
+        }
+
+        var num = parseInt(col,16);
+
+        var r = (num >> 16) + amt;
+
+        if ( r > 255 ) r = 255;
+        else if  (r < 0) r = 0;
+
+        var b = ((num >> 8) & 0x00FF) + amt;
+
+        if ( b > 255 ) b = 255;
+        else if  (b < 0) b = 0;
+
+        var g = (num & 0x0000FF) + amt;
+
+        if ( g > 255 ) g = 255;
+        else if  ( g < 0 ) g = 0;
+
+        return (usePound?"#":"") + (g | (b << 8) | (r << 16)).toString(16);
     }
 
     changeFontSize(size: string) {

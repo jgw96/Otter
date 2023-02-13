@@ -56,9 +56,13 @@ export class SearchPage extends LitElement {
                 padding: 0;
                 list-style: none;
 
-                height: 77vh;
+                height: 70vh;
                 overflow-y: scroll;
                 overflow-x: hidden;
+            }
+
+            media-timeline {
+                height: 70vh;
             }
 
             li {

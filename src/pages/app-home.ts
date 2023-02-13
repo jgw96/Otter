@@ -236,6 +236,10 @@ export class AppHome extends LitElement {
 
       #profile-card-actions {
         margin-top: 22px;
+
+        position: fixed;
+        bottom: 24px;
+        width: 20%;
       }
 
       #profile-card-actions sl-button {
@@ -342,6 +346,13 @@ export class AppHome extends LitElement {
     @media(max-width: 1030px) {
       #profile-card-actions sl-button {
         width: 100%;
+      }
+    }
+
+
+    @media(max-width: 600px) and (prefers-color-scheme: light) {
+      sl-tab-group::part(tabs) {
+        background: white;
       }
     }
 
