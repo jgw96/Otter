@@ -153,7 +153,7 @@ export class AppTheme extends LitElement {
         const littleLighter = this.LightenDarkenColor(color, 40);
         document.body.style.setProperty('--sl-color-primary-500', littleLighter);
 
-        const littleDarker = this.LightenDarkenColor(potentialColor, -40);
+        const littleDarker = this.LightenDarkenColor(color, -40);
         document.body.style.setProperty('--sl-color-primary-700', littleDarker);
     }
 
