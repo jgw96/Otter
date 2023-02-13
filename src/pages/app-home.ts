@@ -34,7 +34,7 @@ import './search-page';
 
 import { styles } from '../styles/shared-styles';
 import { getCurrentUser, getInstanceInfo } from '../services/account';
-import { publishPost, uploadImageAsFormData } from '../services/posts';
+import { publishPost, uploadImageAsFormData, uploadImageFromBlob } from '../services/posts';
 import { reply } from '../services/timeline';
 import { router } from '../utils/router';
 import { getSettings, setSettings } from '../services/settings';
@@ -437,9 +437,19 @@ export class AppHome extends LitElement {
   async firstUpdated() {
     console.log('This is your home page');
 
-      this.user = await getCurrentUser();
+    this.user = await getCurrentUser();
 
-      console.log("user", this.user);
+    const urlParams = new URLSearchParams(window.location.search);
+
+    if (urlParams.has("name")) {
+      const name = urlParams.get("name");
+
+      if (name) {
+        await this.shareTarget(name);
+      }
+    }
+
+    console.log("user", this.user);
 
 
     window.requestIdleCallback(async () => {
@@ -481,143 +491,174 @@ export class AppHome extends LitElement {
     }
   }
 
-  handlePrimaryColor(color: string) {
-        this.primary_color = color;
+  async shareTarget(name: string) {
+    const cache = await caches.open("shareTarget");
+    const result = [];
 
-        // set css variable color
-        document.documentElement.style.setProperty('--sl-color-primary-600', color);
-
-        localStorage.setItem("primary_color", color);
-      }
-
-  share() {
-        if((navigator as any).share) {
-        (navigator as any).share({
-          title: 'PWABuilder pwa-starter',
-          text: 'Check out the PWABuilder pwa-starter!',
-          url: 'https://github.com/pwa-builder/pwa-starter',
-        });
+    for (const request of await cache.keys()) {
+      // If the request URL matches, add the response to the result
+      if (
+        (request.url.endsWith(".png") && request.url.includes(name)) ||
+        request.url.endsWith(".jpg") && request.url.includes(name)) {
+        result.push(await cache.match(name));
       }
     }
 
-    openNewDialog() {
-      // if on desktop, open the dialog
-      if (window.innerWidth > 600) {
-        // const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
-        // dialog.show();
-        const dialog: any = this.shadowRoot?.querySelector("post-dialog");
-        dialog?.openNewDialog();
-      }
-      else {
-        const drawer = this.shadowRoot?.getElementById('reply-drawer') as any;
-        drawer.show();
-      }
-    }
+    console.log("share target result", result);
 
-  async publish() {
-      const status = (this.shadowRoot?.querySelector('sl-textarea') as any).value;
-      console.log(status);
+    if (result.length > 0) {
+      const blob = await result[0]!.blob();
 
-      if (this.attachmentID) {
-        await publishPost(status, this.attachmentID);
-      }
-      else {
-        await publishPost(status);
-      }
+      await this.openNewDialog();
 
-      const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
-      dialog.hide();
-    }
-
-  async goToFollowers() {
-      router.navigate(`/followers?id=${this.user.id}`)
-    }
-
-  async goToFollowing() {
-      router.navigate(`/following?id=${this.user.id}`)
-    }
-
-  async openSettingsDrawer() {
-      const drawer = this.shadowRoot?.getElementById('settings-drawer') as any;
-      await drawer.show();
-
-      this.instanceInfo = await getInstanceInfo();
-      console.log("instanceInfo", this.instanceInfo)
-    }
-
-  async attachFile() {
       this.attaching = true;
-      const attachmentData = await uploadImageAsFormData();
-      console.log("attachmentData", attachmentData);
+
+      const data = await uploadImageFromBlob(blob);
 
       this.attaching = false;
 
-      this.attachmentID = attachmentData.id;
-      this.attachmentPreview = attachmentData.preview_url;
+      this.attachmentID = data.id;
+      this.attachmentPreview = data.preview_url;
     }
+  }
+
+  handlePrimaryColor(color: string) {
+    this.primary_color = color;
+
+    // set css variable color
+    document.documentElement.style.setProperty('--sl-color-primary-600', color);
+
+    localStorage.setItem("primary_color", color);
+  }
+
+  share() {
+    if ((navigator as any).share) {
+      (navigator as any).share({
+        title: 'PWABuilder pwa-starter',
+        text: 'Check out the PWABuilder pwa-starter!',
+        url: 'https://github.com/pwa-builder/pwa-starter',
+      });
+    }
+  }
+
+  openNewDialog() {
+    // if on desktop, open the dialog
+    if (window.innerWidth > 600) {
+      // const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
+      // dialog.show();
+      const dialog: any = this.shadowRoot?.querySelector("post-dialog");
+      dialog?.openNewDialog();
+    }
+    else {
+      const drawer = this.shadowRoot?.getElementById('reply-drawer') as any;
+      drawer.show();
+    }
+  }
+
+  async publish() {
+    const status = (this.shadowRoot?.querySelector('sl-textarea') as any).value;
+    console.log(status);
+
+    if (this.attachmentID) {
+      await publishPost(status, this.attachmentID);
+    }
+    else {
+      await publishPost(status);
+    }
+
+    const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
+    dialog.hide();
+  }
+
+  async goToFollowers() {
+    router.navigate(`/followers?id=${this.user.id}`)
+  }
+
+  async goToFollowing() {
+    router.navigate(`/following?id=${this.user.id}`)
+  }
+
+  async openSettingsDrawer() {
+    const drawer = this.shadowRoot?.getElementById('settings-drawer') as any;
+    await drawer.show();
+
+    this.instanceInfo = await getInstanceInfo();
+    console.log("instanceInfo", this.instanceInfo)
+  }
+
+  async attachFile() {
+    this.attaching = true;
+    const attachmentData = await uploadImageAsFormData();
+    console.log("attachmentData", attachmentData);
+
+    this.attaching = false;
+
+    this.attachmentID = attachmentData.id;
+    this.attachmentPreview = attachmentData.preview_url;
+  }
 
   async handleReplies(replies: any[], id: string) {
-      this.replies = replies;
+    this.replies = replies;
 
-      this.replyID = id;
+    this.replyID = id;
 
-      const drawer = this.shadowRoot?.getElementById('replies-drawer') as any;
-      await drawer.show();
-    }
+    const drawer = this.shadowRoot?.getElementById('replies-drawer') as any;
+    await drawer.show();
+  }
 
   async replyToAStatus() {
-      const replyValue = (this.shadowRoot?.querySelector('#reply-post-actions sl-input') as any).value;
+    const replyValue = (this.shadowRoot?.querySelector('#reply-post-actions sl-input') as any).value;
 
-      if (this.replyID && replyValue) {
-        await reply(this.replyID, replyValue);
-      }
+    if (this.replyID && replyValue) {
+      await reply(this.replyID, replyValue);
     }
+  }
 
   async openThemingDrawer() {
-      const drawer = this.shadowRoot?.getElementById('theming-drawer') as any;
-      await drawer.show();
-    }
+    const drawer = this.shadowRoot?.getElementById('theming-drawer') as any;
+    await drawer.show();
+  }
 
-    doFocusMode() {
-      const main = this.shadowRoot?.querySelector('main') as any;
+  doFocusMode() {
+    const main = this.shadowRoot?.querySelector('main') as any;
 
-      main.classList.toggle('focus');
+    main.classList.toggle('focus');
 
-      const profile = this.shadowRoot?.querySelector('#profile') as any;
-      profile.style.display = profile.style.display === 'none' ? 'flex' : 'none';
+    const profile = this.shadowRoot?.querySelector('#profile') as any;
+    profile.style.display = profile.style.display === 'none' ? 'flex' : 'none';
 
-      const appTimeline = this.shadowRoot?.querySelector('app-timeline') as any;
-      appTimeline.style.position = appTimeline.style.position === 'fixed' ? 'relative' : 'fixed';
-      appTimeline.style.left = appTimeline.style.left === '11vw' ? '0' : '11vw';
-      appTimeline.style.right = appTimeline.style.right === '11vw' ? '0' : '11vw';
-    }
+    const appTimeline = this.shadowRoot?.querySelector('app-timeline') as any;
+    appTimeline.style.position = appTimeline.style.position === 'fixed' ? 'relative' : 'fixed';
+    appTimeline.style.left = appTimeline.style.left === '11vw' ? '0' : '11vw';
+    appTimeline.style.right = appTimeline.style.right === '11vw' ? '0' : '11vw';
+  }
 
-    handleWellnessMode(check: boolean) {
-      console.log("check", check);
-      this.wellnessMode = check;
+  handleWellnessMode(check: boolean) {
+    console.log("check", check);
+    this.wellnessMode = check;
 
-      setSettings({ wellness: check });
-    }
+    setSettings({ wellness: check });
+  }
 
-    handleDataSaverMode(mode: boolean) {
-      console.log("mode", mode)
-      this.dataSaverMode = mode;
+  handleDataSaverMode(mode: boolean) {
+    console.log("mode", mode)
+    this.dataSaverMode = mode;
 
-      setSettings({ data_saver: mode });
-    }
+    setSettings({ data_saver: mode });
+  }
 
-    removeImage() {
-      this.attachmentID = null;
-      this.attachmentPreview = null;
-    }
+  removeImage() {
+    this.attachmentID = null;
+    this.attachmentPreview = null;
+  }
 
-    openATab(name: string) {
-      const tab = this.shadowRoot?.querySelector(`sl-tab[panel=${name}]`) as any;
-      tab.click();
-    }
+  openATab(name: string) {
+    const tab = this.shadowRoot?.querySelector(`sl-tab[panel=${name}]`) as any;
+    tab.click();
+  }
 
-    render() {
-      return html`
+  render() {
+    return html`
       <div id="context-menu">
         <sl-menu>
           <sl-menu-item @click="${() => this.openNewDialog()}">
@@ -625,23 +666,23 @@ export class AppHome extends LitElement {
             New Post
           </sl-menu-item>
           <sl-divider></sl-divider>
-          <sl-menu-item @click="${() => this.openATab("search")}">
+          <sl-menu-item @click="${() => this.openATab(" search")}">
             <sl-icon src="/assets/search-outline.svg"></sl-icon>
             Explore
           </sl-menu-item>
-          <sl-menu-item @click="${() => this.openATab("notifications")}">
+          <sl-menu-item @click="${() => this.openATab(" notifications")}">
             <sl-icon src="/assets/notifications-outline.svg"></sl-icon>
             Notifications
           </sl-menu-item>
-          <sl-menu-item @click="${() => this.openATab("messages")}">
+          <sl-menu-item @click="${() => this.openATab(" messages")}">
             <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
             Messages
           </sl-menu-item>
-          <sl-menu-item @click="${() => this.openATab("bookmarks")}">
+          <sl-menu-item @click="${() => this.openATab(" bookmarks")}">
             <sl-icon src="/assets/bookmark-outline.svg"></sl-icon>
             Bookmarks
           </sl-menu-item>
-          <sl-menu-item @click="${() => this.openATab("faves")}">
+          <sl-menu-item @click="${() => this.openATab(" faves")}">
             <sl-icon src="/assets/heart-outline.svg"></sl-icon>
             Favorites
           </sl-menu-item>
@@ -662,17 +703,17 @@ export class AppHome extends LitElement {
       <post-dialog></post-dialog>
 
       <!-- <sl-dialog id="notify-dialog" label="New Post">
-                                <sl-button circle slot="header-actions" @click="${() => this.attachFile()}">
-                                  <sl-icon src="/assets/attach-outline.svg"></sl-icon>
-                                </sl-button>
-                                <sl-textarea placeholder="What's on your mind?"></sl-textarea>
+                                      <sl-button circle slot="header-actions" @click="${() => this.attachFile()}">
+                                        <sl-icon src="/assets/attach-outline.svg"></sl-icon>
+                                      </sl-button>
+                                      <sl-textarea placeholder="What's on your mind?"></sl-textarea>
 
-                                ${this.attachmentPreview ? html`
-                                <img src="${this.attachmentPreview}" />
-                                ` : html``}
+                                      ${this.attachmentPreview ? html`
+                                      <img src="${this.attachmentPreview}" />
+                                      ` : html``}
 
-                                <sl-button @click="${() => this.publish()}" slot="footer" variant="primary">Publish</sl-button>
-                              </sl-dialog> -->
+                                      <sl-button @click="${() => this.publish()}" slot="footer" variant="primary">Publish</sl-button>
+                                    </sl-dialog> -->
 
       <sl-drawer id="reply-drawer" placement="bottom" label="Reply">
         <sl-button circle slot="footer" @click="${() => this.attachFile()}">
@@ -737,15 +778,15 @@ export class AppHome extends LitElement {
       <sl-drawer id="replies-drawer" placement="end" label="Comments">
         ${this.replies.length > 0 ? html`<ul>
           ${this.replies.map((reply: any) => {
-      return html`
+          return html`
           <timeline-item ?show="${false}" .tweet="${reply}"></timeline-item>
           `
-      })
-          }
+        })
+        }
         </ul>` : html`
-          <div id="no-replies">
-            <p>No comments yet.</p>
-          </div>
+        <div id="no-replies">
+          <p>No comments yet.</p>
+        </div>
         `}
 
         <div slot="footer" id="reply-post-actions">
@@ -755,7 +796,7 @@ export class AppHome extends LitElement {
       </sl-drawer>
 
       <main>
-        <sl-tab-group .placement="${window.matchMedia(" (max-width: 600px)").matches ? "bottom" : "start"}">
+        <sl-tab-group .placement="${window.matchMedia(" (max-width: 600px)").matches ? "bottom" : "start" }">
           <sl-tab slot="nav" panel="general">
             <sl-icon src="/assets/home-outline.svg"></sl-icon>
 
@@ -772,10 +813,10 @@ export class AppHome extends LitElement {
             <span class="tab-label">Notifications</span>
           </sl-tab>
           <!-- <sl-tab slot="nav" panel="messages">
-            <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
+                  <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
 
-            <span class="tab-label">Messages</span>
-          </sl-tab> -->
+                  <span class="tab-label">Messages</span>
+                </sl-tab> -->
           <sl-tab id="bookmarks-tab" slot="nav" panel="bookmarks">
             <sl-icon src="/assets/bookmark-outline.svg"></sl-icon>
 
@@ -841,7 +882,7 @@ export class AppHome extends LitElement {
 
             <p id="user-url">${this.user ? this.user.url : "Loading..."}</p>
 
-            <!-- <div .innerHTML=${this.user ? this.user.note : "Loading..." }></div> -->
+            <!-- <div .innerHTML=${this.user ? this.user.note : "Loading..."}></div> -->
 
             <sl-badge @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count : "0"} followers
             </sl-badge>
@@ -860,5 +901,5 @@ export class AppHome extends LitElement {
         </div>
       </main>
     `;
-    }
   }
+}

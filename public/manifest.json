@@ -45,13 +45,18 @@
   ],
   "screenshots": [
     {
-      "src": "assets/screenshots/new/1280x800-screenshot.png",
-      "sizes": "1280x800",
+      "src": "assets/screenshots/new/mobile-one.png",
+      "sizes": "1081x2162",
       "type": "image/png"
     },
     {
-      "src": "assets/screenshots/new/750x1334-screenshot.png",
-      "sizes": "750x1334",
+      "src": "assets/screenshots/new/mobile-two.png",
+      "sizes": "1081x2162",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/screenshots/new/desktop.png",
+      "sizes": "2580x1728",
       "type": "image/png"
     }
   ],
@@ -60,6 +65,24 @@
     "fast",
     "simple"
   ],
+  "share_target": {
+    "action": "/?share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "name",
+      "text": "description",
+      "files": [
+        {
+          "name": "image",
+          "accept": [
+            ".png",
+            ".jpg"
+          ]
+        }
+      ]
+    }
+  },
   "shortcuts": [
     {
       "name": "Home",

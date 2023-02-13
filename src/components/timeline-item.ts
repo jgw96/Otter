@@ -377,11 +377,11 @@ export class TimelineItem extends LitElement {
 
                         ${this.tweet.card ? html`<div class="status-link-card">
                             <a href="${this.tweet.card.url}" target="_blank" rel="noopener noreferrer">
-                                <div class="status-link-card__image">
+                                ${this.tweet.card.image? html`<div class="status-link-card__image">
 
                                     <img src="${this.tweet.card.image}" @click="${() => this.openInBox(this.tweet.media_attachments[0].preview_url)}" alt="${this.tweet.card.title}">
 
-                    </div>
+                    </div>` : null}
                                 <div class="status-link-card__content">
                                     <h5 class="status-link-card__title">${this.tweet.card.title}</h5>
                                 </div>

@@ -9,6 +9,34 @@ const bgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin('retryqueue
     maxRetentionTime: 48 * 60,
 });
 
+async function shareTargetHandler({ event }) {
+    const formData = await event.request.formData();
+    const mediaFiles = formData.getAll("image");
+    const cache = await caches.open("shareTarget");
+
+    for (const mediaFile of mediaFiles) {
+        await cache.put(
+            // TODO: Handle scenarios in which mediaFile.name isn't set,
+            // or doesn't include a proper extension.
+            mediaFile.name,
+            new Response(mediaFile, {
+                headers: {
+                    "content-length": mediaFile.size,
+                    "content-type": mediaFile.type,
+                },
+            })
+        );
+    }
+
+    return Response.redirect(`/home?name=${mediaFiles[0].name}`, 303);
+}
+
+workbox.routing.registerRoute(
+    '/?share',
+    shareTargetHandler,
+    'POST'
+);
+
 // background sync
 workbox.routing.registerRoute(
     ({ request }) => request.url.includes('/boost?id'),
