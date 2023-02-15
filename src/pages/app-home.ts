@@ -4,22 +4,19 @@ import { property, customElement, state } from 'lit/decorators.js';
 // For more info on the @pwabuilder/pwainstall component click here https://github.com/pwa-builder/pwa-install
 import '@pwabuilder/pwainstall';
 
-import '@shoelace-style/shoelace/dist/components/card/card.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/tab-group/tab-group.js';
 import '@shoelace-style/shoelace/dist/components/tab/tab.js';
 import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js';
 import '@shoelace-style/shoelace/dist/components/badge/badge.js';
-import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
-import '@shoelace-style/shoelace/dist/components/textarea/textarea.js';
 import '@shoelace-style/shoelace/dist/components/drawer/drawer.js';
-import '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js';
-import '@shoelace-style/shoelace/dist/components/radio/radio.js';
-import '@shoelace-style/shoelace/dist/components/color-picker/color-picker.js';
 import '@shoelace-style/shoelace/dist/components/switch/switch.js';
+import '@shoelace-style/shoelace/dist/components/textarea/textarea.js';
+// import '@shoelace-style/shoelace/dist/components/color-picker/color-picker.js';
 import '@shoelace-style/shoelace/dist/components/menu/menu.js';
 import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
 import '@shoelace-style/shoelace/dist/components/divider/divider.js';
+import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 
 import '../components/timeline';
 import '../components/timeline-item';
@@ -27,17 +24,13 @@ import '../components/bookmarks';
 import '../components/favorites';
 import '../components/notifications';
 import '../components/app-theme';
-import '../components/post-dialog';
 
 import './app-messages';
 import './search-page';
 
 import { styles } from '../styles/shared-styles';
 import { getCurrentUser, getInstanceInfo } from '../services/account';
-import { publishPost, uploadImageAsFormData, uploadImageFromBlob } from '../services/posts';
-import { reply } from '../services/timeline';
 import { router } from '../utils/router';
-import { getSettings, setSettings } from '../services/settings';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -91,11 +84,16 @@ export class AppHome extends LitElement {
         background: #00000040;
         padding: 6px;
         gap: 6px;
+
+        border-radius: 6px;
     }
 
     .img-preview img {
         width: 8em;
         min-height: 6em;
+        border-radius: 6px;
+
+        margin-top: 6px;
     }
 
       .setting sl-switch {
@@ -443,12 +441,14 @@ export class AppHome extends LitElement {
 
   constructor() {
     super();
+
+    getCurrentUser().then((user) => {
+      this.user = user;
+    });
   }
 
   async firstUpdated() {
     console.log('This is your home page');
-
-    this.user = await getCurrentUser();
 
     const urlParams = new URLSearchParams(window.location.search);
 
@@ -464,6 +464,7 @@ export class AppHome extends LitElement {
 
 
     window.requestIdleCallback(async () => {
+      const { getSettings } = await import("../services/settings");
       const settings = await getSettings();
 
       if (settings) {
@@ -524,6 +525,7 @@ export class AppHome extends LitElement {
 
       this.attaching = true;
 
+      const { uploadImageFromBlob } = await import("../services/posts");
       const data = await uploadImageFromBlob(blob);
 
       this.attaching = false;
@@ -552,9 +554,10 @@ export class AppHome extends LitElement {
     }
   }
 
-  openNewDialog() {
+  async openNewDialog() {
     // if on desktop, open the dialog
     if (window.innerWidth > 600) {
+      await import("../components/post-dialog");
       // const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
       // dialog.show();
       const dialog: any = this.shadowRoot?.querySelector("post-dialog");
@@ -571,9 +574,11 @@ export class AppHome extends LitElement {
     console.log(status);
 
     if (this.attachmentID) {
+      const { publishPost } = await import("../services/posts");
       await publishPost(status, this.attachmentID);
     }
     else {
+      const { publishPost } = await import("../services/posts");
       await publishPost(status);
     }
 
@@ -599,6 +604,8 @@ export class AppHome extends LitElement {
 
   async attachFile() {
     this.attaching = true;
+
+    const { uploadImageAsFormData } = await import("../services/posts");
     const attachmentData = await uploadImageAsFormData();
     console.log("attachmentData", attachmentData);
 
@@ -621,6 +628,7 @@ export class AppHome extends LitElement {
     const replyValue = (this.shadowRoot?.querySelector('#reply-post-actions sl-input') as any).value;
 
     if (this.replyID && replyValue) {
+      const { reply } = await import("../services/timeline");
       await reply(this.replyID, replyValue);
     }
   }
@@ -644,17 +652,19 @@ export class AppHome extends LitElement {
     appTimeline.style.right = appTimeline.style.right === '11vw' ? '0' : '11vw';
   }
 
-  handleWellnessMode(check: boolean) {
+  async handleWellnessMode(check: boolean) {
     console.log("check", check);
     this.wellnessMode = check;
 
+    const { setSettings } = await import("../services/settings");
     setSettings({ wellness: check });
   }
 
-  handleDataSaverMode(mode: boolean) {
+  async handleDataSaverMode(mode: boolean) {
     console.log("mode", mode)
     this.dataSaverMode = mode;
 
+    const { setSettings } = await import("../services/settings");
     setSettings({ data_saver: mode });
   }
 

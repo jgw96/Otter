@@ -1,14 +1,12 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js'
 import { classMap } from 'lit/directives/class-map.js';
-import { boostPost, getAStatus, getReplies, reblogPost } from '../services/timeline';
 
 import '../components/user-profile';
 
 import '@shoelace-style/shoelace/dist/components/card/card.js';
 import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 
-import { addBookmark } from '../services/bookmarks';
 import { getSettings, Settings } from '../services/settings';
 
 @customElement('timeline-item')
@@ -242,6 +240,7 @@ export class TimelineItem extends LitElement {
         }
 
         if(this.tweet.in_reply_to_id !== null) {
+            const { getAStatus } = await import('../services/timeline');
           const replyStatus = await getAStatus(this.tweet.in_reply_to_id);
 
           this.tweet.reply_to = replyStatus;
@@ -270,6 +269,8 @@ export class TimelineItem extends LitElement {
 
     async favorite(id: string) {
         console.log("favorite", id);
+
+        const { boostPost } = await import('../services/timeline');
         await boostPost(id);
 
         this.isBoosted = true;
@@ -284,6 +285,8 @@ export class TimelineItem extends LitElement {
 
     async reblog(id: string) {
         console.log("reblog", id);
+
+        const { reblogPost } = await import('../services/timeline');
         await reblogPost(id);
 
         this.isReblogged = true;
@@ -298,12 +301,14 @@ export class TimelineItem extends LitElement {
 
     async bookmark(id: string) {
         console.log("bookmark", id);
+        const { addBookmark } = await import('../services/bookmarks');
         await addBookmark(id);
 
         this.isBookmarked = true;
     }
 
     async replies(id: string) {
+        const { getReplies } = await import('../services/timeline');
       const data = await getReplies(id);
       console.log(data);
 

@@ -6,7 +6,6 @@ import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 import '@shoelace-style/shoelace/dist/components/menu/menu.js';
 import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
 import '@shoelace-style/shoelace/dist/components/menu-label/menu-label.js';
-import { searchTimeline } from '../services/timeline';
 
 import { router } from '../utils/router';
 
@@ -47,6 +46,7 @@ export class Search extends LitElement {
 
             entries.forEach(async entry => {
                 if (entry.isIntersecting) {
+                    const { searchTimeline } = await import('../services/timeline');
                     const searchData = await searchTimeline("Mastodon");
                     console.log("searchData", searchData);
 
@@ -73,7 +73,7 @@ export class Search extends LitElement {
         console.log(value);
 
         // const dropdown: any = this.shadowRoot?.querySelector('sl-dropdown');
-
+        const { searchTimeline } = await import('../services/timeline');
         const searchData = await searchTimeline(value);
         console.log("searchData", searchData);
 

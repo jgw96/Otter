@@ -43,11 +43,15 @@ export class PostDialog extends LitElement {
                 background: #00000040;
                 padding: 6px;
                 gap: 6px;
+
+                border-radius: 6px;
             }
 
             .img-preview img {
                 width: 8em;
                 min-height: 6em;
+                border-radius: 6px;
+                margin-top: 4px;
             }
 
             sl-skeleton {

@@ -1,8 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
-import { clearNotifications, getNotifications, subToPush } from '../services/notifications';
-
 import './user-profile';
 import './timeline-item';
 
@@ -11,6 +9,7 @@ import '@shoelace-style/shoelace/dist/components/divider/divider';
 @customElement('app-notifications')
 export class Notifications extends LitElement {
     @state() notifications = [];
+    @state() subbed: boolean = false;
 
     static styles = [
         css`
@@ -23,6 +22,10 @@ export class Notifications extends LitElement {
                 contain: paint layout style;
                 content-visibility: auto;
             }
+
+            sl-switch {
+                --sl-toggle-size-small: 16px;
+              }
 
             ul {
                 display: flex;
@@ -110,7 +113,7 @@ export class Notifications extends LitElement {
                 border-radius: 6px;
                 background: transparent;
                 display: flex;
-                justify-content: flex-end;
+                justify-content: space-between;
                 align-items: center;
                 gap: 8px;
             }
@@ -130,10 +133,20 @@ export class Notifications extends LitElement {
 
             entries.forEach(async entry => {
                 if (entry.isIntersecting) {
+                    const { getNotifications } = await import('../services/notifications');
                     const notificationsData = await getNotifications();
                     console.log(notificationsData);
 
                     this.notifications = notificationsData;
+
+                    // check push reg
+                    const reg = await navigator.serviceWorker.getRegistration();
+                    if (reg && reg.pushManager) {
+                        const sub = await reg.pushManager.getSubscription();
+                        if (sub) {
+                            this.subbed = true;
+                        }
+                    }
 
                     observer.disconnect();
                 }
@@ -145,6 +158,7 @@ export class Notifications extends LitElement {
     }
 
     async clear() {
+        const { getNotifications, clearNotifications } = await import('../services/notifications');
         await clearNotifications();
 
         const notificationsData = await getNotifications();
@@ -153,14 +167,28 @@ export class Notifications extends LitElement {
         this.notifications = notificationsData;
     }
 
-    async sub() {
-        await subToPush();
+    async sub(flag: boolean) {
+        console.log("flag", flag)
+        const { subToPush, unsubToPush } = await import('../services/notifications');
+
+        if (flag === false) {
+          await unsubToPush();
+        }
+        else {
+            try {
+                await subToPush();
+                this.subbed = true;
+            }
+            catch (err) {
+                console.log(err);
+            }
+        }
     }
 
     render() {
         return html`
           <div id="notify-actions">
-            <sl-button pill size="small" variant="primary" @click="${() => this.sub()}">Subscribe to Push Notifications</sl-button>
+            <sl-switch size="small" label="Notifications" ?checked="${this.subbed}" @sl-change="${($event: any) => this.sub($event.target.checked)}">Notifications</sl-switch>
             <sl-button pill size="small" @click="${() => this.clear()}">Clear</sl-button>
           </div>
 

@@ -100,11 +100,12 @@ export class Timeline extends LitElement {
             }
 
             .fake sl-skeleton {
-                height: 241px;
+                height: 302px;
                 --border-radius: var(--sl-border-radius-medium);
             }
 
             .fake {
+                margin-bottom: 8px;
                 animation-name: fadein;
                 animation-duration: 0.3s;
             }
@@ -128,6 +129,10 @@ export class Timeline extends LitElement {
                 ul {
                     padding: 0 10px;
                 }
+
+                #img-preview::part(panel) {
+                    height: initial;
+                }
             }
 
             @keyframes fadein {
@@ -142,22 +147,26 @@ export class Timeline extends LitElement {
     ];
 
     async firstUpdated() {
-        this.loadingData = true;
-        await this.refreshTimeline(true);
-        this.loadingData = false;
+        window.requestIdleCallback(async () => {
+            this.loadingData = true;
+            await this.refreshTimeline(true);
+            this.loadingData = false;
+        }, { timeout: 3000});
 
-        // update data when the user scrolls to the bottom of the page
-        const scroller = this.shadowRoot?.querySelector('lit-virtualizer') as any;
+        window.requestIdleCallback(async () => {
+            // update data when the user scrolls to the bottom of the page
+            const scroller = this.shadowRoot?.querySelector('lit-virtualizer') as any;
 
-        scroller.onoverscroll = async (e: any) => {
-            if (e.deltaY > 0) {
-                if (this.loadingData) return;
+            scroller.onoverscroll = async (e: any) => {
+                if (e.deltaY > 0) {
+                    if (this.loadingData) return;
 
-                this.loadingData = true;
-                await this.loadMore();
-                this.loadingData = false;
+                    this.loadingData = true;
+                    await this.loadMore();
+                    this.loadingData = false;
+                }
             }
-        }
+        }, { timeout: 3000});
 
     }
 
@@ -263,6 +272,28 @@ export class Timeline extends LitElement {
         </div>
 
         <ul>
+            ${this.loadingData ? html`
+                <li class="fake">
+                    <sl-skeleton effect="pulse"></sl-skeleton>
+                </li>
+
+                <li class="fake">
+                    <sl-skeleton effect="pulse"></sl-skeleton>
+                </li>
+
+                <li class="fake">
+                    <sl-skeleton effect="pulse"></sl-skeleton>
+                </li>
+
+                <li class="fake">
+                    <sl-skeleton effect="pulse"></sl-skeleton>
+                </li>
+
+                <li class="fake">
+                    <sl-skeleton effect="pulse"></sl-skeleton>
+                </li>
+            ` : null}
+
             <lit-virtualizer scroller .items="${this.timeline}" .renderItem="${
                 (tweet: any) => html`
                 <timeline-item @analyze="${($event: any) => this.showAnalyze($event.detail.data)}" @openimage="${($event: any) => this.showImage($event.detail.imageURL)}" ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>

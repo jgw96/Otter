@@ -1,8 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
-import { getFavorites } from '../services/favorites';
-
 @customElement('app-favorites')
 export class Favorites extends LitElement {
     @state() favorites = [];
@@ -52,6 +50,7 @@ export class Favorites extends LitElement {
 
             entries.forEach(async entry => {
                 if (entry.isIntersecting) {
+                    const { getFavorites } = await import('../services/favorites');
                     const favoritesData = await getFavorites();
                     console.log(favoritesData);
 

@@ -1,6 +1,5 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js'
-import { getBookmarks } from '../services/bookmarks';
 
 import './timeline-item';
 
@@ -54,6 +53,7 @@ export class Bookmarks extends LitElement {
 
             entries.forEach(async entry => {
                 if (entry.isIntersecting) {
+                    const { getBookmarks } = await import('../services/bookmarks');
                     const bookmarksData = await getBookmarks();
                     console.log(bookmarksData);
 
