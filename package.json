@@ -22,6 +22,7 @@
     "@vaadin/router": "^1.7.4",
     "browser-fs-access": "^0.31.1",
     "lit": "^2.3.1",
+    "urlpattern-polyfill": "^6.0.2",
     "workbox-build": "^6.5.2",
     "workbox-core": "^6.5.2",
     "workbox-precaching": "^6.5.2"

@@ -2,6 +2,21 @@ importScripts(
     'https://storage.googleapis.com/workbox-cdn/releases/6.5.4/workbox-sw.js'
 );
 
+self.addEventListener('push', (event) => {
+    if (event.data) {
+        console.log('This push event has data: ', event.data.json());
+
+        const notifData = event.data.json();
+
+        const promiseChain = self.registration.showNotification("Mammoth", {
+            body: `You have a new ${notifData.type} from ${notifData.account.username}`,
+        });
+        event.waitUntil(promiseChain);
+    } else {
+        console.log('This push event has no data.');
+    }
+});
+
 // This is your Service Worker, you can put any of your custom Service Worker
 // code in this file, above the `precacheAndRoute` line.
 
