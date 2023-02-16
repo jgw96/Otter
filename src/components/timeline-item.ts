@@ -30,6 +30,15 @@ export class TimelineItem extends LitElement {
                 margin-bottom: 10px;
             }
 
+            img[data-src] {
+                opacity: 0;
+            }
+
+            img {
+                opacity: 1;
+                transition: opacity 0.3s ease-in-out;
+            }
+
             .status-link-card {
                 display: flex;
                 align-items: center;
@@ -253,13 +262,17 @@ export class TimelineItem extends LitElement {
             if (img) {
                 const src = img.getAttribute('data-src');
                 if (src) {
-                    img.setAttribute('src', src);
+                    img.onload = () => {
+                        window.requestIdleCallback(() => {
+                            img.removeAttribute('data-src');
 
-                    window.requestIdleCallback(() => {
-                        img.removeAttribute('data-src');
-                    }, {
-                        timeout: 1000
-                    })
+                            // remove event listener
+                            img.onload = null;
+                        }, {
+                            timeout: 1000
+                        })
+                    }
+                    img.setAttribute('src', src);
                 }
             }
         }, {

@@ -54,6 +54,47 @@ export const subToPush = async () => {
     console.log('subToPush', res);
 }
 
+export const modifyPush = async (flags?: any[]) => {
+    let data: any | undefined;
+    if (flags) {
+        data = {
+            alerts: {
+                follow: flags.includes('follow'),
+                reblog: flags.includes('reblog'),
+                favourite: flags.includes('favourite'),
+                mention: flags.includes('mention'),
+                poll: flags.includes('poll'),
+                follow_request: flags.includes('follow_request')
+            }
+        };
+    }
+    else {
+        data = {
+            alerts: {
+                follow: true,
+                reblog: true,
+                favourite: true,
+                mention: true,
+                poll: true,
+                follow_request: true
+            }
+        };
+    }
+
+    const response = await fetch(`https://${server}/api/v1/push/subscription`, {
+        method: 'PUT',
+        headers: new Headers({
+            "Authorization": `Bearer ${accessToken}`,
+            "Content-Type": "application/json"
+        }),
+        body: JSON.stringify({
+            data
+        })
+    });
+    const res = await response.json();
+    console.log('modifyPush', res);
+}
+
 export const unsubToPush = async () => {
     // get push subscription
     const registration = await navigator.serviceWorker.getRegistration();

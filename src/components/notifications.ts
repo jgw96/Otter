@@ -23,6 +23,13 @@ export class Notifications extends LitElement {
                 content-visibility: auto;
             }
 
+            #notify-inner {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+            }
+
             sl-switch {
                 --sl-toggle-size-small: 16px;
               }
@@ -169,7 +176,7 @@ export class Notifications extends LitElement {
 
     async sub(flag: boolean) {
         console.log("flag", flag)
-        const { subToPush, unsubToPush } = await import('../services/notifications');
+        const { subToPush, unsubToPush, modifyPush } = await import('../services/notifications');
 
         if (flag === false) {
           await unsubToPush();
@@ -178,6 +185,9 @@ export class Notifications extends LitElement {
             try {
                 await subToPush();
                 this.subbed = true;
+
+                await modifyPush();
+
             }
             catch (err) {
                 console.log(err);
@@ -188,7 +198,19 @@ export class Notifications extends LitElement {
     render() {
         return html`
           <div id="notify-actions">
+            <div id="notify-inner">
             <sl-switch size="small" label="Notifications" ?checked="${this.subbed}" @sl-change="${($event: any) => this.sub($event.target.checked)}">Notifications</sl-switch>
+                ${this.subbed === true ? html`<sl-dropdown>
+                    <sl-button pill size="small" slot="trigger" caret>Settings</sl-button>
+                    <sl-menu>
+                        <sl-menu-label>Get Notifications For</sl-menu-label>
+                        <sl-menu-item type="checkbox" checked>Follows</sl-menu-item>
+                        <sl-menu-item type="checkbox" checked>Favorites</sl-menu-item>
+                        <sl-menu-item type="checkbox" checked>Boosts</sl-menu-item>
+                        <sl-menu-item type="checkbox" checked>Mentions</sl-menu-item>
+                    </sl-menu>
+                </sl-dropdown>` : null}
+            </div>
             <sl-button pill size="small" @click="${() => this.clear()}">Clear</sl-button>
           </div>
 
