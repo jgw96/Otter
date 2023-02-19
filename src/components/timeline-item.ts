@@ -9,6 +9,11 @@ import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 
 import { getSettings, Settings } from '../services/settings';
 
+// import * as blurhash from "blurhash-wasm";
+
+// @ts-ignore
+import ImgWorker from '../utils/img-worker?worker';
+
 @customElement('timeline-item')
 export class TimelineItem extends LitElement {
     @property({ type: Object }) tweet: any;
@@ -19,6 +24,11 @@ export class TimelineItem extends LitElement {
     @state() isBookmarked = false;
 
     @state() settings: Settings | undefined;
+
+    canvas = document.createElement('canvas');
+    ctx = this.canvas.getContext('bitmaprenderer');
+
+    worker: Worker | undefined;
 
     static styles = [
         css`
@@ -257,27 +267,128 @@ export class TimelineItem extends LitElement {
     }
 
     async loadImage() {
-        window.requestIdleCallback(() => {
+       // window.requestIdleCallback(() => {
+
             const img = this.shadowRoot?.querySelector('img');
+
+            console.log("timeline img", img);
+
             if (img) {
                 const src = img.getAttribute('data-src');
+
+                // handle blurhash
+                if (this.tweet.media_attachments[0] && this.tweet.media_attachments[0].blurhash) {
+                    console.log("has blurhash", this.tweet.media_attachments[0].blurhash);
+                    try {
+                        this.worker = new ImgWorker();
+                            //  console.log(this.worker);
+
+                        // window.requestIdleCallback(() => {
+
+                            // const pixels = blurhash.decode(this.tweet.media_attachments[0].blurhash, this.tweet.media_attachments[0].meta.original.width, this.tweet.media_attachments[0].meta.original.height);
+                              this.canvas.width = this.tweet.media_attachments[0].meta.original.width;
+                              this.canvas.height = this.tweet.media_attachments[0].meta.original.height;
+
+                              this.worker!.onmessage = (e) => {
+                                console.log("worker message", e.data)
+                                // e.data is a bitmap
+                                // display bitmap on canvas
+                                this.ctx!.transferFromImageBitmap(e.data!)
+
+                                img.setAttribute('src', this.canvas.toDataURL());
+
+                                img.removeAttribute('data-src');
+                                //
+
+                                // window.requestIdleCallback(() => {
+                                    // const imageData = this.ctx?.createImageData(this.canvas.width, this.canvas.height);
+
+                                    // if (imageData) {
+                                    //     imageData.data.set(e.data!);
+                                    //     this.ctx?.putImageData(imageData, 0, 0);
+
+                                    //     img.setAttribute('src', this.canvas.toDataURL());
+
+                                    //     img.removeAttribute('data-src');
+
+                                    //     console.log("src", src);
+
+                                    //                     // start loading real image
+                                        if (src) {
+                                            const placeholderImage = new Image();
+
+                                            img.onload = () => {
+                                                window.requestIdleCallback(() => {
+                                                    // remove event listener
+
+                                                    img.removeAttribute('data-src');
+
+                                                }, {
+                                                    timeout: 1000
+                                                })
+                                            }
+
+                                            placeholderImage.onload = () => {
+                                                img.setAttribute('src', src);
+                                            };
+
+                                            placeholderImage.src = src;
+                                        }
+                                    // }
+                                //}, {
+                                //    timeout: 3000
+                                //})
+
+                                this.worker!.terminate();
+                              }
+
+                              console.log("posting message", {
+                                hash: this.tweet.media_attachments[0].blurhash,
+                                width: this.tweet.media_attachments[0].meta.original.width,
+                                height: this.tweet.media_attachments[0].meta.original.height
+                                })
+
+                                this.worker!.postMessage({
+                                    hash: this.tweet.media_attachments[0].blurhash,
+                                    width: this.tweet.media_attachments[0].meta.original.width,
+                                    height: this.tweet.media_attachments[0].meta.original.height
+                                });
+                        // }, {
+                        //     timeout: 3000
+                        // });
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+                else {
+                    console.log('in here', src);
+                                    // start loading real image
                 if (src) {
+                    const placeholderImage = new Image();
+
                     img.onload = () => {
                         window.requestIdleCallback(() => {
-                            img.removeAttribute('data-src');
-
+                            // if (!this.tweet.media_attachments[0] || !this.tweet.media_attachments[0].blurhash) {
+                                img.removeAttribute('data-src');
+                            // }
                             // remove event listener
                             img.onload = null;
                         }, {
                             timeout: 1000
                         })
                     }
-                    img.setAttribute('src', src);
+
+                    placeholderImage.onload = () => {
+                        img.setAttribute('src', src);
+                    };
+
+                    placeholderImage.src = src;
+                }
                 }
             }
-        }, {
-            timeout: 1000
-        })
+       // }, {
+       //     timeout: 1000
+       // })
     }
 
     async favorite(id: string) {
@@ -399,11 +510,11 @@ export class TimelineItem extends LitElement {
                         <user-profile .account="${this.tweet.account}"></user-profile>
                         <div .innerHTML="${this.tweet.content}"></div>
 
-                        ${this.tweet.card ? html`<div class="status-link-card">
+                        <!-- ${this.tweet.card ? html`<div class="status-link-card">
                             <a href="${this.tweet.card.url}" target="_blank" rel="noopener noreferrer">
                                 ${this.tweet.card.image? html`<div class="status-link-card__image">
 
-                                    <img src="${this.tweet.card.image}" @click="${() => this.openInBox(this.tweet.media_attachments[0].preview_url)}" alt="${this.tweet.card.title}">
+                                    <img src="${this.tweet.card.image}" alt="${this.tweet.card.title}">
 
                     </div>` : null}
                                 <div class="status-link-card__content">
@@ -411,7 +522,7 @@ export class TimelineItem extends LitElement {
                                 </div>
                                 </a>
 
-                        </div>` : null}
+                        </div>` : null} -->
 
                         <div class="actions" slot="footer">
                         <sl-button pill @click="${() => this.analyzeStatus(this.tweet.content)}">
