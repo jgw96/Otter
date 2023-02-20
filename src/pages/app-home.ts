@@ -24,6 +24,7 @@ import '../components/bookmarks';
 import '../components/favorites';
 import '../components/notifications';
 import '../components/app-theme';
+import '../components/right-click';
 
 import './app-messages';
 import './search-page';
@@ -112,6 +113,10 @@ export class AppHome extends LitElement {
         transition: transform, opacity;
         transition-duration: 0.12s;
         pointer-events: none;
+    }
+
+    right-click sl-menu-item::part(checked-icon) {
+      width: 8px;
     }
 
     #context-menu sl-menu-item::part(checked-icon) {
@@ -474,33 +479,33 @@ export class AppHome extends LitElement {
       }
     }, { timeout: 3000 });
 
-    const contextMenu = this.shadowRoot?.getElementById("context-menu");
-    const scope = document.querySelector("body");
+    // const contextMenu = this.shadowRoot?.getElementById("context-menu");
+    // const scope = document.querySelector("body");
 
-    console.log("contextMenu", contextMenu);
+    // console.log("contextMenu", contextMenu);
 
-    if (scope && contextMenu) {
-      scope.addEventListener("contextmenu", (event) => {
-        event.preventDefault();
-        const { clientX: mouseX, clientY: mouseY } = event;
-        contextMenu.style.top = `${mouseY}px`;
-        contextMenu.style.left = `${mouseX}px`;
+    // if (scope && contextMenu) {
+    //   scope.addEventListener("contextmenu", (event) => {
+    //     event.preventDefault();
+    //     const { clientX: mouseX, clientY: mouseY } = event;
+    //     contextMenu.style.top = `${mouseY}px`;
+    //     contextMenu.style.left = `${mouseX}px`;
 
-        contextMenu.classList.remove("visible");
+    //     contextMenu.classList.remove("visible");
 
-        setTimeout(() => {
-          contextMenu.classList.add("visible");
-        }, 300)
+    //     setTimeout(() => {
+    //       contextMenu.classList.add("visible");
+    //     }, 300)
 
-        event.preventDefault();
-      });
+    //     event.preventDefault();
+    //   });
 
-      scope.addEventListener("click", (e) => {
-        if ((e.target as any)!.offsetParent != contextMenu) {
-          contextMenu.classList.remove("visible");
-        }
-      });
-    }
+    //   scope.addEventListener("click", (e) => {
+    //     if ((e.target as any)!.offsetParent != contextMenu) {
+    //       contextMenu.classList.remove("visible");
+    //     }
+    //   });
+    // }
   }
 
   async shareTarget(name: string) {
@@ -680,7 +685,7 @@ export class AppHome extends LitElement {
 
   render() {
     return html`
-      <div id="context-menu">
+      <!-- <div id="context-menu">
         <sl-menu>
           <sl-menu-item @click="${() => this.openNewDialog()}">
             <sl-icon slot="prefix" src="/assets/add-outline.svg"></sl-icon>
@@ -708,7 +713,37 @@ export class AppHome extends LitElement {
             Favorites
           </sl-menu-item>
         </sl-menu>
-      </div>
+      </div> -->
+
+      <right-click>
+        <sl-menu>
+            <sl-menu-item @click="${() => this.openNewDialog()}">
+              <sl-icon slot="prefix" src="/assets/add-outline.svg"></sl-icon>
+              New Post
+            </sl-menu-item>
+            <sl-divider></sl-divider>
+            <sl-menu-item @click="${() => this.openATab(" search")}">
+              <sl-icon src="/assets/search-outline.svg"></sl-icon>
+              Explore
+            </sl-menu-item>
+            <sl-menu-item @click="${() => this.openATab(" notifications")}">
+              <sl-icon src="/assets/notifications-outline.svg"></sl-icon>
+              Notifications
+            </sl-menu-item>
+            <sl-menu-item @click="${() => this.openATab(" messages")}">
+              <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
+              Messages
+            </sl-menu-item>
+            <sl-menu-item @click="${() => this.openATab(" bookmarks")}">
+              <sl-icon src="/assets/bookmark-outline.svg"></sl-icon>
+              Bookmarks
+            </sl-menu-item>
+            <sl-menu-item @click="${() => this.openATab(" faves")}">
+              <sl-icon src="/assets/heart-outline.svg"></sl-icon>
+              Favorites
+            </sl-menu-item>
+          </sl-menu>
+      </right-click>
 
       <app-header @open-settings="${() => this.openSettingsDrawer()}" @open-theming="${() => this.openThemingDrawer()}">
       </app-header>

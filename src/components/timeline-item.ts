@@ -271,8 +271,6 @@ export class TimelineItem extends LitElement {
 
             const img = this.shadowRoot?.querySelector('img');
 
-            console.log("timeline img", img);
-
             if (img) {
                 const src = img.getAttribute('data-src');
 
@@ -281,11 +279,7 @@ export class TimelineItem extends LitElement {
                     console.log("has blurhash", this.tweet.media_attachments[0].blurhash);
                     try {
                         this.worker = new ImgWorker();
-                            //  console.log(this.worker);
 
-                        // window.requestIdleCallback(() => {
-
-                            // const pixels = blurhash.decode(this.tweet.media_attachments[0].blurhash, this.tweet.media_attachments[0].meta.original.width, this.tweet.media_attachments[0].meta.original.height);
                               this.canvas.width = this.tweet.media_attachments[0].meta.original.width;
                               this.canvas.height = this.tweet.media_attachments[0].meta.original.height;
 
@@ -298,22 +292,7 @@ export class TimelineItem extends LitElement {
                                 img.setAttribute('src', this.canvas.toDataURL());
 
                                 img.removeAttribute('data-src');
-                                //
 
-                                // window.requestIdleCallback(() => {
-                                    // const imageData = this.ctx?.createImageData(this.canvas.width, this.canvas.height);
-
-                                    // if (imageData) {
-                                    //     imageData.data.set(e.data!);
-                                    //     this.ctx?.putImageData(imageData, 0, 0);
-
-                                    //     img.setAttribute('src', this.canvas.toDataURL());
-
-                                    //     img.removeAttribute('data-src');
-
-                                    //     console.log("src", src);
-
-                                    //                     // start loading real image
                                         if (src) {
                                             const placeholderImage = new Image();
 
@@ -341,13 +320,6 @@ export class TimelineItem extends LitElement {
 
                                 this.worker!.terminate();
                               }
-
-                              console.log("posting message", {
-                                hash: this.tweet.media_attachments[0].blurhash,
-                                width: this.tweet.media_attachments[0].meta.original.width,
-                                height: this.tweet.media_attachments[0].meta.original.height
-                                })
-
                                 this.worker!.postMessage({
                                     hash: this.tweet.media_attachments[0].blurhash,
                                     width: this.tweet.media_attachments[0].meta.original.width,
@@ -502,6 +474,7 @@ export class TimelineItem extends LitElement {
                 <sl-card class="${classMap({ replyCard: this.tweet.reply_to ? true : false})}">
                       ${
                         this.tweet.media_attachments.length > 0 ? html`
+
                           <img slot="image" @click="${() => this.openInBox(this.tweet.media_attachments[0].preview_url)}" data-src="${this.tweet.media_attachments[0].preview_url}">
 
                         ` : html``

@@ -13,21 +13,51 @@ export class RightClick extends LitElement {
 
                 content-visibility: auto;
                 contain: layout style paint;
+
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 2;
+
+                pointer-events: none;
             }
 
             #context-menu {
                 position: fixed;
                 z-index: 10000;
-                width: 150px;
+                width: fit-content;
+                overflow-x: hidden;
                 background: #1blala;
                 border-radius: 5px;
                 display: none;
                 pointer-events: none;
+                opacity: 0;
+
+                animation-name: fadeIn;
+                animation-duration: 0.12s;
+                animation-fill-mode: forwards;
+                animation-timing-function: ease-in-out;
+                transform-origin: top left;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: scale(0.8);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: scale(1);
+                }
             }
 
             #context-menu.visible {
-              display: block;
-              pointer-events: auto;
+                display: block;
+                pointer-events: auto;
             }
 
         `
@@ -37,34 +67,38 @@ export class RightClick extends LitElement {
         const contextMenu = this.shadowRoot?.getElementById("context-menu");
         const scope = document.querySelector("body");
 
-        console.log("contextMenu", contextMenu);
+        console.log("contextMenu", contextMenu, scope);
 
         if (scope && contextMenu) {
-            scope.addEventListener("contextmenu", (event) => {
-                event.preventDefault();
-                const { clientX: mouseX, clientY: mouseY } = event;
-                contextMenu.style.top = `${mouseY}px`;
-                contextMenu.style.left = `${mouseX}px`;
-                contextMenu.classList.add("visible");
-                event.preventDefault();
-            });
+            if (scope && contextMenu) {
+                scope.addEventListener("contextmenu", (event) => {
+                    event.preventDefault();
+                    const { clientX: mouseX, clientY: mouseY } = event;
+                    contextMenu.style.top = `${mouseY}px`;
+                    contextMenu.style.left = `${mouseX}px`;
+
+                    contextMenu.classList.remove("visible");
+
+                    setTimeout(() => {
+                        contextMenu.classList.add("visible");
+                    }, 300)
+
+                    event.preventDefault();
+                });
+
+                scope.addEventListener("click", (e) => {
+                    if ((e.target as any)!.offsetParent != contextMenu) {
+                        contextMenu.classList.remove("visible");
+                    }
+                })
+            }
         }
     }
 
     render() {
         return html`
         <div id="context-menu">
-            <sl-menu>
-                <sl-menu-item>Item 1</sl-menu-item>
-                <sl-menu-item>Item 2</sl-menu-item>
-                <sl-menu-item>Item 3</sl-menu-item>
-
-                <sl-menu-divider></sl-menu-divider>
-
-                <sl-menu-item>Item 4</sl-menu-item>
-                <sl-menu-item>Item 5</sl-menu-item>
-                <sl-menu-item>Item 6</sl-menu-item>
-            </sl-menu>
+            <slot></slot>
         </div>
         `;
     }
