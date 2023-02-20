@@ -2,6 +2,26 @@ importScripts(
     'https://storage.googleapis.com/workbox-cdn/releases/6.5.4/workbox-sw.js'
 );
 
+// Listen to the widgetinstall event.
+self.addEventListener("widgetinstall", event => {
+    // The widget just got installed, render it using renderWidget.
+    // Pass the event.widget object to the function.
+    event.waitUntil(renderWidget(event.widget));
+});
+
+const renderWidget = async (widget) => {
+    // Get the template and data URLs from the widget definition.
+    const templateUrl = widget.definition.msAcTemplate;
+    const dataUrl = widget.definition.data;
+
+    // Fetch the template text and data.
+    const template = await (await fetch(templateUrl)).text();
+    const data = await (await fetch(dataUrl)).text();
+
+    // Render the widget with the template and data.
+    await self.widgets.updateByTag(widget.definition.tag, { template, data });
+}
+
 self.addEventListener('push', (event) => {
     if (event.data) {
         console.log('This push event has data: ', event.data.json());
