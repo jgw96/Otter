@@ -144,5 +144,24 @@
         }
       ]
     }
+  ],
+  "widgets": [
+    {
+      "name": "Mammoth",
+      "description": "Widget for Mammoth, the Mastodon app",
+      "tag": "mammoth",
+      "template": "mammoth-template",
+      "ms_ac_template": "widgets/widget-template.json",
+      "data": "widgets/widget-data.json",
+      "type": "application/json",
+      "icons": [
+        {
+          "src": "./favicon-16.png",
+          "sizes": "16x16"
+        }
+      ],
+      "auth": false,
+      "update": 86400
+    }
   ]
 }

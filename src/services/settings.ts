@@ -4,6 +4,7 @@ export interface Settings {
     data_saver?: boolean;
     wellness?: boolean;
     focus?: boolean;
+    sensitive?: boolean;
 }
 
 const defaultSettings = {
@@ -11,16 +12,19 @@ const defaultSettings = {
     font_size: "16px",
     data_saver: false,
     wellness: false,
-    focus: false
+    focus: false,
+    sensitive: false
 }
 
-export function getSettings(): Settings {
-    const settings = localStorage.getItem('settings');
-    return settings ? JSON.parse(settings) : defaultSettings;
+export async function getSettings(): Promise<Settings> {
+    const { get } = await import("idb-keyval");
+
+    const settings = await get('settings');
+    return settings ? settings : defaultSettings;
 }
 
-export function setSettings(settings: Settings) {
-    const currentSettings = getSettings();
+export async function setSettings(settings: Settings) {
+    const currentSettings = await getSettings();
 
     const savedSettings = {
         primary_color: settings.primary_color || currentSettings.primary_color,
@@ -28,6 +32,10 @@ export function setSettings(settings: Settings) {
         data_saver: Object.keys(settings).includes("data_saver") ? settings.data_saver : currentSettings.data_saver,
         wellness: Object.keys(settings).includes("wellness") ? settings.wellness : currentSettings.wellness,
         focus: Object.keys(settings).includes("focus") ? settings.focus : currentSettings.focus,
+        sensitive: Object.keys(settings).includes("sensitive") ? settings.sensitive : currentSettings.sensitive,
     }
-    localStorage.setItem('settings', JSON.stringify(savedSettings));
+    // localStorage.setItem('settings', JSON.stringify(savedSettings));
+    const { set } = await import("idb-keyval");
+
+    await set('settings', savedSettings);
 }
