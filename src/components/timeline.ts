@@ -147,6 +147,7 @@ export class Timeline extends LitElement {
     ];
 
     async firstUpdated() {
+        console.log("first updated", this.timelineType)
         window.requestIdleCallback(async () => {
             this.loadingData = true;
             await this.refreshTimeline(true);
@@ -187,7 +188,7 @@ export class Timeline extends LitElement {
                 break;
             case "Media":
                 console.log("media timeline")
-               const timelineDataMedia = await getPaginatedHomeTimeline();
+               const timelineDataMedia = await getPaginatedHomeTimeline(cache);
 
                // filter out tweets that don't have media
                 (timelineDataMedia as Array<any>).filter((tweet: any) => tweet.media_attachments.length > 0);
