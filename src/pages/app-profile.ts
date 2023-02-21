@@ -150,14 +150,13 @@ export class AppProfile extends LitElement {
 
             #profile #avatar-block img {
                 height: 5em;
-
-
                 border: solid var(--sl-color-primary-600) 4px;
-
                 position: relative;
                 top: 6px;
                 right: 2px;
+                width: 5em;
                 border-radius: 4px;
+                object-fit: cover;
               }
 
               #fields sl-badge span {

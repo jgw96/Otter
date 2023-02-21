@@ -51,12 +51,6 @@ export class Notifications extends LitElement {
                 display: none;
             }
 
-            @media(max-width: 600px) {
-                ul {
-                    height: initial;
-                }
-            }
-
             .notify-header img {
                 border-radius: 50%;
                 height: 62px;
@@ -123,6 +117,13 @@ export class Notifications extends LitElement {
                 justify-content: space-between;
                 align-items: center;
                 gap: 8px;
+            }
+
+            @media(max-width: 600px) {
+                sl-tab-group {
+                    padding-left: 10px;
+                    padding-right: 10px;
+                }
             }
         `
     ];
@@ -200,21 +201,17 @@ export class Notifications extends LitElement {
           <div id="notify-actions">
             <div id="notify-inner">
             <sl-switch size="small" label="Notifications" ?checked="${this.subbed}" @sl-change="${($event: any) => this.sub($event.target.checked)}">Notifications</sl-switch>
-                ${this.subbed === true ? html`<sl-dropdown>
-                    <sl-button pill size="small" slot="trigger" caret>Settings</sl-button>
-                    <sl-menu>
-                        <sl-menu-label>Get Notifications For</sl-menu-label>
-                        <sl-menu-item type="checkbox" checked>Follows</sl-menu-item>
-                        <sl-menu-item type="checkbox" checked>Favorites</sl-menu-item>
-                        <sl-menu-item type="checkbox" checked>Boosts</sl-menu-item>
-                        <sl-menu-item type="checkbox" checked>Mentions</sl-menu-item>
-                    </sl-menu>
-                </sl-dropdown>` : null}
             </div>
             <sl-button pill size="small" @click="${() => this.clear()}">Clear</sl-button>
           </div>
 
-          <ul>
+          <sl-tab-group placement="top">
+                <sl-tab slot="nav" panel="all">All</sl-tab>
+                <sl-tab slot="nav" panel="mentions">Mentions</sl-tab>
+                <sl-tab slot="nav" panel="follows">Follows</sl-tab>
+
+                <sl-tab-panel name="all">
+                <ul>
             ${
                 this.notifications && this.notifications.length > 0 ? this.notifications.map((notification: any) => {
                     return html`
@@ -296,6 +293,67 @@ export class Notifications extends LitElement {
                 `
             }
           </ul>
+                </sl-tab-panel>
+
+                <sl-tab-panel name="mentions">
+                <ul>
+            ${
+                this.notifications && this.notifications.length > 0 ? this.notifications.map((notification: any) => {
+                    return html`
+
+                    ${
+                        notification.type === "mention" ? html`
+                            <li class="mention">
+                                <div>
+                                    <user-profile small .account=${notification.account}></user-profile>
+
+                                    <p>mentioned you</p>
+                                </div>
+
+                                <timeline-item .tweet=${notification.status}></timeline-item>
+                        ` : null
+                    }
+
+                    `;
+                }) : html`
+                    <li id="no">
+                        <img src="/assets/notify-done.svg" alt="no notifications">
+                        <p>No notifications</p>
+                    </li>
+                `
+            }
+          </ul>
+                </sl-tab-panel>
+
+                <sl-tab-panel name="follows">
+                <ul>
+            ${
+                this.notifications && this.notifications.length > 0 ? this.notifications.map((notification: any) => {
+                    return html`
+                    ${
+                        notification.type === "follow" ? html`
+                          <li class="follow">
+
+                            <div>
+                                <user-profile small .account=${notification.account}></user-profile>
+
+                                <p>followed you</p>
+                            </div>
+
+                          </li>
+                        ` : null
+                    }
+                    `;
+                }) : html`
+                    <li id="no">
+                        <img src="/assets/notify-done.svg" alt="no notifications">
+                        <p>No notifications</p>
+                    </li>
+                `
+            }
+          </ul>
+                </sl-tab-panel>
+            </sl-tab-group>
         `;
     }
 }
