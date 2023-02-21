@@ -50,6 +50,7 @@ export class AppHome extends LitElement {
 
   @state() wellnessMode: boolean = false;
   @state() dataSaverMode: boolean = false;
+  @state() sensitiveMode: boolean = false;
 
   @state() attaching: boolean = false;
 
@@ -665,6 +666,14 @@ export class AppHome extends LitElement {
     setSettings({ wellness: check });
   }
 
+  async handleSensitiveContent(check: boolean) {
+    console.log("check", check);
+    this.sensitiveMode = check;
+
+    const { setSettings } = await import("../services/settings");
+    setSettings({ sensitive: check });
+  }
+
   async handleDataSaverMode(mode: boolean) {
     console.log("mode", mode)
     this.dataSaverMode = mode;
@@ -792,6 +801,18 @@ export class AppHome extends LitElement {
       </sl-drawer>
 
       <sl-drawer id="settings-drawer" placement="end" label="Settings">
+        <div class="setting">
+          <div>
+            <h4>Show Sensitive Content</h4>
+
+            <sl-switch @sl-change="${($event: any) => this.handleSensitiveContent($event.target.checked)}" ?checked="${this.sensitiveMode}"></sl-switch>
+          </div>
+
+          <p>
+            Show sensitive content in your timeline.
+          </p>
+        </div>
+
         <div class="setting">
           <div>
             <h4>Wellness Mode</h4>

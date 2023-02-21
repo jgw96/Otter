@@ -247,7 +247,12 @@ export class TimelineItem extends LitElement {
             const observer = new IntersectionObserver((entries, observer) => {
                 entries.forEach(async entry => {
                     if (entry.isIntersecting) {
-                        await this.loadImage();
+                        if (this.settings?.sensitive === false && this.tweet.sensitive === false) {
+                            await this.loadImage();
+                        }
+                        else if (this.settings?.sensitive === true) {
+                            await this.loadImage();
+                        }
 
                         observer.unobserve(entry.target);
                     }
@@ -482,20 +487,6 @@ export class TimelineItem extends LitElement {
 
                         <user-profile .account="${this.tweet.account}"></user-profile>
                         <div .innerHTML="${this.tweet.content}"></div>
-
-                        <!-- ${this.tweet.card ? html`<div class="status-link-card">
-                            <a href="${this.tweet.card.url}" target="_blank" rel="noopener noreferrer">
-                                ${this.tweet.card.image? html`<div class="status-link-card__image">
-
-                                    <img src="${this.tweet.card.image}" alt="${this.tweet.card.title}">
-
-                    </div>` : null}
-                                <div class="status-link-card__content">
-                                    <h5 class="status-link-card__title">${this.tweet.card.title}</h5>
-                                </div>
-                                </a>
-
-                        </div>` : null} -->
 
                         <div class="actions" slot="footer">
                         <sl-button pill @click="${() => this.analyzeStatus(this.tweet.content)}">

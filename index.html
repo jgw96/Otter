@@ -20,7 +20,8 @@
   <meta name="apple-mobile-web-app-title" content="Mammoth" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 
-  <meta http-equiv="origin-trial" content="Aj8FlZb9SyzcLEGzrcsBX0FE0lCSGS+CK2K58/+AGGJoKVOPBANpPtLJmf42ZpC2HJImUJhpfj3bv3Yh1d6E/vsAAACNeyJvcmlnaW4iOiJodHRwczovL3dvbmRlcmZ1bC1nbGFjaWVyLTA3YjAyMmQxZS4yLmF6dXJlc3RhdGljYXBwcy5uZXQ6NDQzIiwiaXNTdWJkb21haW4iOnRydWUsImZlYXR1cmUiOiJtc1dlYkFwcFdpZGdldHMiLCJleHBpcnkiOjE2ODU1Nzc2MDB9">
+  <meta http-equiv="origin-trial"
+    content="Aj8FlZb9SyzcLEGzrcsBX0FE0lCSGS+CK2K58/+AGGJoKVOPBANpPtLJmf42ZpC2HJImUJhpfj3bv3Yh1d6E/vsAAACNeyJvcmlnaW4iOiJodHRwczovL3dvbmRlcmZ1bC1nbGFjaWVyLTA3YjAyMmQxZS4yLmF6dXJlc3RhdGljYXBwcy5uZXQ6NDQzIiwiaXNTdWJkb21haW4iOnRydWUsImZlYXR1cmUiOiJtc1dlYkFwcFdpZGdldHMiLCJleHBpcnkiOjE2ODU1Nzc2MDB9">
 
   <!-- Imports an icon to represent the document. -->
   <link rel="icon" href="/assets/icons/icon_24.png" type="image/x-icon" />
@@ -29,14 +30,10 @@
   <link rel="manifest" href="/manifest.json" />
 
   <!-- light mode and dark mode CSS -->
-  <link rel="stylesheet" media="(prefers-color-scheme:light)"
-    href="/light.css"
-    >
-  <link rel="stylesheet" media="(prefers-color-scheme:dark)"
-    href="/dark.css"
-    >
+  <link rel="stylesheet" media="(prefers-color-scheme:light)" href="/light.css">
+  <link rel="stylesheet" media="(prefers-color-scheme:dark)" href="/dark.css">
 
-    <link rel="stylesheet" href="/global.css">
+  <link rel="stylesheet" href="/global.css">
 
   <script type="module" src="/src/app-index.ts"></script>
 </head>
@@ -59,9 +56,11 @@
 
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register(
-        '/sw.js'
-      );
+      window.onload = () => {
+        navigator.serviceWorker.register(
+          '/sw.js'
+        );
+      }
     }
   </script>
 </body>

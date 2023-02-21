@@ -95,8 +95,11 @@ export class AppTheme extends LitElement {
         `
     ];
 
-    firstUpdated() {
-        this.settings = getSettings();
+    async connectedCallback(): Promise<void> {
+        super.connectedCallback();
+
+        this.settings = await getSettings();
+        console.log("this.settings", this.settings)
 
         const potentialColor = this.settings.primary_color;
         const potentialFontSize = this.settings.font_size;
@@ -203,7 +206,7 @@ export class AppTheme extends LitElement {
         const eyeDropper = new (window as any).EyeDropper();
 
         const color = await eyeDropper.open();
-        this.chooseColor(color);
+        this.chooseColor(color.sRGBHex);
     }
 
     render() {
