@@ -93,6 +93,10 @@ export class AppLogin extends LitElement {
     async login() {
         const serverURL = (this.shadowRoot?.querySelector('sl-input[name="serverURL"]') as HTMLInputElement)?.value;
 
+        if (serverURL.includes("https://")) {
+            serverURL.replace("https://", "");
+        }
+
         try {
             const { initAuth } = await import('../services/account');
             await initAuth(serverURL);

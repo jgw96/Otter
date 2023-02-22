@@ -277,6 +277,7 @@ export class TimelineItem extends LitElement {
             const img = this.shadowRoot?.querySelector('img');
 
             if (img) {
+
                 const src = img.getAttribute('data-src');
 
                 // handle blurhash
@@ -431,18 +432,30 @@ export class TimelineItem extends LitElement {
         }));
     }
 
-    async analyzeStatus(content: string) {
-        const { analyzeStatusText } = await import('../services/ai');
-        const data = await analyzeStatusText(content);
+    async analyzeStatus(tweet: any) {
+        const { analyzeStatusText, analyzeStatusImage } = await import('../services/ai');
+        const data = await analyzeStatusText(tweet.content);
+
+        let imageData: any = null;
+        const imageURL = tweet.media_attachments[0]?.preview_url;
+
+        if (imageURL) {
+          imageData = await analyzeStatusImage(imageURL);
+          console.log("imageData", imageData);
+        }
+
         if (data) {
             console.log(data);
 
             this.dispatchEvent(new CustomEvent('analyze', {
                 detail: {
-                    data
+                    data,
+                    imageData: imageData ? imageData : null,
+                    tweet
                 }
             }));
         }
+
     }
 
     render() {
@@ -450,12 +463,12 @@ export class TimelineItem extends LitElement {
           ${this.tweet.reblog === null || this.tweet.reblog === undefined ? html`
                 ${
                     this.tweet.reply_to !== null && this.tweet.reply_to !== undefined ? html`
-                      <sl-card>
+                      <sl-card part="card">
                         <user-profile .account="${this.tweet.reply_to.account}"></user-profile>
                         <div .innerHTML="${this.tweet.reply_to.content}"></div>
 
                         <div class="actions" slot="footer">
-                          <sl-button pill @click="${() => this.analyzeStatus(this.tweet.reply_to.content)}">
+                          <sl-button pill @click="${() => this.analyzeStatus(this.tweet)}">
                             <sl-icon src="/assets/search-outline.svg"></sl-icon>
                           </sl-button>
 
@@ -476,11 +489,11 @@ export class TimelineItem extends LitElement {
                 }
 
 
-                <sl-card class="${classMap({ replyCard: this.tweet.reply_to ? true : false})}">
+                <sl-card part="card" class="${classMap({ replyCard: this.tweet.reply_to ? true : false})}">
                       ${
                         this.tweet.media_attachments.length > 0 ? html`
 
-                          <img slot="image" @click="${() => this.openInBox(this.tweet.media_attachments[0].preview_url)}" data-src="${this.tweet.media_attachments[0].preview_url}">
+                          <img part="image" slot="image" @click="${() => this.openInBox(this.tweet.media_attachments[0].preview_url)}" data-src="${this.tweet.media_attachments[0].preview_url}">
 
                         ` : html``
                       }
@@ -489,7 +502,7 @@ export class TimelineItem extends LitElement {
                         <div .innerHTML="${this.tweet.content}"></div>
 
                         <div class="actions" slot="footer">
-                        <sl-button pill @click="${() => this.analyzeStatus(this.tweet.content)}">
+                        <sl-button pill @click="${() => this.analyzeStatus(this.tweet)}">
                             <sl-icon src="/assets/search-outline.svg"></sl-icon>
                           </sl-button>
                           ${this.show === true ? html`<sl-button pill @click="${() => this.replies(this.tweet.id)}">
@@ -501,11 +514,11 @@ export class TimelineItem extends LitElement {
                         </div>
                     </sl-card>
                     ` : html`
-                    <sl-card>
+                    <sl-card slot="card">
                     ${
                         this.tweet.reblog.media_attachments.length > 0 ? html`
 
-<img slot="image" @click="${() => this.openInBox(this.tweet.reblog.media_attachments[0].preview_url)}" data-src="${this.tweet.reblog.media_attachments[0].preview_url}">
+<img part="image" slot="image" @click="${() => this.openInBox(this.tweet.reblog.media_attachments[0].preview_url)}" data-src="${this.tweet.reblog.media_attachments[0].preview_url}">
                         ` : html``
                       }
 
@@ -520,7 +533,7 @@ export class TimelineItem extends LitElement {
                         <div .innerHTML="${this.tweet.reblog.content}"></div>
 
                         <div class="actions" slot="footer">
-                        <sl-button pill @click="${() => this.analyzeStatus(this.tweet.reblog.content)}">
+                        <sl-button pill @click="${() => this.analyzeStatus(this.tweet)}">
                             <sl-icon src="/assets/search-outline.svg"></sl-icon>
                           </sl-button>
                         ${this.show === true ? html`<sl-button pill @click="${() => this.replies(this.tweet.id)}">

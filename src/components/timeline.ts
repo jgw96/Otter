@@ -17,6 +17,8 @@ export class Timeline extends LitElement {
     @state() imgPreview: string | undefined = undefined;
 
     @state() analyzeData: any | undefined = undefined;
+    @state() imageDesc: string | undefined = undefined;
+    @state() analyzeTweet: any | undefined = undefined;
 
     @property({ type: String }) timelineType: "Home" | "Public" | "Media" = "Home";
 
@@ -112,6 +114,7 @@ export class Timeline extends LitElement {
 
             #analyze ul {
                 max-height: 200px;
+                max-width: 390px;
                 height: initial;
             }
 
@@ -123,6 +126,21 @@ export class Timeline extends LitElement {
                 background: var(--primary-color);
                 border-radius: 6px;
                 padding: 8px;
+            }
+
+            #analyze::part(panel) {
+                --width: 90vw;
+                height: 90vh;
+            }
+
+            #analyze::part(body) {
+                display: grid;
+                grid-template-columns: 29% 69%;
+                gap: 16px;
+            }
+
+            #analyze timeline-item::part(image) {
+                height: 200px;
             }
 
             @media(max-width: 768px) {
@@ -227,10 +245,23 @@ export class Timeline extends LitElement {
         await dialog.show();
     }
 
-    async showAnalyze(data: any) {
-        console.log("show analyze", data.results.documents[0].entities);
+    async showAnalyze(data: any, imageData: any, tweet: any) {
+        this.analyzeData = null;
+        this.imageDesc = undefined;
+        this.analyzeTweet = null;
 
-        this.analyzeData = data.results.documents[0].entities;
+        if (data.results && data.results?.documents[0] && data.results.documents[0].entities && data.results.documents[0].entities?.length !== 0) {
+            this.analyzeData = data.results.documents[0].entities;
+        };
+
+        console.log("image data", imageData)
+
+        if (imageData) {
+            this.imageDesc = imageData.descriptionResult.values[0].text;
+        }
+
+        this.analyzeTweet = tweet;
+
 
         const dialog = this.shadowRoot?.querySelector('#analyze') as any;
         await dialog.show();
@@ -240,7 +271,10 @@ export class Timeline extends LitElement {
         return html`
 
         <sl-dialog label="Analyze" id="analyze">
-                <strong>Learn More</strong><br>
+                <timeline-item .tweet="${this.analyzeTweet}"></timeline-item>
+
+                <div>
+                <h2>Learn More</h2>
                 <p>Learn more about the subjects mentioned in this status</p>
 
                 ${
@@ -259,6 +293,19 @@ export class Timeline extends LitElement {
                         </ul>
                     ` : null
                 }
+
+                ${
+                    this.imageDesc ? html`
+                      <h2>Image Analysis</h2>
+                      <p>Learn more about the image in this status</p>
+
+                      <strong>Image Description</strong>
+                      <p>${this.imageDesc}</p>
+
+
+                    ` : null
+                }
+                </div>
         </sl-dialog>
 
         <sl-dialog id="img-preview">
@@ -296,7 +343,7 @@ export class Timeline extends LitElement {
 
             <lit-virtualizer scroller .items="${this.timeline}" .renderItem="${
                 (tweet: any) => html`
-                <timeline-item @analyze="${($event: any) => this.showAnalyze($event.detail.data)}" @openimage="${($event: any) => this.showImage($event.detail.imageURL)}" ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
+                <timeline-item @analyze="${($event: any) => this.showAnalyze($event.detail.data, $event.detail.imageData, $event.detail.tweet)}" @openimage="${($event: any) => this.showImage($event.detail.imageURL)}" ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
                 `
             }">
             </lit-virtualizer>
