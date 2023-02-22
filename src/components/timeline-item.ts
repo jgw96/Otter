@@ -433,15 +433,15 @@ export class TimelineItem extends LitElement {
     }
 
     async analyzeStatus(tweet: any) {
+
         const { analyzeStatusText, analyzeStatusImage } = await import('../services/ai');
-        const data = await analyzeStatusText(tweet.content);
+        const data = await analyzeStatusText(tweet.reblog ? tweet.reblog.content : tweet.content);
 
         let imageData: any = null;
-        const imageURL = tweet.media_attachments[0]?.preview_url;
+        const imageURL = tweet.reblog ? tweet.reblog.media_attachments[0].preview_url : tweet.media_attachments[0]?.preview_url;
 
         if (imageURL) {
           imageData = await analyzeStatusImage(imageURL);
-          console.log("imageData", imageData);
         }
 
         if (data) {

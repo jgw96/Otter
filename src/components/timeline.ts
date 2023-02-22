@@ -254,8 +254,6 @@ export class Timeline extends LitElement {
             this.analyzeData = data.results.documents[0].entities;
         };
 
-        console.log("image data", imageData)
-
         if (imageData) {
             this.imageDesc = imageData.descriptionResult.values[0].text;
         }
