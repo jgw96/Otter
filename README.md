@@ -16,6 +16,7 @@
    - Not understanding something in a post, or just want to learn more about a specific topic in a post? Click the search button on a post to have AI help you understand the post!
    
 ### Customizeable
+- Dark and light mode support
 - Themeable
 - Wellness mode: Hides likes and boosts
 - Focus mode
