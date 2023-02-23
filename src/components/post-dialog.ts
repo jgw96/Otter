@@ -3,7 +3,7 @@ import { customElement, state } from 'lit/decorators.js';
 
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
-import { publishPost, uploadImageAsFormData, uploadImageFromBlob, uploadImageFromURL } from '../services/posts';
+import { publishPost, uploadImageAsFormData, uploadImageFromBlob } from '../services/posts';
 import { createImage } from '../services/ai';
 
 @customElement('post-dialog')
