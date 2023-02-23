@@ -116,9 +116,8 @@ export class TimelineItem extends LitElement {
             }
 
             sl-card img {
-                height: 420px;
+                height: 340px;
                 object-fit: contain;
-
                 border-radius: 6px 6px 0px 0px;
             }
 
@@ -438,7 +437,7 @@ export class TimelineItem extends LitElement {
         const data = await analyzeStatusText(tweet.reblog ? tweet.reblog.content : tweet.content);
 
         let imageData: any = null;
-        const imageURL = tweet.reblog ? tweet.reblog.media_attachments[0].preview_url : tweet.media_attachments[0]?.preview_url;
+        const imageURL = tweet.reblog ? tweet.reblog.media_attachments[0] ? tweet.reblog.media_attachments[0].preview_url : null : tweet.media_attachments[0] ? tweet.media_attachments[0]?.preview_url : null;
 
         if (imageURL) {
           imageData = await analyzeStatusImage(imageURL);

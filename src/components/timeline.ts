@@ -40,6 +40,11 @@ export class Timeline extends LitElement {
                 justify-content: space-between;
             }
 
+            #learn-more-header {
+                padding-top: 0;
+                margin-top: 0;
+            }
+
             #img-preview {
                 --width: 80vw;
             }
@@ -143,13 +148,36 @@ export class Timeline extends LitElement {
                 height: 200px;
             }
 
+            #analyze timeline-item {
+                overflow: hidden;
+            }
+
             @media(max-width: 768px) {
                 ul {
                     padding: 0 10px;
                 }
 
+                #analyze ul {
+                    max-height: none;
+                }
+
+                #analyze::part(panel) {
+                    height: 96vh;
+                    --width: 96vw;
+                    max-width: none;
+                    max-height: none;
+                }
+
                 #img-preview::part(panel) {
                     height: initial;
+                }
+
+                #analyze::part(body) {
+                    display: initial;
+                }
+
+                #analyze timeline-item {
+                    display: none;
                 }
             }
 
@@ -272,7 +300,7 @@ export class Timeline extends LitElement {
                 <timeline-item .tweet="${this.analyzeTweet}"></timeline-item>
 
                 <div>
-                <h2>Learn More</h2>
+                <h2 id="learn-more-header">Learn More</h2>
                 <p>Learn more about the subjects mentioned in this status</p>
 
                 ${

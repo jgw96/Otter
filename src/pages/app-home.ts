@@ -65,6 +65,20 @@ export class AppHome extends LitElement {
         flex-direction: column;
       }
 
+      .sponsor {
+        background: rgba(128, 128, 128, 0.14);
+        border-radius: 6px;
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: end;
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+      }
+
       #no-replies {
         display: flex;
         align-items: center;
@@ -837,6 +851,11 @@ export class AppHome extends LitElement {
           <p>
             Data Saver Mode reduces the amount of data used by Mammoth.
           </p>
+        </div>
+
+        <div class="sponsor">
+          Thanks for using Mammoth! If you are enjoying the app and want to help me spend more time on it, please consider sponsoring me on GitHub!
+          <iframe src="https://github.com/sponsors/jgw96/button" title="Sponsor jgw96" height="32" width="114" style="border: 0; border-radius: 6px;"></iframe>
         </div>
 
         ${this.instanceInfo ? html`

@@ -4,12 +4,36 @@ let server = localStorage.getItem('server') || '';
 let accessToken = localStorage.getItem('accessToken') || '';
 
 export async function publishPost(post: string, id?: string) {
-    const correctURL = id ? `https://mammoth-backend.azurewebsites.net/status?status=${post}&id=${id}&code=${accessToken}&server=${server}` : `https://mammoth-backend.azurewebsites.net/status?status=${post}&code=${accessToken}&server=${server}`;
-    const response = await fetch(correctURL, {
+    const formData = new FormData();
+
+    formData.append("status", post && post.length > 0 ? post : "");
+
+    if (id) {
+        formData.append("media_ids[]", id);
+    }
+
+    // make a fetch request to post a status using the mastodon api
+    const response = await fetch(`https://${server}/api/v1/statuses`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        headers: new Headers({
+            "Authorization": `Bearer ${accessToken}`
+        }),
+        body: formData
+    });
+
+    const data = await response.json();
+    return data;
+}
+
+export async function uploadImageFromURL(url: string) {
+    const response = await fetch(`https://${server}/api/v2/media`, {
+        method: 'POST',
+        headers: new Headers({
+            "Authorization": `Bearer ${accessToken}`
+        }),
+        body: JSON.stringify({
+            url: url
+        })
     });
 
     const data = await response.json();
