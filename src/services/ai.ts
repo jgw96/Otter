@@ -4,6 +4,15 @@ const key = "a38533c238474e93999c8898e8d7419b";
 const visionEndpoint = "https://mammoth-vision.cognitiveservices.azure.com/";
 const visionKey = "8362308c1d174ffca10ca1eb77b1314f";
 
+export const createAPost = async (prompt: string) => {
+    const response = await fetch(`https://mammoth-backend.azurewebsites.net/generateStatus?prompt=${prompt}`, {
+        method: "POST"
+    });
+    const data = await response.json();
+
+    return data;
+}
+
 export const createImage = async (prompt: string) => {
     const response = await fetch(`https://mammoth-backend.azurewebsites.net/generateImage?prompt=${prompt}`, {
         method: "POST"

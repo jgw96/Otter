@@ -4,7 +4,7 @@ import { customElement, state } from 'lit/decorators.js';
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 import { publishPost, uploadImageAsFormData, uploadImageFromBlob } from '../services/posts';
-import { createImage } from '../services/ai';
+import { createAPost, createImage } from '../services/ai';
 
 @customElement('post-dialog')
 export class PostDialog extends LitElement {
@@ -15,6 +15,8 @@ export class PostDialog extends LitElement {
 
     @state() showPrompt: boolean = false;
     @state() generatingImage: boolean = false;
+
+    @state() generatingPost: boolean = false;
 
     @state() generatedImage: string | undefined;
 
@@ -31,6 +33,14 @@ export class PostDialog extends LitElement {
                 align-items: center;
                 justify-content: center;
                 flex: 1;
+            }
+
+            #post-ai-actions {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                gap: 6px;
+                margin-top: 8px;
             }
 
             #ai-preview-block sl-skeleton {
@@ -190,11 +200,62 @@ export class PostDialog extends LitElement {
         this.showPrompt = true;
     }
 
+    async generateStatus() {
+        const textarea = this.shadowRoot?.querySelector('sl-textarea') as any;
+
+        const prompt = textarea.value;
+
+        console.log(prompt, prompt.length);
+
+        if (!prompt && prompt.length === 0) {
+            textarea.placeholder = "Start your post here, and AI will help generate a post for you";
+
+            const listener = textarea.addEventListener("sl-change", async () => {
+                await this.handleGeneratePost(textarea.value, textarea, listener);
+            })
+        }
+        else {
+            await this.handleGeneratePost(prompt, textarea, undefined);
+        }
+    }
+
+    private async handleGeneratePost(prompt: any, textarea: any, listener: any) {
+        this.generatingPost = true;
+
+        if (prompt && prompt.length > 0) {
+            const data = await createAPost(prompt);
+
+            if (data && data.choices[0]) {
+                textarea.value = data.choices[0].text.trim();
+
+                this.generatingPost = false;
+
+                // drop event listerner
+                textarea.removeEventListener("sl-change", listener);
+            }
+            else {
+                this.generatingPost = false;
+
+                textarea.removeEventListener("sl-change", listener);
+            }
+        }
+        else {
+            this.generatingPost = false;
+            textarea.removeEventListener("sl-change", listener);
+        }
+    }
+
     render() {
         return html`
         <sl-dialog id="notify-dialog" label="New Post">
 
             <sl-textarea autofocus placeholder="What's on your mind?"></sl-textarea>
+
+            <div id="post-ai-actions">
+              <sl-button ?loading="${this.generatingPost}" pill size="small" @click="${() => this.generateStatus()}">AI: Help with my post</sl-button>
+
+              ${this.showPrompt === false ? html`<sl-button size="small" pill @click="${() => this.openAIPrompt()}">AI: Generate Image</sl-button>` : null}
+            </div>
 
             ${this.attachmentPreview && this.attaching === false ? html`
             <div class="img-preview">
@@ -224,7 +285,6 @@ export class PostDialog extends LitElement {
                 }
             </div>` : null}
 
-            ${this.showPrompt === false ? html`<sl-button slot="footer" pill @click="${() => this.openAIPrompt()}">Generate AI Image</sl-button>` : null}
             <sl-button pill slot="footer" @click="${() => this.attachFile()}">
                 <sl-icon src="/assets/albums-outline.svg"></sl-icon>
             </sl-button>
