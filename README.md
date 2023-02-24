@@ -5,16 +5,17 @@
 ## Status: Currently In Public Alpha
 
 <div>
-<img height="400px" src="/public/assets/screenshots/new/desktop.png" />
-<img height="400px" src="/public/assets/screenshots/new/mobile-one.png" />
+  <img height="400px" src="/public/assets/screenshots/new/desktop.png" />
+  <img height="400px" src="/public/assets/screenshots/new/mobile-one.png" />
 </div>
 
 ## Features
 
 ### AI Enhanced:
-   - Struggling to find that perfect image to go along with your post? Have a funny idea for an image on a post? Generate it right in Mammoth with the magic of AI
-   - Not understanding something in a post, or just want to learn more about a specific topic in a post? Click the search button on a post to have AI help you understand the post!
-   
+- Struggling to find that perfect image to go along with your post? Have a funny idea for an image on a post? Generate it right in Mammoth with the magic of AI
+- Not understanding something in a post, or just want to learn more about a specific topic in a post? Click the search button on a post to have AI help you understand the post!
+- AI driven autocomplete and status generation: Have something to say but not sure how to say it best? Ask Mammoth to write it for you!
+
 ### Customizeable
 - Dark and light mode support
 - Themeable
@@ -27,10 +28,8 @@
 - Fast
 
 ### Coming Soon
-
 - Widget on Windows 11
-- Speech to Text and "Read that post" text to speech
-- AI driven autocomplete and status generation: Have something to say but not sure how to say it best? Ask Mammoth to write it for you!
+- Speech to Text and "Read that Post" text to speech
 
 ## Get the app:
 
