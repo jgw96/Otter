@@ -963,22 +963,9 @@ export class AppHome extends LitElement {
             ${this.user ? html`<img src="${this.user.avatar}" />` : html`<img src="https://via.placeholder.com/150" />`}
             <div id="username-block">
               <h3>${this.user ? this.user.display_name : "Loading..."}</h3>
-
-              <div>
-                <sl-button circle size="small" id="share-button">
-                  <sl-icon src="/assets/share-social-outline.svg"></sl-icon>
-                </sl-button>
-
-                <sl-button circle size="small" id="settings-button">
-                  <sl-icon src="/assets/ellipsis-vertical-outline.svg"></sl-icon>
-                </sl-button>
-              </div>
-
             </div>
 
             <p id="user-url">${this.user ? this.user.url : "Loading..."}</p>
-
-            <!-- <div .innerHTML=${this.user ? this.user.note : "Loading..."}></div> -->
 
             <sl-badge @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count : "0"} followers
             </sl-badge>

@@ -27,6 +27,36 @@ export class AppLogin extends LitElement {
                 width: 100vw;
             }
 
+            #intro-carousel {
+                display: grid;
+                grid-template-columns: 100% 100% 100%;
+                overflow-x: auto;
+                overflow-y: hidden;
+                width: 100%;
+                height: 100%;
+                scroll-snap-type: x mandatory;
+            }
+
+            #intro-carousel::-webkit-scrollbar {
+                display: none;
+            }
+
+            .scroll-item {
+                scroll-snap-align: center;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-content: center;
+                flex-wrap: wrap;
+                padding-left: 100px;
+                padding-right: 100px;
+            }
+
+            .scroll-item sl-button {
+                width: 100px;
+                align-self: center;
+            }
+
             sl-dialog a {
               color: var(--sl-color-primary-600);
             }
@@ -122,6 +152,9 @@ export class AppLogin extends LitElement {
         ${
             this.loadIntro ? html`
                       <sl-dialog label="Intro To Mastodon">
+                        <div id="intro-carousel">
+
+            <div class="scroll-item">
             <h2>What is Mammoth?</h2>
             <p>
                 Mammoth is the app your using 😊. It is an open source, cross-platform Mastodon client. Mammoth
@@ -129,6 +162,12 @@ export class AppLogin extends LitElement {
                 no matter your device or internet connection. To use Mammoth, you need a Mastodon account. Once you have a Mastodon account
                 you will need to enter the URL of the Mastodon instance you signed up at.
             </p>
+
+            <sl-button pill>Next</sl-button>
+
+            </div>
+
+            <div class="scroll-item">
 
             <h2>What Is Mastodon?</h2>
             <p>
@@ -138,9 +177,15 @@ export class AppLogin extends LitElement {
                 "instances," they want to join. Mastodon is open-source and free to use.
             </p>
 
+
             <p>
                 Each instance is run by a different administrator and can have its own rules and moderation policies.
             </p>
+
+            <sl-button pill>Next</sl-button>
+            </div>
+
+            <div class="scroll-item">
 
             <h2>How do I join Mastodon?</h2>
 
@@ -160,6 +205,10 @@ export class AppLogin extends LitElement {
                 email address or approving new accounts manually. Be sure to read the rules and guidelines of the instance you
                 are joining before signing up.</p>
 
+                <sl-button pill>Get Started</sl-button>
+                </div>
+
+                        </div>
         </sl-dialog>
             ` : null
         }
