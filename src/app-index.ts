@@ -5,6 +5,7 @@ import { router } from './utils/router';
 
 import './pages/app-login';
 import './components/header';
+import { getSettings } from './services/settings';
 
 @customElement('app-index')
 export class AppIndex extends LitElement {
@@ -61,7 +62,24 @@ export class AppIndex extends LitElement {
     super();
   }
 
-  firstUpdated() {
+  async firstUpdated() {
+    const settings = await getSettings();
+    console.log("settings", settings)
+
+    const potentialColor = settings.primary_color;
+
+    if (potentialColor) {
+      document.body.style.setProperty('--sl-color-primary-600', potentialColor);
+
+      document.querySelector("html")!.style.setProperty('--primary-color', potentialColor);
+    }
+    else {
+      // get css variable color
+      const color = getComputedStyle(document.body).getPropertyValue('--sl-color-primary-600');
+      document.querySelector("html")!.style.setProperty('--primary-color', color);
+
+    }
+
     router.addEventListener('route-changed', () => {
       if ("startViewTransition" in document) {
         return (document as any).startViewTransition(() => {
@@ -76,7 +94,6 @@ export class AppIndex extends LitElement {
 
 
   render() {
-
     return router.render();
   }
 }

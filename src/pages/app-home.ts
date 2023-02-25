@@ -494,33 +494,16 @@ export class AppHome extends LitElement {
       }
     }, { timeout: 3000 });
 
-    // const contextMenu = this.shadowRoot?.getElementById("context-menu");
-    // const scope = document.querySelector("body");
+    window.matchMedia(" (max-width: 600px)").addEventListener("change", (e) => {
+      if (e.matches) {
+        const tabGroup = this.shadowRoot?.querySelector("sl-tab-group");
+        tabGroup?.setAttribute("placement", "bottom");
+      } else {
+        const tabGroup = this.shadowRoot?.querySelector("sl-tab-group");
+        tabGroup?.setAttribute("placement", "start");
+      }
+    })
 
-    // console.log("contextMenu", contextMenu);
-
-    // if (scope && contextMenu) {
-    //   scope.addEventListener("contextmenu", (event) => {
-    //     event.preventDefault();
-    //     const { clientX: mouseX, clientY: mouseY } = event;
-    //     contextMenu.style.top = `${mouseY}px`;
-    //     contextMenu.style.left = `${mouseX}px`;
-
-    //     contextMenu.classList.remove("visible");
-
-    //     setTimeout(() => {
-    //       contextMenu.classList.add("visible");
-    //     }, 300)
-
-    //     event.preventDefault();
-    //   });
-
-    //   scope.addEventListener("click", (e) => {
-    //     if ((e.target as any)!.offsetParent != contextMenu) {
-    //       contextMenu.classList.remove("visible");
-    //     }
-    //   });
-    // }
   }
 
   async shareTarget(name: string) {
@@ -576,17 +559,17 @@ export class AppHome extends LitElement {
 
   async openNewDialog() {
     // if on desktop, open the dialog
-    if (window.innerWidth > 600) {
+    // if (window.innerWidth > 600) {
       await import("../components/post-dialog");
       // const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
       // dialog.show();
       const dialog: any = this.shadowRoot?.querySelector("post-dialog");
       dialog?.openNewDialog();
-    }
-    else {
-      const drawer = this.shadowRoot?.getElementById('reply-drawer') as any;
-      drawer.show();
-    }
+    // }
+    // else {
+    //   const drawer = this.shadowRoot?.getElementById('reply-drawer') as any;
+    //   drawer.show();
+    // }
   }
 
   async publish() {
@@ -892,7 +875,7 @@ export class AppHome extends LitElement {
       </sl-drawer>
 
       <main>
-        <sl-tab-group .placement="${window.matchMedia(" (max-width: 600px)").matches ? "bottom" : "start" }">
+        <sl-tab-group .placement="${window.matchMedia("(max-width: 600px)").matches ? "bottom" : "start" }">
           <sl-tab slot="nav" panel="general">
             <sl-icon src="/assets/home-outline.svg"></sl-icon>
 

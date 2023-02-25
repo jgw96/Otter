@@ -4,6 +4,8 @@ import { customElement, state } from 'lit/decorators.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import { router } from '../utils/router';
 
+let scrollWidth: number = 0;
+
 @customElement('app-login')
 export class AppLogin extends LitElement {
 
@@ -93,8 +95,32 @@ export class AppLogin extends LitElement {
 
             @media(max-width: 600px) {
                 sl-dialog::part(panel) {
-                    height: 90vh;
-                    width: 90vw;
+                    height: 100vh;
+                    width: 100vw;
+                    max-height: 100vh;
+                    max-width: 100vw;
+                    min-height: 100vh;
+                    min-width: 100vw;
+                }
+
+                #intro-carousel {
+                    overflow-y: auto;
+                    overflow-x: hidden;
+                    scroll-snap-type: y;
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                .scroll-item sl-button {
+                    display: none;
+                }
+
+                .scroll-item {
+                    display: flex;
+                    flex-flow: column;
+                    padding: 0px;
+                    height: 100vh;
+                    scroll-snap-align: start;
                 }
             }
         `
@@ -118,6 +144,7 @@ export class AppLogin extends LitElement {
         else if (accessToken && server) {
             await router.navigate("/home");
         }
+
     }
 
     async login() {
@@ -147,6 +174,32 @@ export class AppLogin extends LitElement {
         dialog.show();
     }
 
+    scrollToItem(scroller: any, width: number) {
+        const newWidth = scrollWidth + width;
+        scrollWidth = newWidth;
+
+        scroller.scrollTo({
+            top: 0,
+            left: newWidth,
+            behavior: "smooth",
+          })
+      }
+
+      next() {
+        const scroller = this.shadowRoot?.querySelector('#intro-carousel') as any;
+
+
+        this.scrollToItem(scroller, 1000);
+
+      }
+
+      async getStarted() {
+        const dialog = this.shadowRoot?.querySelector('sl-dialog') as any;
+        await dialog.hide();
+
+        scrollWidth = 0;
+      }
+
     render() {
         return html`
         ${
@@ -163,7 +216,7 @@ export class AppLogin extends LitElement {
                 you will need to enter the URL of the Mastodon instance you signed up at.
             </p>
 
-            <sl-button pill>Next</sl-button>
+            <sl-button pill @click="${() => this.next()}">Next</sl-button>
 
             </div>
 
@@ -182,7 +235,7 @@ export class AppLogin extends LitElement {
                 Each instance is run by a different administrator and can have its own rules and moderation policies.
             </p>
 
-            <sl-button pill>Next</sl-button>
+            <sl-button pill @click="${() => this.next()}">Next</sl-button>
             </div>
 
             <div class="scroll-item">
@@ -205,7 +258,7 @@ export class AppLogin extends LitElement {
                 email address or approving new accounts manually. Be sure to read the rules and guidelines of the instance you
                 are joining before signing up.</p>
 
-                <sl-button pill>Get Started</sl-button>
+                <sl-button pill @click="${() => this.getStarted()}">Get Started</sl-button>
                 </div>
 
                         </div>
