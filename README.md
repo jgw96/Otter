@@ -9,6 +9,10 @@
   <img height="400px" src="/public/assets/screenshots/new/mobile-one.png" />
 </div>
 
+## Demos
+- Create a Post with AI: https://youtu.be/WqDzQR3tG-g
+- Theming: https://youtu.be/D2qNMS9Lusw
+
 ## Features
 
 ### AI Enhanced:
