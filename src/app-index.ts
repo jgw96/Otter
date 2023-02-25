@@ -62,7 +62,7 @@ export class AppIndex extends LitElement {
     super();
   }
 
-  async firstUpdated() {
+  async connectedCallback() {
     const settings = await getSettings();
     console.log("settings", settings)
 
@@ -79,7 +79,9 @@ export class AppIndex extends LitElement {
       document.querySelector("html")!.style.setProperty('--primary-color', color);
 
     }
+  }
 
+  firstUpdated() {
     router.addEventListener('route-changed', () => {
       if ("startViewTransition" in document) {
         return (document as any).startViewTransition(() => {
