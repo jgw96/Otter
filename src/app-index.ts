@@ -63,6 +63,8 @@ export class AppIndex extends LitElement {
   }
 
   async connectedCallback() {
+    super.connectedCallback();
+
     const settings = await getSettings();
     console.log("settings", settings)
 
