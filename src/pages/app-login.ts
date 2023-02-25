@@ -148,10 +148,11 @@ export class AppLogin extends LitElement {
     }
 
     async login() {
-        const serverURL = (this.shadowRoot?.querySelector('sl-input[name="serverURL"]') as HTMLInputElement)?.value;
+        let serverURL = (this.shadowRoot?.querySelector('sl-input[name="serverURL"]') as HTMLInputElement)?.value;
 
         if (serverURL.includes("https://")) {
-            serverURL.replace("https://", "");
+            // remove https://
+            serverURL = serverURL.replace("https://", "");
         }
 
         try {
