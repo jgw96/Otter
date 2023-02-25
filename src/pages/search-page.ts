@@ -11,6 +11,7 @@ import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 export class SearchPage extends LitElement {
 
     @state() searchData: any | undefined;
+    @state() trending: any[] | undefined;
 
     static styles = [
         css`
@@ -95,6 +96,13 @@ export class SearchPage extends LitElement {
     async handleSearch(search: any) {
         console.log(search);
         this.searchData = search.searchData;
+
+        const { getTrendingStatuses } = await import('../services/timeline');
+
+        const trendingStatuses = await getTrendingStatuses();
+        console.log("trendingStatuses", trendingStatuses);
+
+        this.trending = trendingStatuses;
     }
 
     openAccount(id: string) {
@@ -112,8 +120,19 @@ export class SearchPage extends LitElement {
 
             <sl-tab-group placement="top">
                 <sl-tab slot="nav" panel="accounts">Accounts</sl-tab>
+                <sl-tab slot="nav" panel="trending">Trending</sl-tab>
                 <sl-tab slot="nav" panel="hashtags">Hashtags</sl-tab>
                 <sl-tab slot="nav" panel="media">Media</sl-tab>
+
+                <sl-tab-panel name="trending">
+                    <ul>
+                        ${
+                            this.trending ? this.trending.map((status: any) => {
+                                return html`<timeline-item .tweet="${status}"></timeline-item>`
+                            }) : null
+                        }
+                    </ul>
+                </sl-tab-panel>
 
                 <sl-tab-panel name="accounts">
                 ${ this.searchData && this.searchData.accounts ? html`

@@ -168,16 +168,19 @@ export class Timeline extends LitElement {
                     max-height: none;
                 }
 
-                #img-preview::part(panel) {
-                    height: initial;
-                }
-
                 #analyze::part(body) {
                     display: initial;
                 }
 
                 #analyze timeline-item {
                     display: none;
+                }
+
+                #img-preview::part(panel) {
+                    height: 100vh;
+                    max-height: 100vh;
+                    max-width: 100vw;
+                    width: 100vw;
                 }
             }
 

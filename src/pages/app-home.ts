@@ -400,8 +400,9 @@ export class AppHome extends LitElement {
       }
 
       #mobile-actions sl-button sl-icon {
-        height: 24px;
-        width: 24px;
+        height: 30px;
+        width: 30px;
+        vertical-align: text-bottom;
       }
 
       .tab-label {

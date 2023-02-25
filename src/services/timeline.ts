@@ -200,3 +200,18 @@ export const getAStatus = async (id: string) => {
 
     return data;
 }
+
+export const getTrendingStatuses = async () => {
+    let accessToken = localStorage.getItem('accessToken') || '';
+
+    const response = await fetch(`https://${server}/api/v1/trends/statuses`, {
+        method: 'GET',
+        headers: new Headers({
+            "Authorization": `Bearer ${accessToken}`
+        })
+    });
+
+    const data = await response.json();
+
+    return data;
+}
