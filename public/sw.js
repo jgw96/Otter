@@ -1,6 +1,14 @@
+const VERSION = 1;
+
 importScripts(
     'https://storage.googleapis.com/workbox-cdn/releases/6.5.4/workbox-sw.js'
 );
+
+addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
+});
 
 // Listen to the widgetinstall event.
 self.addEventListener("widgetinstall", event => {

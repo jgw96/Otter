@@ -10,94 +10,10 @@ export const getHomeTimeline = async () => {
     return data;
 }
 
-const getFromDisk = async () => {
-    console.log("getting from disk")
-    const root = await navigator.storage.getDirectory();
-
-    const fileHandle = await root.getFileHandle('mammoth.json', { create: true });
-    const file = await fileHandle.getFile();
-
-    const fileContents = await file.text();
-
-    // if the blob is over 2mb, evict the file
-    if (file.size > 2097152) {
-        await root.removeEntry('mammoth.json');
-    }
-
-    if (fileContents.length === 0) return [];
-
-    return JSON.parse(fileContents);
-}
-
-const saveToDisk = async (content: Array<any>) => {
-    const blob = new Blob([JSON.stringify(content)], { type: 'application/json' });
-
-    const root = await navigator.storage.getDirectory();
-
-    // if the blob is over 2mb, evict the file
-    if (blob.size > 2097152) {
-        await root.removeEntry('mammoth.json');
-    }
-
-    const file = await root.getFileHandle('mammoth.json', { create: true });
-
-    // @ts-ignore
-    const writable = await file.createWritable();
-
-    await writable.write(blob);
-
-    await writable.close();
-
-}
-
 let lastPageID = "";
 
 export const getPaginatedHomeTimeline = async (cache?: boolean) => {
     console.log("here 1", cache, latestHomeTimelineData.length);
-
-    // try disk first
-    const potentialData = await getFromDisk();
-
-    if (cache) {
-        console.log('here 2')
-
-        if (potentialData.length > 0) {
-            latestHomeTimelineData = potentialData;
-
-            window.requestIdleCallback(async () => {
-                // update from network when we can
-                const response = await fetch(`https://mammoth-backend.azurewebsites.net/timelinePaginated?limit=40&code=${accessToken}&server=${server}`);
-                const data = await response.json();
-
-                lastPageID = data[data.length - 1].id;
-
-                latestHomeTimelineData = [...latestHomeTimelineData, ...data];
-
-                window.requestIdleCallback(async () => {
-                    await saveToDisk(latestHomeTimelineData);
-                });
-            })
-
-            return potentialData;
-        }
-        else {
-            const response = await fetch(`https://mammoth-backend.azurewebsites.net/timelinePaginated?limit=40&code=${accessToken}&server=${server}`);
-            const data = await response.json();
-
-            lastPageID = data[data.length - 1].id;
-
-            latestHomeTimelineData = [...latestHomeTimelineData, ...data];
-
-            window.requestIdleCallback(async () => {
-                await saveToDisk(latestHomeTimelineData);
-            });
-
-            return data;
-        }
-    }
-    else if (cache && latestHomeTimelineData.length > 0) {
-        return latestHomeTimelineData;
-    }
 
     if (lastPageID && lastPageID.length > 0) {
         const response = await fetch(`https://mammoth-backend.azurewebsites.net/timelinePaginated?since_id=${lastPageID}&limit=40&code=${accessToken}&server=${server}`);
@@ -106,10 +22,6 @@ export const getPaginatedHomeTimeline = async (cache?: boolean) => {
         lastPageID = data[data.length - 1].id;
 
         latestHomeTimelineData = [...latestHomeTimelineData, ...data];
-
-        window.requestIdleCallback(async () => {
-            await saveToDisk(latestHomeTimelineData);
-        });
 
         return data;
     }
@@ -120,10 +32,6 @@ export const getPaginatedHomeTimeline = async (cache?: boolean) => {
         lastPageID = data[data.length - 1].id;
 
         latestHomeTimelineData = [...latestHomeTimelineData, ...data];
-
-        window.requestIdleCallback(async () => {
-            await saveToDisk(latestHomeTimelineData);
-        });
 
         return data;
     }
