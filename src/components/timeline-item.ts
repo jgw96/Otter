@@ -492,7 +492,7 @@ export class TimelineItem extends LitElement {
                       ${
                         this.tweet.media_attachments.length > 0 ? html`
 
-                          <img part="image" slot="image" @click="${() => this.openInBox(this.tweet.media_attachments[0].preview_url)}" data-src="${this.tweet.media_attachments[0].preview_url}">
+                          <img part="image" alt="${this.tweet.media_attachments[0].description || ""}" slot="image" @click="${() => this.openInBox(this.tweet.media_attachments[0].preview_url)}" data-src="${this.tweet.media_attachments[0].preview_url}">
 
                         ` : html``
                       }
@@ -517,7 +517,7 @@ export class TimelineItem extends LitElement {
                     ${
                         this.tweet.reblog.media_attachments.length > 0 ? html`
 
-<img part="image" slot="image" @click="${() => this.openInBox(this.tweet.reblog.media_attachments[0].preview_url)}" data-src="${this.tweet.reblog.media_attachments[0].preview_url}">
+<img part="image" slot="image" alt="${this.tweet.reblog.media_attachments[0].description || ""}" @click="${() => this.openInBox(this.tweet.reblog.media_attachments[0].preview_url)}" data-src="${this.tweet.reblog.media_attachments[0].preview_url}">
                         ` : html``
                       }
 
