@@ -74,3 +74,21 @@ body {
 }
 
 
+#updateToast {
+  position: fixed;
+  z-index: 99999;
+  right: 16px;
+  bottom: 16px;
+  background: var(--primary-color);
+  color: black;
+
+  padding: 10px;
+  border-radius: 6px;
+  flex-direction: column;
+  display: none;
+}
+
+#updateButton {
+  align-self: flex-end;
+  width: 6em;
+}
