@@ -1,9 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
 
-// For more info on the @pwabuilder/pwainstall component click here https://github.com/pwa-builder/pwa-install
-import '@pwabuilder/pwainstall';
-
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/tab-group/tab-group.js';
 import '@shoelace-style/shoelace/dist/components/tab/tab.js';
@@ -28,6 +25,8 @@ import '../components/right-click';
 
 import './app-messages';
 import './search-page';
+
+import '@khmyznikov/pwa-install';
 
 import { styles } from '../styles/shared-styles';
 import { getCurrentUser, getInstanceInfo } from '../services/account';
@@ -328,12 +327,6 @@ export class AppHome extends LitElement {
 
       sl-dialog::part(panel) {
         backdrop-filter: blur(40px);
-      }
-
-      pwa-install {
-        position: absolute;
-        bottom: 16px;
-        right: 16px;
       }
 
       sl-card::part(footer) {
@@ -967,6 +960,8 @@ export class AppHome extends LitElement {
           </div>
         </div>
       </main>
+
+      <pwa-install disable-install-description="true"></pwa-install>
     `;
   }
 }

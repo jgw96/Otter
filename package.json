@@ -15,6 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@khmyznikov/pwa-install": "^0.2.0",
     "@lit-labs/virtualizer": "^1.0.1",
     "@pwabuilder/pwainstall": "^1.6.7",
     "@shoelace-style/shoelace": "^2.1.0",

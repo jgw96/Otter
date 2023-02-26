@@ -99,7 +99,7 @@ export class AppHeader extends LitElement {
       <header>
 
         <div id="back-button-block">
-          ${this.enableBack ? html`<sl-button size="small" href="/home">
+          ${this.enableBack ? html`<sl-button title="back" size="small" href="/home">
             Back
           </sl-button>` : null}
 
@@ -107,11 +107,11 @@ export class AppHeader extends LitElement {
         </div>
 
         <div id="actions">
-          <sl-button id="open-button" circle size="small" @click="${() => this.handleTheming()}">
+          <sl-button title="Open Theme Settings" id="open-button" circle size="small" @click="${() => this.handleTheming()}">
             <sl-icon src="/assets/color-palette-outline.svg" alt="Theme"></sl-icon>
           </sl-button>
 
-          <sl-button @click="${() => this.openSettings()}" circle size="small">
+          <sl-button title="Open Settings" @click="${() => this.openSettings()}" circle size="small">
             <sl-icon src="/assets/settings-outline.svg"></sl-icon>
           </sl-button>
         </div>
