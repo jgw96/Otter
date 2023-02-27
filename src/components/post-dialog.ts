@@ -190,6 +190,8 @@ export class PostDialog extends LitElement {
     }
 
     async doAIImage(prompt: string) {
+        this.generatedImage = undefined;
+
         this.generatingImage = true;
         const imageData = await createImage(prompt);
         this.generatingImage = false;

@@ -196,34 +196,39 @@ export class Timeline extends LitElement {
     ];
 
     async firstUpdated() {
-        window.requestIdleCallback(async () => {
-            this.loadingData = true;
-            await this.refreshTimeline(true);
-            this.loadingData = false;
-        }, { timeout: 3000});
+        this.loadingData = true;
+        await this.refreshTimeline();
+        this.loadingData = false;
 
         window.requestIdleCallback(async () => {
-            // update data when the user scrolls to the bottom of the page
-            const scroller = this.shadowRoot?.querySelector('lit-virtualizer') as any;
+            // setup intersection observer
+            const loadMore = this.shadowRoot?.querySelector('#load-more') as any;
 
-            scroller.onoverscroll = async (e: any) => {
-                if (e.deltaY > 0) {
-                    if (this.loadingData) return;
+            const observer = new IntersectionObserver(async (entries: any) => {
+                entries.forEach(async (entry: any) => {
+                    if (entry.isIntersecting) {
 
-                    this.loadingData = true;
-                    await this.loadMore();
-                    this.loadingData = false;
-                }
+                        if (this.loadingData) return;
+
+                        this.loadingData = true;
+                        await this.loadMore();
+                        this.loadingData = false;
+                    }
+                });
             }
+            , { threshold: 0.5 });
+
+            observer.observe(loadMore);
+
         }, { timeout: 3000});
 
     }
 
-    async refreshTimeline(cache: boolean) {
+    async refreshTimeline() {
         console.log("refreshing timeline", this.timelineType)
         switch (this.timelineType) {
             case "Home":
-                const timelineData = await getPaginatedHomeTimeline(cache);
+                const timelineData = await getPaginatedHomeTimeline();
                 console.log("timelineData", timelineData);
 
                 this.timeline = timelineData;
@@ -342,40 +347,21 @@ export class Timeline extends LitElement {
         </sl-dialog>
 
         <div id="list-actions">
-            <sl-button @click="${() => this.refreshTimeline(false)}" circle size="small">
+            <sl-button @click="${() => this.refreshTimeline()}" circle size="small">
               <sl-icon src="/assets/refresh-circle-outline.svg"></sl-icon>
             </sl-button>
         </div>
 
         <ul>
-            ${this.loadingData ? html`
-                <li class="fake">
-                    <sl-skeleton effect="pulse"></sl-skeleton>
-                </li>
-
-                <li class="fake">
-                    <sl-skeleton effect="pulse"></sl-skeleton>
-                </li>
-
-                <li class="fake">
-                    <sl-skeleton effect="pulse"></sl-skeleton>
-                </li>
-
-                <li class="fake">
-                    <sl-skeleton effect="pulse"></sl-skeleton>
-                </li>
-
-                <li class="fake">
-                    <sl-skeleton effect="pulse"></sl-skeleton>
-                </li>
-            ` : null}
-
-            <lit-virtualizer scroller .items="${this.timeline}" .renderItem="${
+            <lit-virtualizer .items="${this.timeline}" .renderItem="${
                 (tweet: any) => html`
                 <timeline-item @analyze="${($event: any) => this.showAnalyze($event.detail.data, $event.detail.imageData, $event.detail.tweet)}" @openimage="${($event: any) => this.showImage($event.detail.imageURL)}" ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
                 `
             }">
             </lit-virtualizer>
+
+            <sl-button ?loading="${this.loadingData}" id="load-more">Load More</sl-button>
+
         </ul>
         `;
     }

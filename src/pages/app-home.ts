@@ -188,7 +188,7 @@ export class AppHome extends LitElement {
 
       main {
         display: grid;
-        grid-template-columns: 75vw 22vw;
+        grid-template-columns: 70vw 30vw;
       }
 
       main.focus {
