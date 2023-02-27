@@ -40,6 +40,12 @@ export class TimelineItem extends LitElement {
                 margin-bottom: 10px;
             }
 
+            .header-actions-block {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+            }
+
             img[data-src] {
                 opacity: 0;
             }
@@ -279,8 +285,11 @@ export class TimelineItem extends LitElement {
 
                 const src = img.getAttribute('data-src');
 
+                // is this safari?
+                const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
                 // handle blurhash
-                if (this.tweet.media_attachments[0] && this.tweet.media_attachments[0].blurhash) {
+                if (this.tweet.media_attachments[0] && this.tweet.media_attachments[0].blurhash && isSafari === false) {
                     console.log("has blurhash", this.tweet.media_attachments[0].blurhash);
                     try {
                         this.worker = new ImgWorker();
@@ -457,6 +466,22 @@ export class TimelineItem extends LitElement {
 
     }
 
+    async shareStatus(tweet: any) {
+        // share status with web share api
+        if (navigator.share) {
+            await navigator.share({
+                title: 'Mammoth',
+                text: tweet.reblog ? tweet.reblog.content : tweet.content,
+                url: `https://mastodon.social/web/statuses/${tweet.reblog ? tweet.reblog.id : tweet.id}`
+            })
+        }
+        else {
+            // fallback to clipboard api
+            const url = `https://mastodon.social/web/statuses/${tweet.reblog ? tweet.reblog.id : tweet.id}`;
+            await navigator.clipboard.writeText(url);
+        }
+    }
+
     render() {
         return html`
           ${this.tweet.reblog === null || this.tweet.reblog === undefined ? html`
@@ -497,6 +522,11 @@ export class TimelineItem extends LitElement {
                         ` : html``
                       }
 
+                      <div class="header-actions-block" slot="header">
+                        <sl-icon-button @click="${() => this.shareStatus(this.tweet)}" src="/assets/share-social-outline.svg">
+                        </sl-icon-button>
+                      </div>
+
                         <user-profile .account="${this.tweet.account}"></user-profile>
                         <div .innerHTML="${this.tweet.content}"></div>
 
@@ -526,6 +556,11 @@ export class TimelineItem extends LitElement {
                             <user-profile ?small="${true}" .account="${this.tweet.account}"></user-profile>
                               <span>boosted</span>
                             <user-profile ?small="${true}"  .account="${this.tweet.reblog.account}"></user-profile>
+
+
+                            <sl-icon-button @click="${() => this.shareStatus(this.tweet.reblog)}" src="/assets/share-social-outline.svg">
+                            </sl-icon-button>
+
                         </div>
                         <h5>${this.tweet.reblog.account.acct} posted</h5>
 

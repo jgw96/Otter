@@ -14,6 +14,7 @@ import '@shoelace-style/shoelace/dist/components/menu/menu.js';
 import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
 import '@shoelace-style/shoelace/dist/components/divider/divider.js';
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
+import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 
 import '../components/timeline';
 import '../components/timeline-item';
@@ -219,8 +220,10 @@ export class AppHome extends LitElement {
       #username-block {
         display: flex;
         align-items: center;
-        gap: 14px;
         margin-top: 8px;
+        justify-content: space-between;
+        width: fit-content;
+        gap: 8px;
       }
 
       sl-radio {
@@ -554,11 +557,11 @@ export class AppHome extends LitElement {
   async openNewDialog() {
     // if on desktop, open the dialog
     // if (window.innerWidth > 600) {
-      await import("../components/post-dialog");
-      // const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
-      // dialog.show();
-      const dialog: any = this.shadowRoot?.querySelector("post-dialog");
-      dialog?.openNewDialog();
+    await import("../components/post-dialog");
+    // const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
+    // dialog.show();
+    const dialog: any = this.shadowRoot?.querySelector("post-dialog");
+    dialog?.openNewDialog();
     // }
     // else {
     //   const drawer = this.shadowRoot?.getElementById('reply-drawer') as any;
@@ -683,9 +686,29 @@ export class AppHome extends LitElement {
     tab.click();
   }
 
+  async shareMyProfile() {
+    // share my profile
+    if ((navigator as any).share) {
+      await (navigator as any).share({
+        title: 'My Mastodon Profile',
+        text: 'Check out my Mastodon profile!',
+        url: this.user.url,
+      });
+    }
+    else {
+      // fall back to the clipboard api
+      await navigator.clipboard.writeText(this.user.url);
+    }
+  }
+
+  viewMyProfile() {
+    router.navigate(`/account?id=${this.user.id}`)
+  }
+
   render() {
     return html`
-      <!-- <div id="context-menu">
+
+      <right-click>
         <sl-menu>
           <sl-menu-item @click="${() => this.openNewDialog()}">
             <sl-icon slot="prefix" src="/assets/add-outline.svg"></sl-icon>
@@ -713,36 +736,6 @@ export class AppHome extends LitElement {
             Favorites
           </sl-menu-item>
         </sl-menu>
-      </div> -->
-
-      <right-click>
-        <sl-menu>
-            <sl-menu-item @click="${() => this.openNewDialog()}">
-              <sl-icon slot="prefix" src="/assets/add-outline.svg"></sl-icon>
-              New Post
-            </sl-menu-item>
-            <sl-divider></sl-divider>
-            <sl-menu-item @click="${() => this.openATab(" search")}">
-              <sl-icon src="/assets/search-outline.svg"></sl-icon>
-              Explore
-            </sl-menu-item>
-            <sl-menu-item @click="${() => this.openATab(" notifications")}">
-              <sl-icon src="/assets/notifications-outline.svg"></sl-icon>
-              Notifications
-            </sl-menu-item>
-            <sl-menu-item @click="${() => this.openATab(" messages")}">
-              <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
-              Messages
-            </sl-menu-item>
-            <sl-menu-item @click="${() => this.openATab(" bookmarks")}">
-              <sl-icon src="/assets/bookmark-outline.svg"></sl-icon>
-              Bookmarks
-            </sl-menu-item>
-            <sl-menu-item @click="${() => this.openATab(" faves")}">
-              <sl-icon src="/assets/heart-outline.svg"></sl-icon>
-              Favorites
-            </sl-menu-item>
-          </sl-menu>
       </right-click>
 
       <app-header @open-settings="${() => this.openSettingsDrawer()}" @open-theming="${() => this.openThemingDrawer()}">
@@ -759,17 +752,17 @@ export class AppHome extends LitElement {
       <post-dialog></post-dialog>
 
       <!-- <sl-dialog id="notify-dialog" label="New Post">
-                                      <sl-button circle slot="header-actions" @click="${() => this.attachFile()}">
-                                        <sl-icon src="/assets/attach-outline.svg"></sl-icon>
-                                      </sl-button>
-                                      <sl-textarea placeholder="What's on your mind?"></sl-textarea>
+                                            <sl-button circle slot="header-actions" @click="${() => this.attachFile()}">
+                                              <sl-icon src="/assets/attach-outline.svg"></sl-icon>
+                                            </sl-button>
+                                            <sl-textarea placeholder="What's on your mind?"></sl-textarea>
 
-                                      ${this.attachmentPreview ? html`
-                                      <img src="${this.attachmentPreview}" />
-                                      ` : html``}
+                                            ${this.attachmentPreview ? html`
+                                            <img src="${this.attachmentPreview}" />
+                                            ` : html``}
 
-                                      <sl-button @click="${() => this.publish()}" slot="footer" variant="primary">Publish</sl-button>
-                                    </sl-dialog> -->
+                                            <sl-button @click="${() => this.publish()}" slot="footer" variant="primary">Publish</sl-button>
+                                          </sl-dialog> -->
 
       <sl-drawer id="reply-drawer" placement="bottom" label="Reply">
         <sl-button circle slot="footer" @click="${() => this.attachFile()}">
@@ -796,7 +789,8 @@ export class AppHome extends LitElement {
           <div>
             <h4>Show Sensitive Content</h4>
 
-            <sl-switch @sl-change="${($event: any) => this.handleSensitiveContent($event.target.checked)}" ?checked="${this.sensitiveMode}"></sl-switch>
+            <sl-switch @sl-change="${($event: any) => this.handleSensitiveContent($event.target.checked)}"
+              ?checked="${this.sensitiveMode}"></sl-switch>
           </div>
 
           <p>
@@ -831,8 +825,10 @@ export class AppHome extends LitElement {
         </div>
 
         <div class="sponsor">
-          Thanks for using Mammoth! If you are enjoying the app and want to help me spend more time on it, please consider sponsoring me on GitHub!
-          <iframe src="https://github.com/sponsors/jgw96/button" title="Sponsor jgw96" height="32" width="114" style="border: 0; border-radius: 6px;"></iframe>
+          Thanks for using Mammoth! If you are enjoying the app and want to help me spend more time on it, please consider
+          sponsoring me on GitHub!
+          <iframe src="https://github.com/sponsors/jgw96/button" title="Sponsor jgw96" height="32" width="114"
+            style="border: 0; border-radius: 6px;"></iframe>
         </div>
 
         ${this.instanceInfo ? html`
@@ -851,11 +847,11 @@ export class AppHome extends LitElement {
       <sl-drawer id="replies-drawer" placement="end" label="Comments">
         ${this.replies.length > 0 ? html`<ul>
           ${this.replies.map((reply: any) => {
-          return html`
+      return html`
           <timeline-item ?show="${false}" .tweet="${reply}"></timeline-item>
           `
-        })
-        }
+      })
+          }
         </ul>` : html`
         <div id="no-replies">
           <p>No comments yet.</p>
@@ -869,7 +865,7 @@ export class AppHome extends LitElement {
       </sl-drawer>
 
       <main>
-        <sl-tab-group .placement="${window.matchMedia("(max-width: 600px)").matches ? "bottom" : "start" }">
+        <sl-tab-group .placement="${window.matchMedia(" (max-width: 600px)").matches ? "bottom" : "start"}">
           <sl-tab slot="nav" panel="general">
             <sl-icon src="/assets/home-outline.svg"></sl-icon>
 
@@ -886,10 +882,10 @@ export class AppHome extends LitElement {
             <span class="tab-label">Notifications</span>
           </sl-tab>
           <!-- <sl-tab slot="nav" panel="messages">
-                  <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
+                        <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
 
-                  <span class="tab-label">Messages</span>
-                </sl-tab> -->
+                        <span class="tab-label">Messages</span>
+                      </sl-tab> -->
           <sl-tab id="bookmarks-tab" slot="nav" panel="bookmarks">
             <sl-icon src="/assets/bookmark-outline.svg"></sl-icon>
 
@@ -940,6 +936,22 @@ export class AppHome extends LitElement {
             ${this.user ? html`<img src="${this.user.avatar}" />` : html`<img src="https://via.placeholder.com/150" />`}
             <div id="username-block">
               <h3>${this.user ? this.user.display_name : "Loading..."}</h3>
+
+              <div id="user-actions">
+                <sl-dropdown>
+                  <sl-icon-button slot="trigger" src="/assets/settings-outline.svg"></sl-icon-button>
+                  <sl-menu>
+                    <sl-menu-item @click="${() => this.viewMyProfile()}">
+                      <sl-icon slot="prefix" src="/assets/eye-outline.svg"></sl-icon>
+                      View My Profile
+                    </sl-menu-item>
+                    <sl-menu-item @click="${() => this.shareMyProfile()}">
+                      <sl-icon slot="prefix" src="/assets/share-social-outline.svg"></sl-icon>
+                      Share My Profile
+                    </sl-menu-item>
+                  </sl-menu>
+                </sl-dropdown>
+              </div>
             </div>
 
             <p id="user-url">${this.user ? this.user.url : "Loading..."}</p>
