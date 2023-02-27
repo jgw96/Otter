@@ -12,11 +12,18 @@ export const getHomeTimeline = async () => {
 
 let lastPageID = "";
 
-export const getPaginatedHomeTimeline = async (cache?: boolean) => {
-    console.log("here 1", cache, latestHomeTimelineData.length);
+export const getPaginatedHomeTimeline = async () => {
 
     if (lastPageID && lastPageID.length > 0) {
-        const response = await fetch(`https://mammoth-backend.azurewebsites.net/timelinePaginated?since_id=${lastPageID}&limit=40&code=${accessToken}&server=${server}`);
+        let accessToken = localStorage.getItem('accessToken') || '';
+
+        const response = await fetch(`https://${server}/api/v1/timelines/home?limit=10&max_id=${lastPageID}`, {
+            method: 'GET',
+            headers: new Headers({
+                "Authorization": `Bearer ${accessToken}`
+            })
+        });
+
         const data = await response.json();
 
         lastPageID = data[data.length - 1].id;
@@ -26,7 +33,15 @@ export const getPaginatedHomeTimeline = async (cache?: boolean) => {
         return data;
     }
     else {
-        const response = await fetch(`https://mammoth-backend.azurewebsites.net/timelinePaginated?limit=40&code=${accessToken}&server=${server}`);
+        let accessToken = localStorage.getItem('accessToken') || '';
+
+        const response = await fetch(`https://${server}/api/v1/timelines/home?limit=10`, {
+            method: 'GET',
+            headers: new Headers({
+                "Authorization": `Bearer ${accessToken}`
+            })
+        });
+
         const data = await response.json();
 
         lastPageID = data[data.length - 1].id;

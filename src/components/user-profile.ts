@@ -19,9 +19,10 @@ export class UserProfile extends LitElement {
             }
 
             p, h4 {
-                max-width: 160px;
                 overflow: hidden;
                 text-overflow: ellipsis;
+                max-width: 220px;
+                white-space: nowrap;
             }
 
             .headerBlock {
@@ -40,6 +41,7 @@ export class UserProfile extends LitElement {
 
             .headerBlock p {
                 margin-top: 0;
+                color: grey;
             }
 
             div.small img {
