@@ -64,6 +64,28 @@
     <sl-button pill id="updateButton">Reload</sl-button>
   </div>
 
+  <script>
+    window.requestIdleCallback =
+    window.requestIdleCallback ||
+    function (cb) {
+    var start = Date.now();
+    return setTimeout(function () {
+        cb({
+        didTimeout: false,
+        timeRemaining: function () {
+            return Math.max(0, 50 - (Date.now() - start));
+        }
+        });
+    }, 1);
+    }
+
+window.cancelIdleCallback =
+    window.cancelIdleCallback ||
+    function (id) {
+    clearTimeout(id);
+    }
+  </script>
+
   <script type="module">
     import { Workbox } from 'https://storage.googleapis.com/workbox-cdn/releases/6.4.1/workbox-window.prod.mjs';
     if ('serviceWorker' in navigator) {
