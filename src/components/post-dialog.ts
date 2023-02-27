@@ -274,14 +274,14 @@ export class PostDialog extends LitElement {
                 <img src="${this.attachmentPreview}" />
             </div>
             ` : this.attaching === true ? html`<div class="img-preview">
-                <sl-skeleton></sl-skeleton>
+                <sl-skeleton effect="sheen"></sl-skeleton>
             </div>` : null}
 
             ${this.showPrompt ? html`<div id="ai-image">
                 ${
                     this.showPrompt && this.generatedImage ? html`
                     <img src="${this.generatedImage}">
-                    ` : this.showPrompt && this.generatingImage === false ? html`<div id="ai-preview-block"><p>Enter a prompt to generate an image with AI!</p></div>` : html`<div id="ai-preview-block"><sl-skeleton></sl-skeleton></div>`
+                    ` : this.showPrompt && this.generatingImage === false ? html`<div id="ai-preview-block"><p>Enter a prompt to generate an image with AI!</p></div>` : html`<div id="ai-preview-block"><sl-skeleton effect="sheen"></sl-skeleton></div>`
                 }
                 ${
                     this.showPrompt ? html`
