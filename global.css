@@ -42,6 +42,8 @@ html, body {
   font-size: var(--sl-font-size-medium);
   padding: 0;
   margin: 0;
+
+  overflow: hidden;
 }
 
 body {

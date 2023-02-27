@@ -4,7 +4,7 @@ import { getPaginatedHomeTimeline, getPublicTimeline } from '../services/timelin
 
 import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 
-import '@lit-labs/virtualizer';
+// import '@lit-labs/virtualizer';
 
 import '../components/timeline-item';
 import '../components/search';
@@ -353,15 +353,13 @@ export class Timeline extends LitElement {
         </div>
 
         <ul>
-            <lit-virtualizer .items="${this.timeline}" .renderItem="${
-                (tweet: any) => html`
-                <timeline-item @analyze="${($event: any) => this.showAnalyze($event.detail.data, $event.detail.imageData, $event.detail.tweet)}" @openimage="${($event: any) => this.showImage($event.detail.imageURL)}" ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
-                `
-            }">
-            </lit-virtualizer>
+            ${this.timeline.map((tweet: any) => html`
+                <li>
+                  <timeline-item @analyze="${($event: any) => this.showAnalyze($event.detail.data, $event.detail.imageData, $event.detail.tweet)}" @openimage="${($event: any) => this.showImage($event.detail.imageURL)}" ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
+                </li>
+            `)}
 
             <sl-button ?loading="${this.loadingData}" id="load-more">Load More</sl-button>
-
         </ul>
         `;
     }
