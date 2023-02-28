@@ -65,6 +65,23 @@ export class AppHome extends LitElement {
         flex-direction: column;
       }
 
+      #settings-profile-inner {
+        background: rgba(128, 128, 128, 0.14);
+        border-radius: 6px;
+        padding: 10px;
+        margin-top: 12px;
+      }
+
+      #settings-profile-inner img {
+        width: 4em;
+        border-radius: 50%;
+      }
+
+      #settings-profile-inner h3 {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
       .sponsor {
         background: rgba(128, 128, 128, 0.14);
         border-radius: 6px;
@@ -822,6 +839,39 @@ export class AppHome extends LitElement {
           <p>
             Data Saver Mode reduces the amount of data used by Mammoth.
           </p>
+        </div>
+
+        <div>
+          <div id="settings-profile-inner">
+            ${this.user ? html`<img src="${this.user.avatar}" />` : html`<img src="https://via.placeholder.com/150" />`}
+            <div id="username-block">
+              <h3>${this.user ? this.user.display_name : "Loading..."}</h3>
+
+              <div id="user-actions">
+                <sl-dropdown>
+                  <sl-icon-button slot="trigger" src="/assets/settings-outline.svg"></sl-icon-button>
+                  <sl-menu>
+                    <sl-menu-item @click="${() => this.viewMyProfile()}">
+                      <sl-icon slot="prefix" src="/assets/eye-outline.svg"></sl-icon>
+                      View My Profile
+                    </sl-menu-item>
+                    <sl-menu-item @click="${() => this.shareMyProfile()}">
+                      <sl-icon slot="prefix" src="/assets/share-social-outline.svg"></sl-icon>
+                      Share My Profile
+                    </sl-menu-item>
+                  </sl-menu>
+                </sl-dropdown>
+              </div>
+            </div>
+
+            <p id="user-url">${this.user ? this.user.url : "Loading..."}</p>
+
+            <sl-badge @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count : "0"} followers
+            </sl-badge>
+            <sl-badge @click="${() => this.goToFollowing()}">${this.user ? this.user.following_count : "0"} following
+            </sl-badge>
+
+          </div>
         </div>
 
         <div class="sponsor">
