@@ -88,6 +88,14 @@ export const router = new Router({
           lazy(() => import('../pages/app-following.js')),
         ],
         render: () => html`<app-hashtags></app-hashtags>`
+      },
+      {
+        path: '/home/post',
+        title: 'post',
+        plugins: [
+          lazy(() => import('../pages/post-detail.js')),
+        ],
+        render: () => html`<post-detail></post-detail>`
       }
       // {
       //   path: 'bar/:id',

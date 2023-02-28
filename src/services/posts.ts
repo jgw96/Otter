@@ -3,6 +3,18 @@ import { fileOpen } from "browser-fs-access";
 let server = localStorage.getItem('server') || '';
 let accessToken = localStorage.getItem('accessToken') || '';
 
+export async function getPostDetail(id: string) {
+    const response = await fetch(`https://${server}/api/v1/statuses/${id}`, {
+        method: 'GET',
+        headers: new Headers({
+            "Authorization": `Bearer ${accessToken}`
+        })
+    });
+
+    const data = await response.json();
+    return data;
+}
+
 export async function publishPost(post: string, id?: string) {
     const formData = new FormData();
 

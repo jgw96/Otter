@@ -13,6 +13,7 @@ import { getSettings, Settings } from '../services/settings';
 
 // @ts-ignore
 import ImgWorker from '../utils/img-worker?worker';
+import { router } from '../utils/router';
 
 @customElement('timeline-item')
 export class TimelineItem extends LitElement {
@@ -347,7 +348,6 @@ export class TimelineItem extends LitElement {
                     }
                 }
                 else {
-                    console.log('in here', src);
                                     // start loading real image
                 if (src) {
                     const placeholderImage = new Image();
@@ -482,6 +482,10 @@ export class TimelineItem extends LitElement {
         }
     }
 
+    async openPost(id: string) {
+        router.navigate(`/home/post?id=${id}`);
+    }
+
     render() {
         return html`
           ${this.tweet.reblog === null || this.tweet.reblog === undefined ? html`
@@ -528,7 +532,7 @@ export class TimelineItem extends LitElement {
                       </div>
 
                         <user-profile .account="${this.tweet.account}"></user-profile>
-                        <div .innerHTML="${this.tweet.content}"></div>
+                        <div @click="${() => this.openPost(this.tweet.id)}" .innerHTML="${this.tweet.content}"></div>
 
                         <div class="actions" slot="footer">
                         <sl-button pill @click="${() => this.analyzeStatus(this.tweet)}">
@@ -564,7 +568,7 @@ export class TimelineItem extends LitElement {
                         </div>
                         <h5>${this.tweet.reblog.account.acct} posted</h5>
 
-                        <div .innerHTML="${this.tweet.reblog.content}"></div>
+                        <div @click="${() => this.openPost(this.tweet.reblog.id)}" .innerHTML="${this.tweet.reblog.content}"></div>
 
                         <div class="actions" slot="footer">
                         <sl-button pill @click="${() => this.analyzeStatus(this.tweet)}">
