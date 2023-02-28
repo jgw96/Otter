@@ -20,6 +20,9 @@ export class AppProfile extends LitElement {
         css`
             :host {
                 display: block;
+
+                overflow-y: scroll;
+                height: 100vh;
             }
 
             sl-badge {

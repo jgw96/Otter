@@ -13,6 +13,9 @@ export class AppFollowers extends LitElement {
         css`
             :host {
                 display: block;
+
+                overflow-y: scroll;
+                height: 100vh;
             }
 
             main {
