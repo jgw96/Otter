@@ -131,9 +131,9 @@ export class AppLogin extends LitElement {
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
 
-        let accessToken = localStorage.getItem('accessToken');
+        const accessToken = localStorage.getItem('accessToken');
 
-        let server = localStorage.getItem('server');
+        const server = localStorage.getItem('server');
 
         if (code) {
             const { authToClient } = await import('../services/account');
