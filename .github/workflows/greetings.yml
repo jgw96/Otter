@@ -1,0 +1,16 @@
+name: Greetings
+
+on: [pull_request_target, issues]
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+    - uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        issue-message: "Hey! Thanks for opening a new issue on Mammoth, I really appreciate it. Please ensure that your issue follows the template as this will help me prioritize the issue."
+        pr-message: "Oh wow, thanks for you time and work! I will do my best to take a look at this PR as soon as possible."
