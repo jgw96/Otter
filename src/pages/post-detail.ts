@@ -103,13 +103,13 @@ export class PostDetail extends LitElement {
             // share the post
             await navigator.share({
                 title: 'Mammoth',
-                text: this.tweet!.content,
-                url: this.tweet!.url
+                text: this.tweet?.content,
+                url: this.tweet?.url
             });
         }
         else {
             // fallback to clipboard api
-            await navigator.clipboard.writeText(this.tweet!.url);
+            await navigator.clipboard.writeText(this.tweet?.url || "");
         }
     }
 
