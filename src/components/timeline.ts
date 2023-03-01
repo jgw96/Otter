@@ -288,7 +288,7 @@ export class Timeline extends LitElement {
 
         if (data.results && data.results?.documents[0] && data.results.documents[0].entities && data.results.documents[0].entities?.length !== 0) {
             this.analyzeData = data.results.documents[0].entities;
-        };
+        }
 
         if (imageData) {
             this.imageDesc = imageData.descriptionResult.values[0].text;
