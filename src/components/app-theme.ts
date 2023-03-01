@@ -234,7 +234,7 @@ export class AppTheme extends LitElement {
 
             <div>
                 <span>Font Size</span>
-                <sl-input @sl-change="${($event: any) => this.changeFontSize($event.target.value)}" type="number" min="12" max="46" value="16"></sl-input>
+                <sl-input @sl-change="${($event: any) => this.changeFontSize($event.target!.value)}" type="number" min="12" max="46" value="16"></sl-input>
             </div>
         </div>
         `;

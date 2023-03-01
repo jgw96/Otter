@@ -14,10 +14,11 @@ import { getSettings, Settings } from '../services/settings';
 // @ts-ignore
 import ImgWorker from '../utils/img-worker?worker';
 import { router } from '../utils/router';
+import { Post } from '../interfaces/Post';
 
 @customElement('timeline-item')
 export class TimelineItem extends LitElement {
-    @property({ type: Object }) tweet: any;
+    @property({ type: Object }) tweet: Post | undefined;
     @property({ type: Boolean }) show: boolean = false;
 
     @state() isBoosted = false;
@@ -253,7 +254,7 @@ export class TimelineItem extends LitElement {
             const observer = new IntersectionObserver((entries, observer) => {
                 entries.forEach(async entry => {
                     if (entry.isIntersecting) {
-                        if (this.settings?.sensitive === false && this.tweet.sensitive === false) {
+                        if (this.settings?.sensitive === false && this.tweet!?.sensitive === false) {
                             await this.loadImage();
                         }
                         else if (this.settings?.sensitive === true) {
@@ -269,11 +270,11 @@ export class TimelineItem extends LitElement {
             observer.observe(this.shadowRoot?.querySelector('sl-card') as Element);
         }
 
-        if(this.tweet.in_reply_to_id !== null) {
+        if(this.tweet!?.in_reply_to_id !== null) {
             const { getAStatus } = await import('../services/timeline');
-          const replyStatus = await getAStatus(this.tweet.in_reply_to_id);
+            const replyStatus = await getAStatus(this.tweet!!.in_reply_to_id);
 
-          this.tweet.reply_to = replyStatus;
+            this.tweet!!.reply_to = replyStatus;
         }
     }
 
@@ -290,13 +291,13 @@ export class TimelineItem extends LitElement {
                 const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
                 // handle blurhash
-                if (this.tweet.media_attachments[0] && this.tweet.media_attachments[0].blurhash && isSafari === false) {
-                    console.log("has blurhash", this.tweet.media_attachments[0].blurhash);
+                if (this.tweet!?.media_attachments[0] && this.tweet!.media_attachments[0].blurhash && isSafari === false) {
+                    console.log("has blurhash", this.tweet!.media_attachments[0].blurhash);
                     try {
                         this.worker = new ImgWorker();
 
-                              this.canvas.width = this.tweet.media_attachments[0].meta.original.width;
-                              this.canvas.height = this.tweet.media_attachments[0].meta.original.height;
+                              this.canvas.width = this.tweet!.media_attachments[0].meta.original.width;
+                              this.canvas.height = this.tweet!.media_attachments[0].meta.original.height;
 
                               this.worker!.onmessage = (e) => {
                                 console.log("worker message", e.data)
@@ -336,9 +337,9 @@ export class TimelineItem extends LitElement {
                                 this.worker!.terminate();
                               }
                                 this.worker!.postMessage({
-                                    hash: this.tweet.media_attachments[0].blurhash,
-                                    width: this.tweet.media_attachments[0].meta.original.width,
-                                    height: this.tweet.media_attachments[0].meta.original.height
+                                    hash: this.tweet!.media_attachments[0].blurhash,
+                                    width: this.tweet!.media_attachments[0].meta.original.width,
+                                    height: this.tweet!.media_attachments[0].meta.original.height
                                 });
                         // }, {
                         //     timeout: 3000
@@ -354,7 +355,7 @@ export class TimelineItem extends LitElement {
 
                     img.onload = () => {
                         window.requestIdleCallback(() => {
-                            // if (!this.tweet.media_attachments[0] || !this.tweet.media_attachments[0].blurhash) {
+                            // if (!this.tweet!.media_attachments[0] || !this.tweet!.media_attachments[0].blurhash) {
                                 img.removeAttribute('data-src');
                             // }
                             // remove event listener
@@ -440,12 +441,12 @@ export class TimelineItem extends LitElement {
         }));
     }
 
-    async analyzeStatus(tweet: any) {
+    async analyzeStatus(tweet: Post) {
 
         const { analyzeStatusText, analyzeStatusImage } = await import('../services/ai');
         const data = await analyzeStatusText(tweet.reblog ? tweet.reblog.content : tweet.content);
 
-        let imageData: any = null;
+        let imageData: string | null = null;
         const imageURL = tweet.reblog ? tweet.reblog.media_attachments[0] ? tweet.reblog.media_attachments[0].preview_url : null : tweet.media_attachments[0] ? tweet.media_attachments[0]?.preview_url : null;
 
         if (imageURL) {
@@ -466,7 +467,7 @@ export class TimelineItem extends LitElement {
 
     }
 
-    async shareStatus(tweet: any) {
+    async shareStatus(tweet: Post) {
         // share status with web share api
         if (navigator.share) {
             await navigator.share({
@@ -488,25 +489,25 @@ export class TimelineItem extends LitElement {
 
     render() {
         return html`
-          ${this.tweet.reblog === null || this.tweet.reblog === undefined ? html`
+          ${this.tweet!?.reblog === null || this.tweet!?.reblog === undefined ? html`
                 ${
-                    this.tweet.reply_to !== null && this.tweet.reply_to !== undefined ? html`
+                    this.tweet!?.reply_to !== null && this.tweet!?.reply_to !== undefined ? html`
                       <sl-card part="card">
-                        <user-profile .account="${this.tweet.reply_to.account}"></user-profile>
-                        <div .innerHTML="${this.tweet.reply_to.content}"></div>
+                        <user-profile .account="${this.tweet!.reply_to.account}"></user-profile>
+                        <div .innerHTML="${this.tweet!.reply_to.content}"></div>
 
                         <div class="actions" slot="footer">
-                          <sl-button pill @click="${() => this.analyzeStatus(this.tweet)}">
+                          <sl-button pill @click="${() => this.analyzeStatus(this.tweet!)}">
                             <sl-icon src="/assets/search-outline.svg"></sl-icon>
                           </sl-button>
 
-                          ${this.show === true ? html`<sl-button pill @click="${() => this.replies(this.tweet.reply_to.id)}">
+                          ${this.show === true ? html`<sl-button pill @click="${() => this.replies(this.tweet!!.reply_to.id)}">
                           <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
                           </sl-button>` : null}
 
-                          <sl-button ?disabled="${this.isBookmarked || this.tweet.reply_to.bookmarked}" pill @click="${() => this.bookmark(this.tweet.reply_to.id)}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></sl-button>
-                          ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isBoosted || this.tweet.reply_to.favourited}" pill @click="${() => this.favorite(this.tweet.reply_to.id)}">${this.tweet.reply_to.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></sl-button>` : null}
-                          ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isReblogged || this.tweet.reply_to.reblogged}" pill @click="${() => this.reblog(this.tweet.reply_to.id)}">${this.tweet.reply_to.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></sl-button>` : null}
+                          <sl-button ?disabled="${this.isBookmarked || this.tweet!.reply_to.bookmarked}" pill @click="${() => this.bookmark(this.tweet!!.reply_to.id)}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></sl-button>
+                          ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isBoosted || this.tweet!.reply_to.favourited}" pill @click="${() => this.favorite(this.tweet!!.reply_to.id)}">${this.tweet!.reply_to.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></sl-button>` : null}
+                          ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isReblogged || this.tweet!.reply_to.reblogged}" pill @click="${() => this.reblog(this.tweet!!.reply_to.id)}">${this.tweet!.reply_to.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></sl-button>` : null}
                         </div>
                       </sl-card>
 
@@ -517,69 +518,69 @@ export class TimelineItem extends LitElement {
                 }
 
 
-                <sl-card part="card" class="${classMap({ replyCard: this.tweet.reply_to ? true : false})}">
+                <sl-card part="card" class="${classMap({ replyCard: this.tweet!?.reply_to ? true : false})}">
                       ${
-                        this.tweet.media_attachments.length > 0 ? html`
+                        this.tweet!!.media_attachments.length > 0 ? html`
 
-                          <img part="image" alt="${this.tweet.media_attachments[0].description || ""}" slot="image" @click="${() => this.openInBox(this.tweet.media_attachments[0].preview_url)}" data-src="${this.tweet.media_attachments[0].preview_url}">
+                          <img part="image" alt="${this.tweet!!.media_attachments[0].description || ""}" slot="image" @click="${() => this.openInBox(this.tweet!!.media_attachments[0].preview_url)}" data-src="${this.tweet!!.media_attachments[0].preview_url}">
 
                         ` : html``
                       }
 
                       <div class="header-actions-block" slot="header">
-                        <sl-icon-button @click="${() => this.shareStatus(this.tweet)}" src="/assets/share-social-outline.svg">
+                        <sl-icon-button @click="${() => this.shareStatus(this.tweet!)}" src="/assets/share-social-outline.svg">
                         </sl-icon-button>
                       </div>
 
-                        <user-profile .account="${this.tweet.account}"></user-profile>
-                        <div @click="${() => this.openPost(this.tweet.id)}" .innerHTML="${this.tweet.content}"></div>
+                        <user-profile .account="${this.tweet!!.account}"></user-profile>
+                        <div @click="${() => this.openPost(this.tweet!!.id)}" .innerHTML="${this.tweet!!.content}"></div>
 
                         <div class="actions" slot="footer">
-                        <sl-button pill @click="${() => this.analyzeStatus(this.tweet)}">
+                        <sl-button pill @click="${() => this.analyzeStatus(this.tweet!)}">
                             <sl-icon src="/assets/search-outline.svg"></sl-icon>
                           </sl-button>
-                          ${this.show === true ? html`<sl-button pill @click="${() => this.replies(this.tweet.id)}">
+                          ${this.show === true ? html`<sl-button pill @click="${() => this.replies(this.tweet!!.id)}">
                           <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
                         </sl-button>` : null}
-                          <sl-button ?disabled="${this.isBookmarked || this.tweet.bookmarked}" pill @click="${() => this.bookmark(this.tweet.id)}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></sl-button>
-                          ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isBoosted || this.tweet.favourited}" pill @click="${() => this.favorite(this.tweet.id)}">${this.tweet.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></sl-button>` : null}
-                          ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isReblogged || this.tweet.reblogged}" pill @click="${() => this.reblog(this.tweet.id)}">${this.tweet.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></sl-button>` : null}
+                          <sl-button ?disabled="${this.isBookmarked || this.tweet!!.bookmarked}" pill @click="${() => this.bookmark(this.tweet!!.id)}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></sl-button>
+                          ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isBoosted || this.tweet!!.favourited}" pill @click="${() => this.favorite(this.tweet!!.id)}">${this.tweet!.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></sl-button>` : null}
+                          ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isReblogged || this.tweet!!.reblogged}" pill @click="${() => this.reblog(this.tweet!!.id)}">${this.tweet!.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></sl-button>` : null}
                         </div>
                     </sl-card>
                     ` : html`
                     <sl-card slot="card">
                     ${
-                        this.tweet.reblog.media_attachments.length > 0 ? html`
+                        this.tweet!.reblog.media_attachments.length > 0 ? html`
 
-<img part="image" slot="image" alt="${this.tweet.reblog.media_attachments[0].description || ""}" @click="${() => this.openInBox(this.tweet.reblog.media_attachments[0].preview_url)}" data-src="${this.tweet.reblog.media_attachments[0].preview_url}">
+<img part="image" slot="image" alt="${this.tweet!.reblog.media_attachments[0].description || ""}" @click="${() => this.openInBox(this.tweet!.reblog!.media_attachments[0].preview_url)}" data-src="${this.tweet!.reblog.media_attachments[0].preview_url}">
                         ` : html``
                       }
 
                         <div class="header-block" slot="header">
 
-                            <user-profile ?small="${true}" .account="${this.tweet.account}"></user-profile>
+                            <user-profile ?small="${true}" .account="${this.tweet!.account}"></user-profile>
                               <span>boosted</span>
-                            <user-profile ?small="${true}"  .account="${this.tweet.reblog.account}"></user-profile>
+                            <user-profile ?small="${true}"  .account="${this.tweet!.reblog.account}"></user-profile>
 
 
-                            <sl-icon-button @click="${() => this.shareStatus(this.tweet.reblog)}" src="/assets/share-social-outline.svg">
+                            <sl-icon-button @click="${() => this.shareStatus(this.tweet!.reblog!)}" src="/assets/share-social-outline.svg">
                             </sl-icon-button>
 
                         </div>
-                        <h5>${this.tweet.reblog.account.acct} posted</h5>
+                        <h5>${this.tweet!.reblog.account.acct} posted</h5>
 
-                        <div @click="${() => this.openPost(this.tweet.reblog.id)}" .innerHTML="${this.tweet.reblog.content}"></div>
+                        <div @click="${() => this.openPost(this.tweet!.reblog!.id)}" .innerHTML="${this.tweet!.reblog.content}"></div>
 
                         <div class="actions" slot="footer">
-                        <sl-button pill @click="${() => this.analyzeStatus(this.tweet)}">
+                        <sl-button pill @click="${() => this.analyzeStatus(this.tweet!)}">
                             <sl-icon src="/assets/search-outline.svg"></sl-icon>
                           </sl-button>
-                        ${this.show === true ? html`<sl-button pill @click="${() => this.replies(this.tweet.id)}">
+                        ${this.show === true ? html`<sl-button pill @click="${() => this.replies(this.tweet!.id)}">
                             <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
                         </sl-button>` : null}
-                            <sl-button ?disabled="${this.isBoosted || this.tweet.favourited}" pill @click="${() => this.bookmark(this.tweet.id)}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></sl-button>
-                            ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isBoosted || this.tweet.favourited}" pill @click="${() => this.favorite(this.tweet.id)}">${this.tweet.reblog.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></sl-button>` : null}
-                            ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isReblogged || this.tweet.reblogged}"  pill @click="${() => this.reblog(this.tweet.id)}">${this.tweet.reblog.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></sl-button>` : null}
+                            <sl-button ?disabled="${this.isBoosted || this.tweet!.favourited}" pill @click="${() => this.bookmark(this.tweet!.id)}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></sl-button>
+                            ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isBoosted || this.tweet!.favourited}" pill @click="${() => this.favorite(this.tweet!.id)}">${this.tweet!.reblog.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></sl-button>` : null}
+                            ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isReblogged || this.tweet!.reblogged}"  pill @click="${() => this.reblog(this.tweet!.id)}">${this.tweet!.reblog.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></sl-button>` : null}
                         </div>
                     </sl-card>
 

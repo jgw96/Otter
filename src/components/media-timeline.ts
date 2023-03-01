@@ -8,10 +8,11 @@ import '@lit-labs/virtualizer';
 
 import '../components/timeline-item';
 import '../components/search';
+import { Post } from '../interfaces/Post';
 
 @customElement('media-timeline')
 export class MediaTimeline extends LitElement {
-    @state() timeline: any[] = [];
+    @state() timeline: Post[] = [];
     @state() loadingData: boolean = false;
 
     @property({ type: String }) timelineType: "Home" | "Public" | "Media" = "Home";
@@ -110,7 +111,11 @@ export class MediaTimeline extends LitElement {
         // update data when the user scrolls to the bottom of the page
         const scroller = this.shadowRoot?.querySelector('lit-virtualizer') as any;
 
-        scroller.onoverscroll = async (e: any) => {
+        type scrollEvent = {
+            deltaY: number;
+        }
+
+        scroller.onoverscroll = async (e: scrollEvent) => {
             if (e.deltaY > 0) {
                 if (this.loadingData) return;
 
@@ -127,7 +132,7 @@ export class MediaTimeline extends LitElement {
                const timelineDataMedia = await getPaginatedHomeTimeline();
 
                // filter out tweets that don't have media
-                const updatedTimeline = (timelineDataMedia as Array<any>).filter((tweet: any) => tweet.media_attachments.length > 0);
+                const updatedTimeline = (timelineDataMedia as Array<any>).filter((tweet: Post) => tweet.media_attachments.length > 0);
                 console.log(timelineDataMedia);
 
                 this.timeline = updatedTimeline;
@@ -137,13 +142,13 @@ export class MediaTimeline extends LitElement {
     async loadMore() {
         const timelineData = await getPaginatedHomeTimeline();
         // filter out tweets that don't have media
-        const updatedTimeline = (timelineData as Array<any>).filter((tweet: any) => tweet.media_attachments.length > 0);
+        const updatedTimeline = (timelineData as Array<any>).filter((tweet: Post) => tweet.media_attachments.length > 0);
         console.log(timelineData);
 
         this.timeline = [...this.timeline, ...updatedTimeline];
     }
 
-    handleReplies(data: any) {
+    handleReplies(data: Array<Post>) {
         console.log("reply", data);
 
         // fire custom event
@@ -158,7 +163,7 @@ export class MediaTimeline extends LitElement {
         return html`
         <ul>
             <lit-virtualizer scroller .items="${this.timeline}" .renderItem="${
-                (tweet: any) => html`
+                (tweet: Post) => html`
                 <timeline-item ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
                 `
             }">

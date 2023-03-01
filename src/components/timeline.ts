@@ -8,17 +8,18 @@ import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 
 import '../components/timeline-item';
 import '../components/search';
+import { Post } from '../interfaces/Post';
 
 @customElement('app-timeline')
 export class Timeline extends LitElement {
-    @state() timeline: any[] = [];
+    @state() timeline: Post[] = [];
     @state() loadingData: boolean = false;
 
     @state() imgPreview: string | undefined = undefined;
 
     @state() analyzeData: any | undefined = undefined;
     @state() imageDesc: string | undefined = undefined;
-    @state() analyzeTweet: any | undefined = undefined;
+    @state() analyzeTweet: Post | null = null;
 
     @property({ type: String }) timelineType: "Home" | "Public" | "Media" = "Home";
 
@@ -204,8 +205,8 @@ export class Timeline extends LitElement {
             // setup intersection observer
             const loadMore = this.shadowRoot?.querySelector('#load-more') as any;
 
-            const observer = new IntersectionObserver(async (entries: any) => {
-                entries.forEach(async (entry: any) => {
+            const observer = new IntersectionObserver(async (entries: Array<IntersectionObserverEntry>) => {
+                entries.forEach(async (entry: IntersectionObserverEntry) => {
                     if (entry.isIntersecting) {
 
                         if (this.loadingData) return;
@@ -244,7 +245,7 @@ export class Timeline extends LitElement {
                const timelineDataMedia = await getPaginatedHomeTimeline();
 
                // filter out tweets that don't have media
-                (timelineDataMedia as Array<any>).filter((tweet: any) => tweet.media_attachments.length > 0);
+                (timelineDataMedia as Array<Post>).filter((tweet: Post) => tweet.media_attachments.length > 0);
                 console.log(timelineData);
 
                 this.timeline = timelineDataMedia;
@@ -256,13 +257,13 @@ export class Timeline extends LitElement {
     }
 
     async loadMore() {
-        const timelineData: any[] = await getPaginatedHomeTimeline();
+        const timelineData: Post[] = await getPaginatedHomeTimeline();
         console.log(timelineData);
 
         this.timeline = [...this.timeline, ...timelineData];
     }
 
-    handleReplies(data: any) {
+    handleReplies(data: Array<Post>) {
         console.log("reply", data);
 
         // fire custom event
@@ -353,7 +354,7 @@ export class Timeline extends LitElement {
         </div>
 
         <ul>
-            ${this.timeline.map((tweet: any) => html`
+            ${this.timeline.map((tweet: Post) => html`
                 <li>
                   <timeline-item @analyze="${($event: any) => this.showAnalyze($event.detail.data, $event.detail.imageData, $event.detail.tweet)}" @openimage="${($event: any) => this.showImage($event.detail.imageURL)}" ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
                 </li>

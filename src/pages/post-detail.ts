@@ -3,11 +3,12 @@ import { customElement, state } from 'lit/decorators.js';
 
 import '../components/header';
 import '../components/timeline-item';
+import { Post } from '../interfaces/Post';
 import { getReplies } from '../services/timeline';
 
 @customElement('post-detail')
 export class PostDetail extends LitElement {
-    @state() tweet: any;
+    @state() tweet: Post | null = null;
     @state() replies: any[] = [];
 
     static styles = [
@@ -102,13 +103,13 @@ export class PostDetail extends LitElement {
             // share the post
             await navigator.share({
                 title: 'Mammoth',
-                text: this.tweet.text,
-                url: this.tweet.url
+                text: this.tweet!.content,
+                url: this.tweet!.url
             });
         }
         else {
             // fallback to clipboard api
-            await navigator.clipboard.writeText(this.tweet.url);
+            await navigator.clipboard.writeText(this.tweet!.url);
         }
     }
 
