@@ -1,3 +1,5 @@
+[![CodeFactor](https://www.codefactor.io/repository/github/jgw96/mammoth-app/badge)](https://www.codefactor.io/repository/github/jgw96/mammoth-app)
+
 # Mammoth: Your Mastodon App
 
 **Not familiar with Mastodon? [Learn More](https://joinmastodon.org/)**
