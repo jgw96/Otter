@@ -42,6 +42,8 @@ export class PostDetail extends LitElement {
                 flex: 1.5;
                 position: sticky;
                 top: 60px;
+
+                overflow-x: hidden;
             }
 
             #post-actions {
@@ -61,6 +63,14 @@ export class PostDetail extends LitElement {
             @media(max-width: 768px) {
                 main {
                     flex-direction: column;
+                }
+
+                #main-block {
+                    display: initial;
+                    position: initial;
+                    width: 100%;
+
+                    overflow-x: hidden;
                 }
 
                 #main {
