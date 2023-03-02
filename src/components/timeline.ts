@@ -17,7 +17,7 @@ export class Timeline extends LitElement {
 
     @state() imgPreview: string | undefined = undefined;
 
-    @state() analyzeData: any | undefined = undefined;
+    @state() analyzeData: any | undefined | null = undefined;
     @state() imageDesc: string | undefined = undefined;
     @state() analyzeTweet: Post | null = null;
 
@@ -228,29 +228,29 @@ export class Timeline extends LitElement {
     async refreshTimeline() {
         console.log("refreshing timeline", this.timelineType)
         switch (this.timelineType) {
-            case "Home":
+            case "Home": {
                 const timelineData = await getPaginatedHomeTimeline();
                 console.log("timelineData", timelineData);
 
                 this.timeline = timelineData;
                 break;
-            case "Public":
+            }
+            case "Public": {
                 const timelineDataPub = await getPublicTimeline();
-                console.log(timelineData);
 
                 this.timeline = timelineDataPub;
                 break;
-            case "Media":
+            }
+            case "Media": {
                 console.log("media timeline")
                const timelineDataMedia = await getPaginatedHomeTimeline();
 
                // filter out tweets that don't have media
                 (timelineDataMedia as Array<Post>).filter((tweet: Post) => tweet.media_attachments.length > 0);
-                console.log(timelineData);
 
                 this.timeline = timelineDataMedia;
                 break;
-
+            }
             default:
                 break;
         }
@@ -282,7 +282,7 @@ export class Timeline extends LitElement {
         await dialog.show();
     }
 
-    async showAnalyze(data: any, imageData: any, tweet: any) {
+    async showAnalyze(data: any, imageData: any, tweet: Post) {
         this.analyzeData = null;
         this.imageDesc = undefined;
         this.analyzeTweet = null;
