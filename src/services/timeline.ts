@@ -1,8 +1,10 @@
+import { Post } from "../interfaces/Post";
+
 let token = localStorage.getItem('token') || '';
 let accessToken = localStorage.getItem('accessToken') || '';
 let server = localStorage.getItem('server') || '';
 
-let latestHomeTimelineData: any[] = [];
+let latestHomeTimelineData: Post[] = [];
 
 export const getHomeTimeline = async () => {
     const response = await fetch(`https://mammoth-backend.azurewebsites.net/timeline?code=${token}&server=${server}`);

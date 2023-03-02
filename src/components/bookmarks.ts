@@ -1,5 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js'
+import { Post } from '../interfaces/Post';
 
 import './timeline-item';
 
@@ -73,7 +74,7 @@ export class Bookmarks extends LitElement {
         return html`
           <ul>
             ${
-                this.bookmarks.map((bookmark: any) => {
+                this.bookmarks.map((bookmark: Post) => {
                     return html`
                         <timeline-item .tweet=${bookmark}></timeline-item>
                     `;

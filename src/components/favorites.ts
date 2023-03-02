@@ -1,5 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
+import { Post } from '../interfaces/Post';
 
 @customElement('app-favorites')
 export class Favorites extends LitElement {
@@ -69,7 +70,7 @@ export class Favorites extends LitElement {
         return html`
           <ul>
             ${
-                this.favorites.map((favorite: any) => {
+                this.favorites.map((favorite: Post) => {
                     return html`
                         <timeline-item .tweet=${favorite}></timeline-item>
                     `;
