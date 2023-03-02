@@ -566,7 +566,7 @@ export class TimelineItem extends LitElement {
                             <user-profile ?small="${true}"  .account="${this.tweet?.reblog.account}"></user-profile>
 
 
-                            <sl-icon-button @click="${() => this.shareStatus(this.tweet)}" src="/assets/share-social-outline.svg">
+                            <sl-icon-button @click="${() => this.shareStatus(this.tweet || null)}" src="/assets/share-social-outline.svg">
                             </sl-icon-button>
 
                         </div>
