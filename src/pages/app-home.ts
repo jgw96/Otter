@@ -70,6 +70,10 @@ export class AppHome extends LitElement {
         flex-direction: column;
       }
 
+      .tab-label {
+        display: none;
+      }
+
       #settings-profile-inner {
         background: rgba(128, 128, 128, 0.14);
         border-radius: 6px;
@@ -473,7 +477,7 @@ export class AppHome extends LitElement {
     }
 
     sl-tab-group::part(tabs) {
-      width: 20vw;
+      width: 8vw;
     }
 
     #focusModeButton {

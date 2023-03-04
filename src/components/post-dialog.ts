@@ -15,6 +15,9 @@ export class PostDialog extends LitElement {
     @state() attachmentPreview: string | undefined;
     @state() attachmentID: string | undefined;
 
+    @state() attachmentIDs: Array<string> = [];
+    @state() attachmentPreviews: Array<string> = [];
+
     @state() attaching: boolean = false;
 
     @state() showPrompt: boolean = false;
@@ -37,6 +40,22 @@ export class PostDialog extends LitElement {
                 align-items: center;
                 justify-content: center;
                 flex: 1;
+            }
+
+            ul {
+                padding: 0;
+                margin: 0;
+                display: flex;
+                gap: 6px;
+                list-style: none;
+                margin-top: 8px;
+
+                overflow: hidden;
+                overflow-x: scroll;
+            }
+
+            ul::-webkit-scrollbar {
+                display: none;
             }
 
             fluent-button::part(control) {
@@ -167,10 +186,18 @@ export class PostDialog extends LitElement {
         const attachmentData = await uploadImageAsFormData();
         console.log("attachmentData", attachmentData);
 
-        this.attaching = false;
+        const ids: Array<any> = [];
+        const previews: Array<any> = [];
 
-        this.attachmentID = attachmentData.id;
-        this.attachmentPreview = attachmentData.preview_url;
+        attachmentData.forEach((attachment) => {
+            ids.push(attachment.id);
+            previews.push(attachment.preview_url);
+        });
+
+        this.attachmentIDs = [...ids];
+        this.attachmentPreviews = [...previews];
+
+        this.attaching = false;
     }
 
     async addAIImageToPost() {
@@ -180,26 +207,37 @@ export class PostDialog extends LitElement {
             this.attaching = true;
             const attachmentData = await uploadImageFromBlob(this.aiBlob);
 
+            this.attachmentIDs = [...this.attachmentIDs, attachmentData.id];
+            this.attachmentPreviews = [...this.attachmentPreviews, attachmentData.preview_url];
+
             this.attaching = false;
-            this.attachmentID = attachmentData.id;
-            this.attachmentPreview = attachmentData.preview_url;
 
             this.generatedImage = undefined;
             this.aiBlob = undefined;
         }
     }
 
-    removeImage() {
-        this.attachmentID = undefined;
-        this.attachmentPreview = undefined;
+    removeImage(preview: string) {
+        const index = this.attachmentPreviews.indexOf(preview);
+        if (index > -1) {
+            this.attachmentPreviews.splice(index, 1);
+            this.attachmentIDs.splice(index, 1);
+
+            this.requestUpdate();
+        }
+
+        if (this.attachmentPreviews.length === 0) {
+            this.attachmentPreviews = [];
+            this.attachmentIDs = [];
+        }
     }
 
     async publish() {
         const status = (this.shadowRoot?.querySelector('fluent-text-area') as any).value;
         console.log(status);
 
-        if (this.attachmentID) {
-            await publishPost(status, this.attachmentID);
+        if (this.attachmentIDs) {
+            await publishPost(status, this.attachmentIDs);
         }
         else {
             await publishPost(status);
@@ -288,16 +326,23 @@ export class PostDialog extends LitElement {
               ${this.showPrompt === false ? html`<fluent-button size="small" pill @click="${() => this.openAIPrompt()}">AI: Generate Image</fluent-button>` : null}
             </div>
 
-            ${this.attachmentPreview && this.attaching === false ? html`
-            <div class="img-preview">
-                <fluent-button circle size="small" @click="${() => this.removeImage()}">
-                    <sl-icon src="/assets/close-outline.svg"></sl-icon>
-                </fluent-button>
-                <img src="${this.attachmentPreview}" />
-            </div>
-            ` : this.attaching === true ? html`<div class="img-preview">
-                <sl-skeleton effect="sheen"></sl-skeleton>
-            </div>` : null}
+            ${
+                this.attaching === false ? html`
+                  <ul>
+                  ${this.attachmentPreviews.map((preview) => {
+                    return html`
+                    <div class="img-preview">
+                        <fluent-button circle size="small" @click="${() => this.removeImage(preview)}">
+                            <sl-icon src="/assets/close-outline.svg"></sl-icon>
+                        </fluent-button>
+                        <img src="${preview}" />
+                    </div>
+                    `
+                })}
+                  </ul>
+                ` : html`<div id="attachment-loading"><sl-skeleton effect="sheen"></sl-skeleton></div>` }
+
+
 
             ${this.showPrompt ? html`<div id="ai-image">
                 ${
