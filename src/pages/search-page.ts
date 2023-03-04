@@ -7,6 +7,14 @@ import { router } from '../utils/router';
 
 import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 
+// import fluent tabs
+import { fluentTabs, fluentTab, fluentTabPanel, fluentButton, fluentTextField, provideFluentDesignSystem } from '@fluentui/web-components';
+provideFluentDesignSystem().register(fluentTabs());
+provideFluentDesignSystem().register(fluentTab());
+provideFluentDesignSystem().register(fluentTabPanel());
+provideFluentDesignSystem().register(fluentButton());
+provideFluentDesignSystem().register(fluentTextField());
+
 @customElement('search-page')
 export class SearchPage extends LitElement {
 
@@ -21,6 +29,16 @@ export class SearchPage extends LitElement {
                 content-visibility: auto;
                 contain: layout style paint;
             }
+
+            @media(prefers-color-scheme: dark) {
+                fluent-tab {
+                    color: white;
+                }
+            }
+
+            fluent-tab-panel {
+                margin-top: 16px;
+              }
 
             main {
                 padding-left: 16px;
@@ -48,6 +66,7 @@ export class SearchPage extends LitElement {
                 align-items: center;
                 gap: 8px;
             }
+
 
             ul {
                 display: flex;
@@ -89,6 +108,12 @@ export class SearchPage extends LitElement {
                 padding-top: 0;
             }
 
+            @media(prefers-color-scheme: dark) {
+                .account {
+                    color: white;
+                }
+            }
+
 
         `
     ];
@@ -118,23 +143,13 @@ export class SearchPage extends LitElement {
         <main>
             <app-search @search="${($event: any) => this.handleSearch($event.detail)}"></app-search>
 
-            <sl-tab-group placement="top">
-                <sl-tab slot="nav" panel="accounts">Accounts</sl-tab>
-                <sl-tab slot="nav" panel="trending">Trending</sl-tab>
-                <sl-tab slot="nav" panel="hashtags">Hashtags</sl-tab>
-                <sl-tab slot="nav" panel="media">Media</sl-tab>
+            <fluent-tabs placement="top">
+                <fluent-tab slot="nav" panel="accounts">Accounts</fluent-tab>
+                <fluent-tab slot="nav" panel="trending">Trending</fluent-tab>
+                <fluent-tab slot="nav" panel="hashtags">Hashtags</fluent-tab>
+                <fluent-tab slot="nav" panel="media">Media</fluent-tab>
 
-                <sl-tab-panel name="trending">
-                    <ul>
-                        ${
-                            this.trending ? this.trending.map((status: any) => {
-                                return html`<timeline-item .tweet="${status}"></timeline-item>`
-                            }) : null
-                        }
-                    </ul>
-                </sl-tab-panel>
-
-                <sl-tab-panel name="accounts">
+                <fluent-tab-panel name="accounts">
                 ${ this.searchData && this.searchData.accounts ? html`
                     <ul>
                     ${
@@ -168,9 +183,20 @@ export class SearchPage extends LitElement {
                     <sl-skeleton></sl-skeleton>
                   </div>
                 `}
-                </sl-tab-panel>
+                </fluent-tab-panel>
 
-                <sl-tab-panel name="hashtags">
+
+                <fluent-tab-panel name="trending">
+                    <ul>
+                        ${
+                            this.trending ? this.trending.map((status: any) => {
+                                return html`<timeline-item .tweet="${status}"></timeline-item>`
+                            }) : null
+                        }
+                    </ul>
+                </fluent-tab-panel>
+
+                <fluent-tab-panel name="hashtags">
                 ${ this.searchData && this.searchData.hashtags ? html`
                     <ul>
                     ${
@@ -183,12 +209,12 @@ export class SearchPage extends LitElement {
                         }) : null}
                     </ul>
                 ` : null}
-                </sl-tab-panel>
+                </fluent-tab-panel>
 
-                <sl-tab-panel name="media">
+                <fluent-tab-panel name="media">
                   <media-timeline></media-timeline>
-                </sl-tab-panel>
-            </sl-tab-group>
+                </fluent-tab-panel>
+            </fluent-tabs>
 
         </main>
         `;

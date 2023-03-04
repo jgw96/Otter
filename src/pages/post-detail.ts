@@ -131,11 +131,11 @@ export class PostDetail extends LitElement {
             <div id="main-block">
                 <timeline-item id="main" .tweet="${this.tweet}"></timeline-item>
                 <div id="post-actions">
-                    <sl-button @click="${() => this.shareStatus()}" pill variant="primary">
+                    <fluent-button appearance="accent" @click="${() => this.shareStatus()}" pill variant="primary">
                         Share
 
                         <sl-icon slot="suffix" src="/assets/share-social-outline.svg"></sl-icon>
-                    </sl-button>
+                    </fluent-button>
 
                     <!-- <sl-button pill variant="primary">
                                 Reply

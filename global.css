@@ -94,3 +94,7 @@ body {
   align-self: flex-end;
   width: 6em;
 }
+
+fluent-button::part(control) {
+  border: none;
+}

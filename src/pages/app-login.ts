@@ -1,8 +1,13 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
+import { fluentButton, fluentTextField, provideFluentDesignSystem } from '@fluentui/web-components';
+
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import { router } from '../utils/router';
+
+provideFluentDesignSystem().register(fluentButton());
+provideFluentDesignSystem().register(fluentTextField());
 
 let scrollWidth: number = 0;
 
@@ -54,7 +59,7 @@ export class AppLogin extends LitElement {
                 padding-right: 100px;
             }
 
-            .scroll-item sl-button {
+            .scroll-item fluent-button {
                 width: 100px;
                 align-self: center;
             }
@@ -63,12 +68,8 @@ export class AppLogin extends LitElement {
               color: var(--sl-color-primary-600);
             }
 
-            main sl-input {
+            main fluent-text-field {
                 width: 20em;
-            }
-
-            main sl-button {
-                width: 8em;
             }
 
             #login-block {
@@ -111,7 +112,7 @@ export class AppLogin extends LitElement {
                     flex-direction: column;
                 }
 
-                .scroll-item sl-button {
+                .scroll-item fluent-button {
                     display: none;
                 }
 
@@ -148,7 +149,7 @@ export class AppLogin extends LitElement {
     }
 
     async login() {
-        let serverURL = (this.shadowRoot?.querySelector('sl-input[name="serverURL"]') as HTMLInputElement)?.value;
+        let serverURL = (this.shadowRoot?.querySelector('fluent-text-field[name="serverURL"]') as HTMLInputElement)?.value;
 
         if (serverURL.includes("https://")) {
             // remove https://
@@ -217,7 +218,7 @@ export class AppLogin extends LitElement {
                 you will need to enter the URL of the Mastodon instance you signed up at.
             </p>
 
-            <sl-button pill @click="${() => this.next()}">Next</sl-button>
+            <fluent-button appearance="lightweight" pill @click="${() => this.next()}">Next</fluent-button>
 
             </div>
 
@@ -236,7 +237,7 @@ export class AppLogin extends LitElement {
                 Each instance is run by a different administrator and can have its own rules and moderation policies.
             </p>
 
-            <sl-button pill @click="${() => this.next()}">Next</sl-button>
+            <fluent-button appearance="lightweight" pill @click="${() => this.next()}">Next</fluent-button>
             </div>
 
             <div class="scroll-item">
@@ -259,7 +260,7 @@ export class AppLogin extends LitElement {
                 email address or approving new accounts manually. Be sure to read the rules and guidelines of the instance you
                 are joining before signing up.</p>
 
-                <sl-button pill @click="${() => this.getStarted()}">Get Started</sl-button>
+                <fluent-button variant="accent" pill @click="${() => this.getStarted()}">Get Started</fluent-button>
                 </div>
 
                         </div>
@@ -270,12 +271,12 @@ export class AppLogin extends LitElement {
         <main>
 
             <div id="login-block">
-                <sl-input type="text" name="serverURL" label="Server URL"></sl-input>
+                <fluent-text-field type="text" name="serverURL" placeholder="Server URL"></fluent-text-field>
 
-                <sl-button @click="${() => this.login()}" variant="primary">Login</sl-button>
+                <fluent-button @click="${() => this.login()}" appearance="accent">Login</fluent-button>
             </div>
 
-            <sl-button @click="${() => this.openIntro()}" size="small" pill>Intro To Mastodon</sl-button>
+            <fluent-button @click="${() => this.openIntro()}" appearance="lightweight">Intro To Mastodon</fluent-button>
 
             <p>Welcome To Mammoth, your Mastodon Client</p>
         </main>

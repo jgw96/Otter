@@ -12,4 +12,12 @@ export const styles = css`
   main {
     padding-top: 60px;
   }
+
+  fluent-button::part(control) {
+    border: none;
+  }
+
+  fluent-tab-panel {
+    margin-top: 16px;
+  }
 `;

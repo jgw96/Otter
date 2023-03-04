@@ -6,6 +6,15 @@ import './timeline-item';
 
 import '@shoelace-style/shoelace/dist/components/divider/divider';
 
+// import fluent tabs
+import { fluentTabs, fluentTab, fluentTabPanel, fluentButton, fluentSwitch, provideFluentDesignSystem } from '@fluentui/web-components';
+provideFluentDesignSystem().register(fluentTabs());
+provideFluentDesignSystem().register(fluentTab());
+provideFluentDesignSystem().register(fluentTabPanel());
+provideFluentDesignSystem().register(fluentButton());
+provideFluentDesignSystem().register(fluentSwitch());
+
+
 @customElement('app-notifications')
 export class Notifications extends LitElement {
     @state() notifications = [];
@@ -22,6 +31,25 @@ export class Notifications extends LitElement {
                 contain: paint layout style;
                 content-visibility: auto;
             }
+
+            @media(prefers-color-scheme: dark) {
+                fluent-tab {
+                    color: white;
+                }
+
+                fluent-button {
+                    background: transparent;
+                }
+
+                li {
+                    color: white;
+                }
+
+            }
+
+            fluent-tab-panel {
+                margin-top: 16px;
+              }
 
             #notify-inner {
                 display: flex;
@@ -202,15 +230,15 @@ export class Notifications extends LitElement {
             <div id="notify-inner">
             <sl-switch size="small" label="Notifications" ?checked="${this.subbed}" @sl-change="${($event: any) => this.sub($event.target.checked)}">Notifications</sl-switch>
             </div>
-            <sl-button pill size="small" @click="${() => this.clear()}">Clear</sl-button>
+            <fluent-button appearance="accent" pill size="small" @click="${() => this.clear()}">Clear</fluent-button>
           </div>
 
-          <sl-tab-group placement="top">
-                <sl-tab slot="nav" panel="all">All</sl-tab>
-                <sl-tab slot="nav" panel="mentions">Mentions</sl-tab>
-                <sl-tab slot="nav" panel="follows">Follows</sl-tab>
+          <fluent-tabs orientation="horizontal">
+                <fluent-tab slot="nav" panel="all">All</fluent-tab>
+                <fluent-tab slot="nav" panel="mentions">Mentions</fluent-tab>
+                <fluent-tab slot="nav" panel="follows">Follows</fluent-tab>
 
-                <sl-tab-panel name="all">
+                <fluent-tab-panel name="all">
                 <ul>
             ${
                 this.notifications && this.notifications.length > 0 ? this.notifications.map((notification: any) => {
@@ -293,9 +321,9 @@ export class Notifications extends LitElement {
                 `
             }
           </ul>
-                </sl-tab-panel>
+                </fluent-tab-panel>
 
-                <sl-tab-panel name="mentions">
+                <fluent-tab-panel name="mentions">
                 <ul>
             ${
                 this.notifications && this.notifications.length > 0 ? this.notifications.map((notification: any) => {
@@ -323,9 +351,9 @@ export class Notifications extends LitElement {
                 `
             }
           </ul>
-                </sl-tab-panel>
+                </fluent-tab-panel>
 
-                <sl-tab-panel name="follows">
+                <fluent-tab-panel name="follows">
                 <ul>
             ${
                 this.notifications && this.notifications.length > 0 ? this.notifications.map((notification: any) => {
@@ -352,8 +380,8 @@ export class Notifications extends LitElement {
                 `
             }
           </ul>
-                </sl-tab-panel>
-            </sl-tab-group>
+                </fluent-tab-panel>
+          </fluent-tabs>
         `;
     }
 }

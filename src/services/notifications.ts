@@ -2,15 +2,37 @@ let server = localStorage.getItem('server') || '';
 let accessToken = localStorage.getItem('accessToken') || '';
 
 export const getNotifications = async () => {
-    const notifyResponse = await fetch(`https://mammoth-backend.azurewebsites.net/notifications?code=${accessToken}&server=${server}`);
+    // const notifyResponse = await fetch(`https://mammoth-backend.azurewebsites.net/notifications?code=${accessToken}&server=${server}`);
+    // const data = await notifyResponse.json();
+    // return data;
+
+    // get notifications from mastodon api
+    const notifyResponse = await fetch(`https://${server}/api/v1/notifications`, {
+        method: 'GET',
+        headers: new Headers({
+            "Authorization": `Bearer ${accessToken}`
+        })
+    });
+
     const data = await notifyResponse.json();
     return data;
 }
 
 export const clearNotifications = async () => {
-    const response = await fetch(`https://mammothserver.azurewebsites.net/clearNotifications?code=${accessToken}&server=${server}`, {
+    // const response = await fetch(`https://mammothserver.azurewebsites.net/clearNotifications?code=${accessToken}&server=${server}`, {
+    //     method: 'POST',
+    // });
+    // const data = await response.json();
+    // return data;
+
+    // clear notifications from mastodon api
+    const response = await fetch(`https://${server}/api/v1/notifications/clear`, {
         method: 'POST',
+        headers: new Headers({
+            "Authorization": `Bearer ${accessToken}`
+        })
     });
+
     const data = await response.json();
     return data;
 }

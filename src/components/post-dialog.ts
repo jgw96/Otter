@@ -6,6 +6,10 @@ import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 import { publishPost, uploadImageAsFormData, uploadImageFromBlob } from '../services/posts';
 import { createAPost, createImage } from '../services/ai';
 
+import { fluentButton, fluentTextArea, provideFluentDesignSystem } from '@fluentui/web-components';
+provideFluentDesignSystem().register(fluentButton());
+provideFluentDesignSystem().register(fluentTextArea());
+
 @customElement('post-dialog')
 export class PostDialog extends LitElement {
     @state() attachmentPreview: string | undefined;
@@ -33,6 +37,17 @@ export class PostDialog extends LitElement {
                 align-items: center;
                 justify-content: center;
                 flex: 1;
+            }
+
+            fluent-button::part(control) {
+                border: none;
+            }
+
+            @media(prefers-color-scheme: dark) {
+                fluent-text-area::part(control), fluent-button[appearance="neutral"]::part(control) {
+                    background: #1e1e1e;
+                    color: white;
+                }
             }
 
             #post-ai-actions {
@@ -87,8 +102,13 @@ export class PostDialog extends LitElement {
                 contain: layout style paint;
               }
 
-              sl-dialog sl-textarea::part(textarea) {
+              sl-dialog fluent-text-area {
+                width: 100%;
+              }
+
+              sl-dialog fluent-text-area::part(control) {
                 height: 20vh;
+                width: 100%;
               }
 
             sl-dialog::part(header-actions) {
@@ -175,7 +195,7 @@ export class PostDialog extends LitElement {
     }
 
     async publish() {
-        const status = (this.shadowRoot?.querySelector('sl-textarea') as any).value;
+        const status = (this.shadowRoot?.querySelector('fluent-text-area') as any).value;
         console.log(status);
 
         if (this.attachmentID) {
@@ -212,7 +232,7 @@ export class PostDialog extends LitElement {
     }
 
     async generateStatus() {
-        const textarea = this.shadowRoot?.querySelector('sl-textarea') as any;
+        const textarea = this.shadowRoot?.querySelector('fluent-text-area') as any;
 
         const prompt = textarea.value;
 
@@ -260,19 +280,19 @@ export class PostDialog extends LitElement {
         return html`
         <sl-dialog id="notify-dialog" label="New Post">
 
-            <sl-textarea autofocus placeholder="What's on your mind?"></sl-textarea>
+            <fluent-text-area autofocus placeholder="What's on your mind?"></fluent-text-area>
 
             <div id="post-ai-actions">
-              <sl-button ?loading="${this.generatingPost}" pill size="small" @click="${() => this.generateStatus()}">AI: Help with my post</sl-button>
+              <fluent-button ?loading="${this.generatingPost}" pill size="small" @click="${() => this.generateStatus()}">AI: Help with my post</fluent-button>
 
-              ${this.showPrompt === false ? html`<sl-button size="small" pill @click="${() => this.openAIPrompt()}">AI: Generate Image</sl-button>` : null}
+              ${this.showPrompt === false ? html`<fluent-button size="small" pill @click="${() => this.openAIPrompt()}">AI: Generate Image</fluent-button>` : null}
             </div>
 
             ${this.attachmentPreview && this.attaching === false ? html`
             <div class="img-preview">
-                <sl-button circle size="small" @click="${() => this.removeImage()}">
+                <fluent-button circle size="small" @click="${() => this.removeImage()}">
                     <sl-icon src="/assets/close-outline.svg"></sl-icon>
-                </sl-button>
+                </fluent-button>
                 <img src="${this.attachmentPreview}" />
             </div>
             ` : this.attaching === true ? html`<div class="img-preview">
@@ -290,16 +310,16 @@ export class PostDialog extends LitElement {
                     <div id="ai-input-block">
                       <sl-input placeholder="A picture of an orange cat" @sl-change="${(e: any) => this.doAIImage(e.target.value)}"></sl-input>
 
-                      <sl-button ?disabled=${!this.generatedImage} pill variant="primary" @click="${() => this.addAIImageToPost()}">Add to post</sl-button>
+                      <fluent-button ?disabled=${!this.generatedImage} pill appearance="accent" @click="${() => this.addAIImageToPost()}">Add to post</fluent-button>
                     </div>
                     ` : null
                 }
             </div>` : null}
 
-            <sl-button pill slot="footer" @click="${() => this.attachFile()}">
+            <fluent-button pill slot="footer" @click="${() => this.attachFile()}">
                 <sl-icon src="/assets/albums-outline.svg"></sl-icon>
-            </sl-button>
-            <sl-button pill @click="${() => this.publish()}" slot="footer" variant="primary">Publish</sl-button>
+            </fluent-button>
+            <fluent-button pill @click="${() => this.publish()}" slot="footer" appearance="accent">Publish</fluent-button>
         </sl-dialog>
         `;
     }

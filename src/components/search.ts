@@ -7,6 +7,9 @@ import '@shoelace-style/shoelace/dist/components/menu/menu.js';
 import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
 import '@shoelace-style/shoelace/dist/components/menu-label/menu-label.js';
 
+import { fluentTextField, provideFluentDesignSystem } from '@fluentui/web-components';
+provideFluentDesignSystem().register(fluentTextField());
+
 import { router } from '../utils/router';
 
 @customElement('app-search')
@@ -31,6 +34,26 @@ export class Search extends LitElement {
                 display: flex;
                 align-items: center;
                 gap: 8px;
+            }
+
+            @media(max-width: 768px) {
+                fluent-text-field {
+                    width: 100%;
+                }
+
+                fluent-text-field::part(root) {
+                    height: 3em;
+                }
+            }
+
+            @media(prefers-color-scheme: dark) {
+                fluent-text-field, fluent-text-field::part(control), fluent-text-field::part(root) {
+                    background: #1e1e1e;
+                }
+
+                .account {
+                    color: white;
+                }
             }
         `
     ];
@@ -97,8 +120,8 @@ export class Search extends LitElement {
     render() {
         return html`
 
-            <sl-input @sl-change="${($event: any) => this.handleSearch($event.target.value)}" placeholder="Search" type="search">
-            </sl-input>
+            <fluent-text-field @change="${($event: any) => this.handleSearch($event.target.value)}" placeholder="Search" type="search">
+    </fluent-text-field>
 
         `;
     }
