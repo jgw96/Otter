@@ -365,6 +365,9 @@ export class AppHome extends LitElement {
 
         backdrop-filter: blur(40px);
 
+        content-visibility: auto;
+        contain: strict;
+
       }
 
       sl-dialog {
@@ -377,11 +380,19 @@ export class AppHome extends LitElement {
 
       sl-dialog::part(panel) {
         backdrop-filter: blur(40px);
+
+        content-visibility: auto;
+        contain: strict;
       }
 
       sl-card::part(footer) {
         display: flex;
         justify-content: flex-end;
+      }
+
+      sl-tab-panel {
+        content-visibility: auto;
+        contain: content;
       }
 
     sl-tab-panel::part(base)::-webkit-scrollbar) {
