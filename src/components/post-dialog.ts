@@ -27,6 +27,8 @@ export class PostDialog extends LitElement {
 
     @state() generatedImage: string | undefined;
 
+    @state() hasStatus: boolean = false;
+
     aiBlob: Blob | undefined;
 
     static styles = [
@@ -314,11 +316,17 @@ export class PostDialog extends LitElement {
         }
     }
 
+    handleStatus(ev: any) {
+        if (ev.target.value.length > 0) {
+            this.hasStatus = true;
+        }
+    }
+
     render() {
         return html`
         <sl-dialog id="notify-dialog" label="New Post">
 
-            <fluent-text-area autofocus placeholder="What's on your mind?"></fluent-text-area>
+            <fluent-text-area @change="${($event: any) => this.handleStatus($event)}" autofocus placeholder="What's on your mind?"></fluent-text-area>
 
             <div id="post-ai-actions">
               <fluent-button ?loading="${this.generatingPost}" pill size="small" @click="${() => this.generateStatus()}">AI: Help with my post</fluent-button>
@@ -364,7 +372,7 @@ export class PostDialog extends LitElement {
             <fluent-button pill slot="footer" @click="${() => this.attachFile()}">
                 <sl-icon src="/assets/albums-outline.svg"></sl-icon>
             </fluent-button>
-            <fluent-button pill @click="${() => this.publish()}" slot="footer" appearance="accent">Publish</fluent-button>
+            <fluent-button ?disabled="${this.hasStatus === false}" pill @click="${() => this.publish()}" slot="footer" appearance="accent">Publish</fluent-button>
         </sl-dialog>
         `;
     }
