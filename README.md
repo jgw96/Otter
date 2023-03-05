@@ -11,6 +11,11 @@
   <img height="400px" src="/public/assets/screenshots/new/mobile-one.png" />
 </div>
 
+<div>
+  <img height="400px" src="/public/assets/screenshots/new/desktop-one.png" />
+  <img height="400px" src="/public/assets/screenshots/new/mobile-theming.png" />
+</div>
+
 ## Demos
 
 - [Create a Post with AI](https://youtu.be/WqDzQR3tG-g)
