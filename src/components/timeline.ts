@@ -41,6 +41,14 @@ export class Timeline extends LitElement {
                 justify-content: space-between;
             }
 
+            @media(prefers-color-scheme: dark) {
+                fluent-button::part(control) {
+                    --neutral-fill-rest: #242428;
+                    color: white;
+                    border: none;
+                }
+            }
+
             #learn-more-header {
                 padding-top: 0;
                 margin-top: 0;
@@ -320,9 +328,9 @@ export class Timeline extends LitElement {
                                 <li>
                                     <strong>${entity.name}</strong>
 
-                                    <sl-button size="small" pill .href="${entity.url}" target="_blank">
+                                    <fluent-button .href="${entity.url}" target="_blank">
                                       Open in ${entity.dataSource}
-                                    </sl-button>
+                                    </fluent-button>
                                 </li>
                             `)}
                         </ul>
@@ -347,12 +355,6 @@ export class Timeline extends LitElement {
             ${ this.imgPreview ? html`<img .src="${this.imgPreview}">` : null}
         </sl-dialog>
 
-        <div id="list-actions">
-            <sl-button @click="${() => this.refreshTimeline()}" circle size="small">
-              <sl-icon src="/assets/refresh-circle-outline.svg"></sl-icon>
-            </sl-button>
-        </div>
-
         <ul>
             ${this.timeline.map((tweet: Post) => html`
                 <li>
@@ -360,7 +362,7 @@ export class Timeline extends LitElement {
                 </li>
             `)}
 
-            <sl-button ?loading="${this.loadingData}" id="load-more">Load More</sl-button>
+            <fluent-button appearance="lightweight" ?loading="${this.loadingData}" id="load-more">Load More</fluent-button>
         </ul>
         `;
     }

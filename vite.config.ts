@@ -5,6 +5,8 @@ import wasm from "vite-plugin-wasm";
 
 import minifyHTML from 'rollup-plugin-minify-html-literals';
 
+import VitePluginInjectPreload from 'vite-plugin-inject-preload';
+
 // https://vitejs.dev/config/
 export default defineConfig({
   base: "/",
@@ -22,12 +24,19 @@ export default defineConfig({
         swDest: 'dist/sw.js',
         globDirectory: 'dist',
         globPatterns: [
-          '**/*.{html,js,css,json,png,svg}',
+          '**/*.{html,js,css,json,svg}',
         ],
       },
       devOptions: {
         enabled: true
       },
+    }),
+    VitePluginInjectPreload({
+      files: [
+        {
+          match: /index.[a-z-0-9]*.(js)$/,
+        }
+      ]
     }),
     wasm(),
     minifyHTML(),

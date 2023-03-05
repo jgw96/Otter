@@ -2,6 +2,10 @@ import { LitElement, css, html } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
 import '@shoelace-style/shoelace/dist/components/button/button.js';
+
+import { fluentButton, provideFluentDesignSystem } from '@fluentui/web-components';
+import { router } from '../utils/router';
+provideFluentDesignSystem().register(fluentButton());
 @customElement('app-header')
 export class AppHeader extends LitElement {
   @property({ type: String }) title = 'Mammoth';
@@ -63,7 +67,7 @@ export class AppHeader extends LitElement {
         gap: 16px;
       }
 
-      sl-button {
+      fluent-button {
         -webkit-app-region: no-drag;
         app-region: no-drag;
       }
@@ -71,10 +75,18 @@ export class AppHeader extends LitElement {
       @media(prefers-color-scheme: light) {
         header {
           color: black;
+          background: white;
         }
 
         nav a {
           color: initial;
+        }
+      }
+
+      @media(prefers-color-scheme: dark) {
+        fluent-button[appearance="neutral"]::part(control) {
+          background: #1e1e1e;
+          color: white;
         }
       }
     `;
@@ -94,26 +106,30 @@ export class AppHeader extends LitElement {
     this.dispatchEvent(new CustomEvent('open-theming'));
   }
 
+  goBack() {
+    router.navigate('/home');
+  }
+
   render() {
     return html`
       <header>
 
         <div id="back-button-block">
-          ${this.enableBack ? html`<sl-button title="back" size="small" href="/home">
+          ${this.enableBack ? html`<fluent-button @click="${() => this.goBack()}" title="back" size="small" href="/home">
             Back
-          </sl-button>` : null}
+          </fluent-button>` : null}
 
           <img src="/assets/icons/64-icon.png" alt="Mammoth" width="32" height="32">
         </div>
 
         <div id="actions">
-          <sl-button title="Open Theme Settings" id="open-button" circle size="small" @click="${() => this.handleTheming()}">
+          <fluent-button appearance="lightweight" title="Open Theme Settings" id="open-button" circle size="small" @click="${() => this.handleTheming()}">
             <sl-icon src="/assets/color-palette-outline.svg" alt="Theme"></sl-icon>
-          </sl-button>
+          </fluent-button>
 
-          <sl-button title="Open Settings" @click="${() => this.openSettings()}" circle size="small">
+          <fluent-button appearance="lightweight"  title="Open Settings" @click="${() => this.openSettings()}" circle size="small">
             <sl-icon src="/assets/settings-outline.svg"></sl-icon>
-          </sl-button>
+          </fluent-button>
         </div>
 
       </header>

@@ -15,13 +15,15 @@ export async function getPostDetail(id: string) {
     return data;
 }
 
-export async function publishPost(post: string, id?: string) {
+export async function publishPost(post: string, ids?: Array<string>) {
     const formData = new FormData();
 
     formData.append("status", post && post.length > 0 ? post : "");
 
-    if (id) {
-        formData.append("media_ids[]", id);
+    if (ids) {
+        for(const id of ids) {
+            formData.append("media_ids[]", id);
+        }
     }
 
     // make a fetch request to post a status using the mastodon api
@@ -72,29 +74,36 @@ export async function uploadImageFromBlob(blob: Blob) {
 
 }
 
-export async function uploadImageAsFormData() {
-    const file = await fileOpen({
-        mimeTypes: ['image/*'],
-        multiple: false,
-    })
+export async function uploadImageAsFormData(): Promise<Array<any>> {
+    return new Promise(async (resolve) => {
+        const files = await fileOpen({
+            mimeTypes: ['image/*'],
+            multiple: true,
+        });
+``
+        let uploaded: any[] = [];
 
-    const formData = new FormData();
-    formData.append('file', file);
+        // loop through the files and upload them
 
-    const response = await fetch(`https://${server}/api/v2/media`, {
-        method: 'POST',
-        headers: new Headers({
-            "Authorization": `Bearer ${accessToken}`
-        }),
-        body: formData
+        for (let i = 0; i < files.length; i++) {
+            const formData = new FormData();
+            formData.append('file', files[i]);
+
+            const response = await fetch(`https://${server}/api/v2/media`, {
+                method: 'POST',
+                headers: new Headers({
+                    "Authorization": `Bearer ${accessToken}`
+                }),
+                body: formData
+            });
+
+            const data = await response.json();
+
+            uploaded = [...uploaded, data];
+
+            console.log("uploaded", uploaded)
+        }
+
+        resolve(uploaded);
     });
-
-
-    // const response = await fetch(`https://mammoth-backend.azurewebsites.net/uploadAttachment?code=${accessToken}&server=${server}`, {
-    //     method: 'POST',
-    //     body: formData,
-    // });
-
-    const data = await response.json();
-    return data;
 }

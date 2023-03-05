@@ -353,26 +353,26 @@ export class AppProfile extends LitElement {
 
                     <div .innerHTML=${this.user ? this.user.note : "Loading..." }></div>
 
-                    <sl-badge>${this.user ? this.user.followers_count : "Loading..."} followers</sl-badge>
-                    <sl-badge>${this.user ? this.user.following_count : "Loading..."} following</sl-badge>
+                    <fluent-badge>${this.user ? this.user.followers_count : "Loading..."} followers</fluent-badge>
+                    <fluent-badge>${this.user ? this.user.following_count : "Loading..."} following</fluent-badge>
 
                     <div id="fields">
                         ${this.user ? this.user.fields.map((field: any) => html`
                         <div>
-                            <sl-badge variant="primary">
+                            <fluent-badge variant="primary">
                                 ${
                                     field.name.toLowerCase() === "twitter" ? html`<img src="/assets/logo-twitter.svg" alt="twitter logo">` : null
                                 }
 
                                <span .innerHTML="${field.value}"></span>
-                            </sl-badge>
+                            </fluent-badge>
                         </div>
                         `) : null}
                     </div>
 
                     <div id="profile-card-actions">
-                        ${this.followed ? html`<sl-button pill disabled>Following</sl-button>` : html`<sl-button pill variant="primary"
-                            @click="${() => this.follow()}">Follow</sl-button>`}
+                        ${this.followed ? html`<fluent-button appearance="accent" pill disabled>Following</fluent-button>` : html`<fluent-button pill appearance="accent"
+                            @click="${() => this.follow()}">Follow</fluent-button>`}
                     </div>
                 </div>
             </div>
@@ -389,8 +389,8 @@ export class AppProfile extends LitElement {
                         <p>${this.user.display_name}</p>
                     </div>
 
-                 ${this.followed ? html`<sl-button pill disabled>Following</sl-button>` : html`<sl-button pill variant="primary"
-                            @click="${() => this.follow()}">Follow</sl-button>`}
+                 ${this.followed ? html`<fluent-button pill disabled>Following</fluent-button>` : html`<fluent-button pill appearance="accent"
+                            @click="${() => this.follow()}">Follow</fluent-button>`}
             </div>
                 ` : null
             }

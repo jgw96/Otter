@@ -16,6 +16,11 @@ import '@shoelace-style/shoelace/dist/components/divider/divider.js';
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 
+import { fluentButton, fluentBadge, fluentToolbar, provideFluentDesignSystem } from '@fluentui/web-components';
+provideFluentDesignSystem().register(fluentButton());
+provideFluentDesignSystem().register(fluentBadge());
+provideFluentDesignSystem().register(fluentToolbar());
+
 import '../components/timeline';
 import '../components/timeline-item';
 import '../components/bookmarks';
@@ -63,6 +68,10 @@ export class AppHome extends LitElement {
         justify-content: center;
         align-items: center;
         flex-direction: column;
+      }
+
+      .tab-label {
+        display: none;
       }
 
       #settings-profile-inner {
@@ -176,7 +185,7 @@ export class AppHome extends LitElement {
 
       }
 
-      sl-badge {
+      fluent-badge {
         cursor: pointer;
       }
 
@@ -203,7 +212,28 @@ export class AppHome extends LitElement {
         width: 160px;
       }
 
+      fluent-toolbar {
+        width: 100%;
+        margin-top: 33px;
+        padding-top: 8px;
+        background: white;
+        margin-bottom: 6px;
+
+        padding-right: 10px;
+      }
+
+      fluent-toolbar::part(positioning-region) {
+        justify-content: flex-end;
+      }
+
+      @media(prefers-color-scheme: dark) {
+        fluent-toolbar {
+          background: transparent;
+        }
+      }
+
       main {
+        padding-top: 0;
         display: grid;
         grid-template-columns: 70vw 30vw;
       }
@@ -279,7 +309,7 @@ export class AppHome extends LitElement {
         width: 20%;
       }
 
-      #profile-card-actions sl-button {
+      #profile-card-actions fluent-button {
         width: 80%;
       }
 
@@ -375,7 +405,7 @@ export class AppHome extends LitElement {
     }
 
     @media(max-width: 1030px) {
-      #profile-card-actions sl-button {
+      #profile-card-actions fluent-button {
         width: 100%;
       }
     }
@@ -389,6 +419,10 @@ export class AppHome extends LitElement {
 
     @media(max-width: 600px) {
       #profile {
+        display: none;
+      }
+
+      fluent-toolbar {
         display: none;
       }
 
@@ -443,7 +477,7 @@ export class AppHome extends LitElement {
     }
 
     sl-tab-group::part(tabs) {
-      width: 20vw;
+      width: 8vw;
     }
 
     #focusModeButton {
@@ -587,20 +621,20 @@ export class AppHome extends LitElement {
   }
 
   async publish() {
-    const status = (this.shadowRoot?.querySelector('sl-textarea') as any).value;
-    console.log(status);
+    // const status = (this.shadowRoot?.querySelector('sl-textarea') as any).value;
+    // console.log(status);
 
-    if (this.attachmentID) {
-      const { publishPost } = await import("../services/posts");
-      await publishPost(status, this.attachmentID);
-    }
-    else {
-      const { publishPost } = await import("../services/posts");
-      await publishPost(status);
-    }
+    // if (this.attachmentID) {
+    //   const { publishPost } = await import("../services/posts");
+    //   await publishPost(status, this.attachmentIDs);
+    // }
+    // else {
+    //   const { publishPost } = await import("../services/posts");
+    //   await publishPost(status);
+    // }
 
-    const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
-    dialog.hide();
+    // const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
+    // dialog.hide();
   }
 
   async goToFollowers() {
@@ -617,19 +651,6 @@ export class AppHome extends LitElement {
 
     this.instanceInfo = await getInstanceInfo();
     console.log("instanceInfo", this.instanceInfo)
-  }
-
-  async attachFile() {
-    this.attaching = true;
-
-    const { uploadImageAsFormData } = await import("../services/posts");
-    const attachmentData = await uploadImageAsFormData();
-    console.log("attachmentData", attachmentData);
-
-    this.attaching = false;
-
-    this.attachmentID = attachmentData.id;
-    this.attachmentPreview = attachmentData.preview_url;
   }
 
   async handleReplies(replies: any[], id: string) {
@@ -758,9 +779,9 @@ export class AppHome extends LitElement {
       <app-header @open-settings="${() => this.openSettingsDrawer()}" @open-theming="${() => this.openThemingDrawer()}">
       </app-header>
 
-      <sl-button @click="${() => this.doFocusMode()}" circle size="small" id="focusModeButton">
+      <fluent-button appearance="lightweight" @click="${() => this.doFocusMode()}" circle size="small" id="focusModeButton">
         <sl-icon src="/assets/eye-outline.svg"></sl-icon>
-      </sl-button>
+      </fluent-button>
 
       <sl-drawer label="Theming" id="theming-drawer">
         <app-theme @color-chosen="${($event: any) => this.handlePrimaryColor($event.detail.color)}"></app-theme>
@@ -768,37 +789,21 @@ export class AppHome extends LitElement {
 
       <post-dialog></post-dialog>
 
-      <!-- <sl-dialog id="notify-dialog" label="New Post">
-                                            <sl-button circle slot="header-actions" @click="${() => this.attachFile()}">
-                                              <sl-icon src="/assets/attach-outline.svg"></sl-icon>
-                                            </sl-button>
-                                            <sl-textarea placeholder="What's on your mind?"></sl-textarea>
-
-                                            ${this.attachmentPreview ? html`
-                                            <img src="${this.attachmentPreview}" />
-                                            ` : html``}
-
-                                            <sl-button @click="${() => this.publish()}" slot="footer" variant="primary">Publish</sl-button>
-                                          </sl-dialog> -->
-
       <sl-drawer id="reply-drawer" placement="bottom" label="Reply">
-        <sl-button circle slot="footer" @click="${() => this.attachFile()}">
-          <sl-icon src="/assets/attach-outline.svg"></sl-icon>
-        </sl-button>
         <sl-textarea placeholder="What's on your mind?"></sl-textarea>
 
         ${this.attachmentPreview && this.attaching === false ? html`
         <div class="img-preview">
-          <sl-button circle size="small" @click="${() => this.removeImage()}">
+          <fluent-button circle size="small" @click="${() => this.removeImage()}">
             <sl-icon src="/assets/close-outline.svg"></sl-icon>
-          </sl-button>
+          </fluent-button>
           <img src="${this.attachmentPreview}" />
         </div>
         ` : this.attaching === true ? html`<div class="img-preview">
           <sl-skeleton></sl-skeleton>
         </div>` : null}
 
-        <sl-button @click="${() => this.publish()}" slot="footer" variant="primary">Publish</sl-button>
+        <fluent-button @click="${() => this.replyToAStatus()}" slot="footer" appearance="accent">Publish</fluent-button>
       </sl-drawer>
 
       <sl-drawer id="settings-drawer" placement="end" label="Settings">
@@ -866,10 +871,12 @@ export class AppHome extends LitElement {
 
             <p id="user-url">${this.user ? this.user.url : "Loading..."}</p>
 
-            <sl-badge @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count : "0"} followers
-            </sl-badge>
-            <sl-badge @click="${() => this.goToFollowing()}">${this.user ? this.user.following_count : "0"} following
-            </sl-badge>
+            <fluent-badge appearance="accent" @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count :
+        "0"} followers
+            </fluent-badge>
+            <fluent-badge appearance="accent" @click="${() => this.goToFollowing()}">${this.user ? this.user.following_count :
+        "0"} following
+            </fluent-badge>
 
           </div>
         </div>
@@ -897,10 +904,10 @@ export class AppHome extends LitElement {
       <sl-drawer id="replies-drawer" placement="end" label="Comments">
         ${this.replies.length > 0 ? html`<ul>
           ${this.replies.map((reply: any) => {
-      return html`
+          return html`
           <timeline-item ?show="${false}" .tweet="${reply}"></timeline-item>
           `
-      })
+          })
           }
         </ul>` : html`
         <div id="no-replies">
@@ -910,11 +917,21 @@ export class AppHome extends LitElement {
 
         <div slot="footer" id="reply-post-actions">
           <sl-input placeholder="Reply"></sl-input>
-          <sl-button variant="primary" @click="${() => this.replyToAStatus()}">Reply</sl-button>
+          <fluent-button appearance="accent" @click="${() => this.replyToAStatus()}">Reply</fluent-button>
         </div>
       </sl-drawer>
 
+      <fluent-toolbar>
+        <fluent-button pill size="large" appearance="accent" @click="${() => this.openNewDialog()}">
+          New Post
+
+          <sl-icon slot="suffix" src="/assets/add-outline.svg"></sl-icon>
+        </fluent-button>
+      </fluent-toolbar>
+
+
       <main>
+
         <sl-tab-group .placement="${window.matchMedia(" (max-width: 600px)").matches ? "bottom" : "start"}">
           <sl-tab slot="nav" panel="general">
             <sl-icon src="/assets/home-outline.svg"></sl-icon>
@@ -932,10 +949,10 @@ export class AppHome extends LitElement {
             <span class="tab-label">Notifications</span>
           </sl-tab>
           <!-- <sl-tab slot="nav" panel="messages">
-                        <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
+                                    <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
 
-                        <span class="tab-label">Messages</span>
-                      </sl-tab> -->
+                                    <span class="tab-label">Messages</span>
+                                  </sl-tab> -->
           <sl-tab id="bookmarks-tab" slot="nav" panel="bookmarks">
             <sl-icon src="/assets/bookmark-outline.svg"></sl-icon>
 
@@ -1006,20 +1023,22 @@ export class AppHome extends LitElement {
 
             <p id="user-url">${this.user ? this.user.url : "Loading..."}</p>
 
-            <sl-badge @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count : "0"} followers
-            </sl-badge>
-            <sl-badge @click="${() => this.goToFollowing()}">${this.user ? this.user.following_count : "0"} following
-            </sl-badge>
+            <fluent-badge appearance="accent" @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count :
+        "0"} followers
+            </fluent-badge>
+            <fluent-badge appearance="accent" @click="${() => this.goToFollowing()}">${this.user ? this.user.following_count :
+        "0"} following
+            </fluent-badge>
 
           </div>
 
-          <div id="profile-card-actions">
-            <sl-button pill size="large" variant="primary" @click="${() => this.openNewDialog()}">
+          <!-- <div id="profile-card-actions">
+            <fluent-button pill size="large" appearance="accent" @click="${() => this.openNewDialog()}">
               New Post
 
               <sl-icon slot="suffix" src="/assets/add-outline.svg"></sl-icon>
-            </sl-button>
-          </div>
+            </fluent-button>
+          </div> -->
         </div>
       </main>
 

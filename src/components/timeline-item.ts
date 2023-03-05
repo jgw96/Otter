@@ -11,6 +11,9 @@ import { getSettings, Settings } from '../services/settings';
 
 // import * as blurhash from "blurhash-wasm";
 
+import { fluentButton, provideFluentDesignSystem } from '@fluentui/web-components';
+provideFluentDesignSystem().register(fluentButton());
+
 // @ts-ignore
 import ImgWorker from '../utils/img-worker?worker';
 import { router } from '../utils/router';
@@ -104,6 +107,8 @@ export class TimelineItem extends LitElement {
                 color: white;
 
                 animation: slideUp 0.3s ease-in-out;
+
+                overflow-x: hidden;
             }
 
             sl-card a {
@@ -151,7 +156,7 @@ export class TimelineItem extends LitElement {
                 gap: 6px;
             }
 
-            .actions sl-button::part(base) {
+            .actions fluent-button {
                 background: transparent;
                 border: none;
                 font-size: 1.2em;
@@ -161,10 +166,6 @@ export class TimelineItem extends LitElement {
             .actions sl-icon svg {
                 color: var(--sl-color-primary-600);
                 fill: var(--sl-color-primary-600);
-            }
-
-            .actions sl-button::part(base):hover {
-                background: #ffffff4f;
             }
 
             img {
@@ -177,7 +178,7 @@ export class TimelineItem extends LitElement {
                 }
             }
 
-            actions sl-button sl-icon {
+            actions fluent-button sl-icon {
                 font-size: 1.2em;
             }
 
@@ -217,12 +218,7 @@ export class TimelineItem extends LitElement {
                     color: black;
                 }
 
-                sl-card sl-icon {
-                    fill: white;
-                    color: white;
-                }
-
-                .actions sl-button::part(base) {
+                .actions fluent-button::part(base) {
                     color: white;
                 }
             }
@@ -500,17 +496,17 @@ export class TimelineItem extends LitElement {
                         <div .innerHTML="${this.tweet?.reply_to.content}"></div>
 
                         <div class="actions" slot="footer">
-                          <sl-button pill @click="${() => this.analyzeStatus(this.tweet || null)}">
+                          <fluent-button appearance="lightweight" pill @click="${() => this.analyzeStatus(this.tweet || null)}">
                             <sl-icon src="/assets/search-outline.svg"></sl-icon>
-                          </sl-button>
+                          </fluent-button>
 
-                          ${this.show === true ? html`<sl-button pill @click="${() => this.replies(this.tweet?.reply_to.id || "")}">
+                          ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies(this.tweet?.reply_to.id || "")}">
                           <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
-                          </sl-button>` : null}
+                          </fluent-button>` : null}
 
-                          <sl-button ?disabled="${this.isBookmarked || this.tweet?.reply_to.bookmarked}" pill @click="${() => this.bookmark(this.tweet?.reply_to.id || "")}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></sl-button>
-                          ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isBoosted || this.tweet?.reply_to.favourited}" pill @click="${() => this.favorite(this.tweet?.reply_to.id || "")}">${this.tweet?.reply_to.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></sl-button>` : null}
-                          ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isReblogged || this.tweet?.reply_to.reblogged}" pill @click="${() => this.reblog(this.tweet?.reply_to.id || "")}">${this.tweet?.reply_to.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></sl-button>` : null}
+                          <fluent-button appearance="lightweight" ?disabled="${this.isBookmarked || this.tweet?.reply_to.bookmarked}" pill @click="${() => this.bookmark(this.tweet?.reply_to.id || "")}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></fluent-button>
+                          ${this.settings && this.settings.wellness === false ? html`<fluent-button appearance="lightweight" ?disabled="${this.isBoosted || this.tweet?.reply_to.favourited}" pill @click="${() => this.favorite(this.tweet?.reply_to.id || "")}">${this.tweet?.reply_to.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></fluent-button>` : null}
+                          ${this.settings && this.settings.wellness === false ? html`<fluent-button appearance="lightweight" ?disabled="${this.isReblogged || this.tweet?.reply_to.reblogged}" pill @click="${() => this.reblog(this.tweet?.reply_to.id || "")}">${this.tweet?.reply_to.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></fluent-button>` : null}
                         </div>
                       </sl-card>
 
@@ -539,15 +535,15 @@ export class TimelineItem extends LitElement {
                         <div @click="${() => this.openPost(this.tweet?.id || "")}" .innerHTML="${this.tweet?.content}"></div>
 
                         <div class="actions" slot="footer">
-                        <sl-button pill @click="${() => this.analyzeStatus(this.tweet || null)}">
+                        <fluent-button appearance="lightweight" pill @click="${() => this.analyzeStatus(this.tweet || null)}">
                             <sl-icon src="/assets/search-outline.svg"></sl-icon>
-                          </sl-button>
-                          ${this.show === true ? html`<sl-button pill @click="${() => this.replies(this.tweet?.id || "")}">
+                          </fluent-button>
+                          ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies(this.tweet?.id || "")}">
                           <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
-                        </sl-button>` : null}
-                          <sl-button ?disabled="${this.isBookmarked || this.tweet?.bookmarked}" pill @click="${() => this.bookmark(this.tweet?.id || "")}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></sl-button>
-                          ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isBoosted || this.tweet?.favourited}" pill @click="${() => this.favorite(this.tweet?.id || "")}">${this.tweet?.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></sl-button>` : null}
-                          ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isReblogged || this.tweet?.reblogged}" pill @click="${() => this.reblog(this.tweet?.id || "")}">${this.tweet?.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></sl-button>` : null}
+                        </fluent-button>` : null}
+                          <fluent-button appearance="lightweight" ?disabled="${this.isBookmarked || this.tweet?.bookmarked}" pill @click="${() => this.bookmark(this.tweet?.id || "")}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></fluent-button>
+                          ${this.settings && this.settings.wellness === false ? html`<fluent-button appearance="lightweight" ?disabled="${this.isBoosted || this.tweet?.favourited}" pill @click="${() => this.favorite(this.tweet?.id || "")}">${this.tweet?.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></fluent-button>` : null}
+                          ${this.settings && this.settings.wellness === false ? html`<fluent-button appearance="lightweight" ?disabled="${this.isReblogged || this.tweet?.reblogged}" pill @click="${() => this.reblog(this.tweet?.id || "")}">${this.tweet?.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></fluent-button>` : null}
                         </div>
                     </sl-card>
                     ` : html`
@@ -575,15 +571,15 @@ export class TimelineItem extends LitElement {
                         <div @click="${() => this.openPost(this.tweet?.reblog?.id || "")}" .innerHTML="${this.tweet?.reblog.content}"></div>
 
                         <div class="actions" slot="footer">
-                        <sl-button pill @click="${() => this.analyzeStatus(this.tweet || null)}">
+                        <fluent-button appearance="lightweight" pill @click="${() => this.analyzeStatus(this.tweet || null)}">
                             <sl-icon src="/assets/search-outline.svg"></sl-icon>
-                          </sl-button>
-                        ${this.show === true ? html`<sl-button pill @click="${() => this.replies(this.tweet?.id || "")}">
+                          </fluent-button>
+                        ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies(this.tweet?.id || "")}">
                             <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
-                        </sl-button>` : null}
-                            <sl-button ?disabled="${this.isBoosted || this.tweet?.favourited}" pill @click="${() => this.bookmark(this.tweet?.id || "")}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></sl-button>
-                            ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isBoosted || this.tweet?.favourited}" pill @click="${() => this.favorite(this.tweet?.id || "")}">${this.tweet?.reblog.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></sl-button>` : null}
-                            ${this.settings && this.settings.wellness === false ? html`<sl-button ?disabled="${this.isReblogged || this.tweet?.reblogged}"  pill @click="${() => this.reblog(this.tweet?.id || "")}">${this.tweet?.reblog.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></sl-button>` : null}
+                        </fluent-button>` : null}
+                            <fluent-button appearance="lightweight" ?disabled="${this.isBoosted || this.tweet?.favourited}" pill @click="${() => this.bookmark(this.tweet?.id || "")}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></fluent-button>
+                            ${this.settings && this.settings.wellness === false ? html`<fluent-button appearance="lightweight" ?disabled="${this.isBoosted || this.tweet?.favourited}" pill @click="${() => this.favorite(this.tweet?.id || "")}">${this.tweet?.reblog.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></fluent-button>` : null}
+                            ${this.settings && this.settings.wellness === false ? html`<fluent-button appearance="lightweight" ?disabled="${this.isReblogged || this.tweet?.reblogged}"  pill @click="${() => this.reblog(this.tweet?.id || "")}">${this.tweet?.reblog.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></fluent-button>` : null}
                         </div>
                     </sl-card>
 
