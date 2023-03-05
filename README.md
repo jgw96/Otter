@@ -7,7 +7,7 @@
 ## Status: Currently In Public Alpha
 
 <div>
-  <img height="400px" src="/public/assets/screenshots/new/desktop-one.png" />
+  <img height="400px" src="/public/assets/screenshots/new/desktop-two.png" />
   <img height="400px" src="/public/assets/screenshots/new/mobile-one.png" />
 </div>
 
