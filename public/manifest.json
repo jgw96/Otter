@@ -50,13 +50,38 @@
       "type": "image/png"
     },
     {
+      "src": "assets/screenshots/new/mobile-one-light.png",
+      "sizes": "1081x2162",
+      "type": "image/png"
+    },
+    {
       "src": "assets/screenshots/new/mobile-two.png",
       "sizes": "1081x2162",
       "type": "image/png"
     },
     {
-      "src": "assets/screenshots/new/desktop.png",
-      "sizes": "2580x1728",
+      "src": "assets/screenshots/new/desktop-one.png",
+      "sizes": "2732x2048",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/screenshots/new/desktop-two.png",
+      "sizes": "2732x2048",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/screenshots/new/desktop-three.png",
+      "sizes": "2732x2048",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/screenshots/new/desktop-four.png",
+      "sizes": "2732x2048",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/screenshots/new/desktop-five.png",
+      "sizes": "2732x2048",
       "type": "image/png"
     }
   ],

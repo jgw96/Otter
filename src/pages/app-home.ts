@@ -621,20 +621,20 @@ export class AppHome extends LitElement {
   }
 
   async publish() {
-    const status = (this.shadowRoot?.querySelector('sl-textarea') as any).value;
-    console.log(status);
+    // const status = (this.shadowRoot?.querySelector('sl-textarea') as any).value;
+    // console.log(status);
 
-    if (this.attachmentID) {
-      const { publishPost } = await import("../services/posts");
-      await publishPost(status, this.attachmentID);
-    }
-    else {
-      const { publishPost } = await import("../services/posts");
-      await publishPost(status);
-    }
+    // if (this.attachmentID) {
+    //   const { publishPost } = await import("../services/posts");
+    //   await publishPost(status, this.attachmentIDs);
+    // }
+    // else {
+    //   const { publishPost } = await import("../services/posts");
+    //   await publishPost(status);
+    // }
 
-    const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
-    dialog.hide();
+    // const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
+    // dialog.hide();
   }
 
   async goToFollowers() {
@@ -651,19 +651,6 @@ export class AppHome extends LitElement {
 
     this.instanceInfo = await getInstanceInfo();
     console.log("instanceInfo", this.instanceInfo)
-  }
-
-  async attachFile() {
-    this.attaching = true;
-
-    const { uploadImageAsFormData } = await import("../services/posts");
-    const attachmentData = await uploadImageAsFormData();
-    console.log("attachmentData", attachmentData);
-
-    this.attaching = false;
-
-    this.attachmentID = attachmentData.id;
-    this.attachmentPreview = attachmentData.preview_url;
   }
 
   async handleReplies(replies: any[], id: string) {
@@ -802,23 +789,7 @@ export class AppHome extends LitElement {
 
       <post-dialog></post-dialog>
 
-      <!-- <sl-dialog id="notify-dialog" label="New Post">
-                                                        <fluent-button circle slot="header-actions" @click="${() => this.attachFile()}">
-                                                          <sl-icon src="/assets/attach-outline.svg"></sl-icon>
-                                                        </fluent-button>
-                                                        <sl-textarea placeholder="What's on your mind?"></sl-textarea>
-
-                                                        ${this.attachmentPreview ? html`
-                                                        <img src="${this.attachmentPreview}" />
-                                                        ` : html``}
-
-                                                        <fluent-button @click="${() => this.publish()}" slot="footer" appearance="accent">Publish</fluent-button>
-                                                      </sl-dialog> -->
-
       <sl-drawer id="reply-drawer" placement="bottom" label="Reply">
-        <fluent-button circle slot="footer" @click="${() => this.attachFile()}">
-          <sl-icon src="/assets/attach-outline.svg"></sl-icon>
-        </fluent-button>
         <sl-textarea placeholder="What's on your mind?"></sl-textarea>
 
         ${this.attachmentPreview && this.attaching === false ? html`
@@ -832,7 +803,7 @@ export class AppHome extends LitElement {
           <sl-skeleton></sl-skeleton>
         </div>` : null}
 
-        <fluent-button @click="${() => this.publish()}" slot="footer" appearance="accent">Publish</fluent-button>
+        <fluent-button @click="${() => this.replyToAStatus()}" slot="footer" appearance="accent">Publish</fluent-button>
       </sl-drawer>
 
       <sl-drawer id="settings-drawer" placement="end" label="Settings">

@@ -107,6 +107,8 @@ export class TimelineItem extends LitElement {
                 color: white;
 
                 animation: slideUp 0.3s ease-in-out;
+
+                overflow-x: hidden;
             }
 
             sl-card a {
