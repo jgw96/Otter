@@ -112,7 +112,7 @@ export class UserProfile extends LitElement {
     }
 
     openUser() {
-        router.navigate(`/account?id=${this.account.id}`);
+        router.navigate(`/account?id=${this.account?.id}`);
     }
 
     render() {
@@ -120,8 +120,8 @@ export class UserProfile extends LitElement {
         <div @click="${() => this.openUser()}" class=${classMap({ small: this.small === true, headerBlock: true })} slot="header">
             <img data-src="${this.account.avatar_static}">
             <div>
-                <h4>${this.account.display_name}</h4>
-                <p>${this.account.acct}</p>
+                <h4>${this.account?.display_name || "Loading..."}</h4>
+                <p>${this.account?.acct || "Loading..."}</p>
             </div>
         </div>
         `;
