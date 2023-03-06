@@ -37,6 +37,7 @@ import '@khmyznikov/pwa-install';
 import { styles } from '../styles/shared-styles';
 import { getCurrentUser, getInstanceInfo } from '../services/account';
 import { router } from '../utils/router';
+import { init } from '../utils/key-shortcuts';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -99,10 +100,6 @@ export class AppHome extends LitElement {
         flex-direction: column;
         gap: 12px;
         align-items: end;
-        position: absolute;
-        bottom: 10px;
-        right: 10px;
-        left: 10px;
       }
 
       #no-replies {
@@ -235,7 +232,7 @@ export class AppHome extends LitElement {
       main {
         padding-top: 0;
         display: grid;
-        grid-template-columns: 70vw 30vw;
+        grid-template-columns: 66vw 34vw;
       }
 
       main.focus {
@@ -539,8 +536,9 @@ export class AppHome extends LitElement {
       }
     }
 
-    console.log("user", this.user);
-
+    window.requestIdleCallback(() => {
+      init();
+    });
 
     window.requestIdleCallback(async () => {
       const { getSettings } = await import("../services/settings");
@@ -561,7 +559,15 @@ export class AppHome extends LitElement {
         const tabGroup = this.shadowRoot?.querySelector("sl-tab-group");
         tabGroup?.setAttribute("placement", "start");
       }
-    })
+    });
+
+    window.requestIdleCallback(async () => {
+      const tabData = urlParams.get("tab");
+
+      if (tabData) {
+        this.openATab(tabData);
+      }
+    });
 
   }
 
@@ -818,6 +824,42 @@ export class AppHome extends LitElement {
       </sl-drawer>
 
       <sl-drawer id="settings-drawer" placement="end" label="Settings">
+
+        <div>
+          <div id="settings-profile-inner">
+            ${this.user ? html`<img src="${this.user.avatar}" />` : html`<img src="https://via.placeholder.com/150" />`}
+            <div id="username-block">
+              <h3>${this.user ? this.user.display_name : "Loading..."}</h3>
+
+              <div id="user-actions">
+                <sl-dropdown>
+                  <sl-icon-button slot="trigger" src="/assets/settings-outline.svg"></sl-icon-button>
+                  <sl-menu>
+                    <sl-menu-item @click="${() => this.viewMyProfile()}">
+                      <sl-icon slot="prefix" src="/assets/eye-outline.svg"></sl-icon>
+                      View My Profile
+                    </sl-menu-item>
+                    <sl-menu-item @click="${() => this.shareMyProfile()}">
+                      <sl-icon slot="prefix" src="/assets/share-social-outline.svg"></sl-icon>
+                      Share My Profile
+                    </sl-menu-item>
+                  </sl-menu>
+                </sl-dropdown>
+              </div>
+            </div>
+
+            <p id="user-url">${this.user ? this.user.url : "Loading..."}</p>
+
+            <fluent-badge appearance="accent" @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count :
+              "0"} followers
+            </fluent-badge>
+            <fluent-badge appearance="accent" @click="${() => this.goToFollowing()}">${this.user ? this.user.following_count :
+              "0"} following
+            </fluent-badge>
+
+          </div>
+        </div>
+
         <div class="setting">
           <div>
             <h4>Show Sensitive Content</h4>
@@ -857,39 +899,20 @@ export class AppHome extends LitElement {
           </p>
         </div>
 
-        <div>
-          <div id="settings-profile-inner">
-            ${this.user ? html`<img src="${this.user.avatar}" />` : html`<img src="https://via.placeholder.com/150" />`}
-            <div id="username-block">
-              <h3>${this.user ? this.user.display_name : "Loading..."}</h3>
+        <div class="setting">
+          <h4>Key Shortcuts</h4>
 
-              <div id="user-actions">
-                <sl-dropdown>
-                  <sl-icon-button slot="trigger" src="/assets/settings-outline.svg"></sl-icon-button>
-                  <sl-menu>
-                    <sl-menu-item @click="${() => this.viewMyProfile()}">
-                      <sl-icon slot="prefix" src="/assets/eye-outline.svg"></sl-icon>
-                      View My Profile
-                    </sl-menu-item>
-                    <sl-menu-item @click="${() => this.shareMyProfile()}">
-                      <sl-icon slot="prefix" src="/assets/share-social-outline.svg"></sl-icon>
-                      Share My Profile
-                    </sl-menu-item>
-                  </sl-menu>
-                </sl-dropdown>
-              </div>
-            </div>
+          <ul>
+            <li><kbd>g</kbd> + <kbd>h</kbd> - Open Home</li>
 
-            <p id="user-url">${this.user ? this.user.url : "Loading..."}</p>
+            <li><kbd>g</kbd> + <kbd>n</kbd> - Open Notifications</li>
 
-            <fluent-badge appearance="accent" @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count :
-        "0"} followers
-            </fluent-badge>
-            <fluent-badge appearance="accent" @click="${() => this.goToFollowing()}">${this.user ? this.user.following_count :
-        "0"} following
-            </fluent-badge>
+            <li><kbd>g</kbd> + <kbd>s</kbd> - Open Search</li>
 
-          </div>
+            <li><kbd>g</kbd> + <kbd>b</kbd> - Open Bookmarks</li>
+
+            <li><kbd>g</kbd> + <kbd>f</kbd> - Open Favorites</li>
+          </ul>
         </div>
 
         <div class="sponsor">
@@ -918,8 +941,8 @@ export class AppHome extends LitElement {
           return html`
           <timeline-item ?show="${false}" .tweet="${reply}"></timeline-item>
           `
-          })
-          }
+        })
+        }
         </ul>` : html`
         <div id="no-replies">
           <p>No comments yet.</p>
@@ -943,7 +966,7 @@ export class AppHome extends LitElement {
 
       <main>
 
-        <sl-tab-group .placement="${window.matchMedia(" (max-width: 600px)").matches ? "bottom" : "start"}">
+        <sl-tab-group .placement="${window.matchMedia(" (max-width: 600px)").matches ? "bottom" : "start" }">
           <sl-tab slot="nav" panel="general">
             <sl-icon src="/assets/home-outline.svg"></sl-icon>
 
@@ -960,10 +983,10 @@ export class AppHome extends LitElement {
             <span class="tab-label">Notifications</span>
           </sl-tab>
           <!-- <sl-tab slot="nav" panel="messages">
-                                    <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
+                                          <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
 
-                                    <span class="tab-label">Messages</span>
-                                  </sl-tab> -->
+                                          <span class="tab-label">Messages</span>
+                                        </sl-tab> -->
           <sl-tab id="bookmarks-tab" slot="nav" panel="bookmarks">
             <sl-icon src="/assets/bookmark-outline.svg"></sl-icon>
 
@@ -1035,21 +1058,21 @@ export class AppHome extends LitElement {
             <p id="user-url">${this.user ? this.user.url : "Loading..."}</p>
 
             <fluent-badge appearance="accent" @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count :
-        "0"} followers
+              "0"} followers
             </fluent-badge>
             <fluent-badge appearance="accent" @click="${() => this.goToFollowing()}">${this.user ? this.user.following_count :
-        "0"} following
+              "0"} following
             </fluent-badge>
 
           </div>
 
           <!-- <div id="profile-card-actions">
-            <fluent-button pill size="large" appearance="accent" @click="${() => this.openNewDialog()}">
-              New Post
+                  <fluent-button pill size="large" appearance="accent" @click="${() => this.openNewDialog()}">
+                    New Post
 
-              <sl-icon slot="suffix" src="/assets/add-outline.svg"></sl-icon>
-            </fluent-button>
-          </div> -->
+                    <sl-icon slot="suffix" src="/assets/add-outline.svg"></sl-icon>
+                  </fluent-button>
+                </div> -->
         </div>
       </main>
 

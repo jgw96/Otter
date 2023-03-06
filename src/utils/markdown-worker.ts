@@ -3,5 +3,10 @@ import { marked } from 'marked';
 onmessage = (e) => {
     const markdownString = e.data
 
-    postMessage(marked.parse(markdownString));
+    const parsed = marked.parse(markdownString);
+    console.log("parsed: ", parsed)
+
+    const escaped = escape(parsed);
+
+    postMessage(escaped);
 };

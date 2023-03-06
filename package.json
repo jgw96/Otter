@@ -26,6 +26,7 @@
     "blurhash-wasm": "^0.2.0",
     "browser-fs-access": "^0.32.1",
     "fast-blurhash": "^1.1.2",
+    "hotkeys-js": "^3.10.1",
     "idb-keyval": "^6.2.0",
     "lit": "^2.6.1",
     "marked": "^4.2.12",

@@ -255,7 +255,7 @@ export class PostDialog extends LitElement {
                 console.log(html);
 
                 if (this.attachmentIDs) {
-                    await publishPost(html, this.attachmentIDs);
+                    await publishPost(status, this.attachmentIDs);
 
                     this.attachmentIDs = [];
                     this.attachmentPreviews = [];
@@ -265,7 +265,7 @@ export class PostDialog extends LitElement {
                     (this.shadowRoot?.querySelector("fluent-text-area") as any)!.value = "";
                  }
                  else {
-                    await publishPost(html);
+                    await publishPost(status);
 
                     this.attachmentIDs = [];
                     this.attachmentPreviews = [];
