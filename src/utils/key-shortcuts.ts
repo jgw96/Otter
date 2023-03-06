@@ -4,6 +4,8 @@ import { router } from './router';
 export function init() {
     // Key Combination
     hotkeys('g+h,g+n,g+s,g+b,g+f', (event, handler) => {
+        console.log("event", event);
+
         switch (handler.key) {
             case 'g+h':
                 handleGoToHome();
