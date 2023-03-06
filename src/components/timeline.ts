@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js'
-import { getPaginatedHomeTimeline, getPublicTimeline } from '../services/timeline';
+import { getPaginatedHomeTimeline } from '../services/timeline';
 
 import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 
@@ -9,6 +9,11 @@ import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 import '../components/timeline-item';
 import '../components/search';
 import { Post } from '../interfaces/Post';
+
+import { fluentCombobox, fluentOption, provideFluentDesignSystem } from '@fluentui/web-components';
+
+provideFluentDesignSystem().register(fluentCombobox());
+provideFluentDesignSystem().register(fluentOption());
 
 @customElement('app-timeline')
 export class Timeline extends LitElement {
@@ -21,12 +26,16 @@ export class Timeline extends LitElement {
     @state() imageDesc: string | undefined = undefined;
     @state() analyzeTweet: Post | null = null;
 
-    @property({ type: String }) timelineType: "Home" | "Public" | "Media" = "Home";
+    @property({ type: String }) timelineType: "home" | "public" | "media" = "home";
 
     static styles = [
         css`
             :host {
                 display: block;
+            }
+
+            fluent-combobox {
+                margin-bottom: 12px;
             }
 
             #list-actions {
@@ -41,11 +50,31 @@ export class Timeline extends LitElement {
                 justify-content: space-between;
             }
 
+            .timeline-list-item {
+                content-visibility: auto;
+                contain: content;
+            }
+
             @media(prefers-color-scheme: dark) {
                 fluent-button::part(control) {
                     --neutral-fill-rest: #242428;
                     color: white;
                     border: none;
+                }
+
+                fluent-combobox::part(control) {
+                    background: #242428;
+                    color: white;
+                }
+
+                fluent-option {
+                    background: #242428;
+                    color: white;
+                }
+
+                fluent-combobox::part(listbox) {
+                    background: #242428;
+                    color: white;
                 }
             }
 
@@ -76,7 +105,7 @@ export class Timeline extends LitElement {
                 padding: 0;
                 list-style: none;
 
-                height: 90vh;
+                height: 84vh;
                 overflow-y: scroll;
                 overflow-x: hidden;
             }
@@ -166,6 +195,12 @@ export class Timeline extends LitElement {
                     padding: 0 10px;
                 }
 
+                fluent-combobox {
+                    margin-left: 10px;
+                    height: 2.5em;
+                    width: 95%;
+                }
+
                 #analyze ul {
                     max-height: none;
                 }
@@ -236,27 +271,33 @@ export class Timeline extends LitElement {
     async refreshTimeline() {
         console.log("refreshing timeline", this.timelineType)
         switch (this.timelineType) {
-            case "Home":
-                const timelineData = await getPaginatedHomeTimeline();
+            case "home":
+                const timelineData = await getPaginatedHomeTimeline("home");
                 console.log("timelineData", timelineData);
 
+                this.timeline = [];
                 this.timeline = timelineData;
                 break;
-            case "Public":
-                const timelineDataPub = await getPublicTimeline();
-                console.log(timelineData);
+            case "public":
+                const timelineDataPub = await getPaginatedHomeTimeline("public");
+                console.log(timelineDataPub);
 
+                this.timeline = [];
                 this.timeline = timelineDataPub;
+
+                this.requestUpdate();
                 break;
-            case "Media":
+            case "media":
                 console.log("media timeline")
-               const timelineDataMedia = await getPaginatedHomeTimeline();
+               const timelineDataMedia = await getPaginatedHomeTimeline("home");
 
                // filter out tweets that don't have media
                 (timelineDataMedia as Array<Post>).filter((tweet: Post) => tweet.media_attachments.length > 0);
                 console.log(timelineData);
 
                 this.timeline = timelineDataMedia;
+
+                this.requestUpdate();
                 break;
 
             default:
@@ -265,7 +306,7 @@ export class Timeline extends LitElement {
     }
 
     async loadMore() {
-        const timelineData: Post[] = await getPaginatedHomeTimeline();
+        const timelineData: Post[] = await getPaginatedHomeTimeline(this.timelineType ? this.timelineType : "home");
         console.log(timelineData);
 
         this.timeline = [...this.timeline, ...timelineData];
@@ -308,6 +349,12 @@ export class Timeline extends LitElement {
 
         const dialog = this.shadowRoot?.querySelector('#analyze') as any;
         await dialog.show();
+    }
+
+    changeTimelineType(type: "home" | "public" | "media") {
+        this.timelineType = type;
+
+        this.refreshTimeline();
     }
 
     render() {
@@ -355,9 +402,15 @@ export class Timeline extends LitElement {
             ${ this.imgPreview ? html`<img .src="${this.imgPreview}">` : null}
         </sl-dialog>
 
+
+        <fluent-combobox @change="${($event: any) => this.changeTimelineType($event.target.value)}" placeholder="Home">
+            <fluent-option value="home">home</fluent-option>
+            <fluent-option value="public">public</fluent-option>
+        </fluent-combobox>
+
         <ul>
             ${this.timeline.map((tweet: Post) => html`
-                <li>
+                <li class="timeline-list-item">
                   <timeline-item @analyze="${($event: any) => this.showAnalyze($event.detail.data, $event.detail.imageData, $event.detail.tweet)}" @openimage="${($event: any) => this.showImage($event.detail.imageURL)}" ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
                 </li>
             `)}

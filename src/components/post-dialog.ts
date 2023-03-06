@@ -6,6 +6,9 @@ import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 import { publishPost, uploadImageAsFormData, uploadImageFromBlob } from '../services/posts';
 import { createAPost, createImage } from '../services/ai';
 
+// @ts-ignore
+import MarkdownWorker from '../utils/markdown-worker?worker';
+
 import { fluentButton, fluentTextArea, provideFluentDesignSystem } from '@fluentui/web-components';
 provideFluentDesignSystem().register(fluentButton());
 provideFluentDesignSystem().register(fluentTextArea());
@@ -42,6 +45,12 @@ export class PostDialog extends LitElement {
                 align-items: center;
                 justify-content: center;
                 flex: 1;
+            }
+
+            #markdown-support {
+                margin: 0;
+                padding-top: 4px;
+                font-size: 11px;
             }
 
             ul {
@@ -238,15 +247,42 @@ export class PostDialog extends LitElement {
         const status = (this.shadowRoot?.querySelector('fluent-text-area') as any).value;
         console.log(status);
 
-        if (this.attachmentIDs) {
-            await publishPost(status, this.attachmentIDs);
-        }
-        else {
-            await publishPost(status);
-        }
+        if (status && status.length > 0) {
+            const worker = new MarkdownWorker();
 
-        const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
-        dialog.hide();
+            worker.onmessage = async (e: any) => {
+                const html = e.data;
+                console.log(html);
+
+                if (this.attachmentIDs) {
+                    await publishPost(status, this.attachmentIDs);
+
+                    this.attachmentIDs = [];
+                    this.attachmentPreviews = [];
+                    this.generatedImage = undefined;
+                    this.aiBlob = undefined;
+
+                    (this.shadowRoot?.querySelector("fluent-text-area") as any)!.value = "";
+                 }
+                 else {
+                    await publishPost(status);
+
+                    this.attachmentIDs = [];
+                    this.attachmentPreviews = [];
+                    this.generatedImage = undefined;
+                    this.aiBlob = undefined;
+
+                    (this.shadowRoot?.querySelector("fluent-text-area") as any)!.value = "";
+                 }
+
+                 const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
+                 dialog.hide();
+
+                worker.terminate();
+            };
+
+            worker.postMessage(status);
+        }
     }
 
     async doAIImage(prompt: string) {
@@ -327,6 +363,7 @@ export class PostDialog extends LitElement {
         <sl-dialog id="notify-dialog" label="New Post">
 
             <fluent-text-area @change="${($event: any) => this.handleStatus($event)}" autofocus placeholder="What's on your mind?"></fluent-text-area>
+            <p id="markdown-support">Supports Markdown</p>
 
             <div id="post-ai-actions">
               <fluent-button ?loading="${this.generatingPost}" pill size="small" @click="${() => this.generateStatus()}">AI: Help with my post</fluent-button>

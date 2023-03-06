@@ -43,6 +43,8 @@ export class TimelineItem extends LitElement {
                 width: 100%;
 
                 margin-bottom: 10px;
+
+                contain: content;
             }
 
             .header-actions-block {
@@ -58,6 +60,9 @@ export class TimelineItem extends LitElement {
             img {
                 opacity: 1;
                 transition: opacity 0.3s ease-in-out;
+
+                contain: content;
+                content-visibility: auto;
             }
 
             .status-link-card {

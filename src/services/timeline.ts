@@ -14,12 +14,12 @@ export const getHomeTimeline = async () => {
 
 let lastPageID = "";
 
-export const getPaginatedHomeTimeline = async () => {
+export const getPaginatedHomeTimeline = async (type = "home") => {
 
     if (lastPageID && lastPageID.length > 0) {
         let accessToken = localStorage.getItem('accessToken') || '';
 
-        const response = await fetch(`https://${server}/api/v1/timelines/home?limit=10&max_id=${lastPageID}`, {
+        const response = await fetch(`https://${server}/api/v1/timelines/${type}?limit=10&max_id=${lastPageID}`, {
             method: 'GET',
             headers: new Headers({
                 "Authorization": `Bearer ${accessToken}`
@@ -37,7 +37,7 @@ export const getPaginatedHomeTimeline = async () => {
     else {
         let accessToken = localStorage.getItem('accessToken') || '';
 
-        const response = await fetch(`https://${server}/api/v1/timelines/home?limit=10`, {
+        const response = await fetch(`https://${server}/api/v1/timelines/${type}?limit=10`, {
             method: 'GET',
             headers: new Headers({
                 "Authorization": `Bearer ${accessToken}`
