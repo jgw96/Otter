@@ -243,6 +243,10 @@ export class AppHome extends LitElement {
         padding-right: 10vw;
       }
 
+      #settings-drawer::part(body)::-webkit-scrollbar {
+        display: none;
+      }
+
       #settings-drawer label {
         display: flex;
         align-items: center;
@@ -760,6 +764,11 @@ export class AppHome extends LitElement {
     router.navigate(`/account?id=${this.user.id}`)
   }
 
+  handleReload() {
+    const timeline = this.shadowRoot?.querySelector('.homeTimeline') as any;
+    timeline.refreshTimeline();
+  }
+
   render() {
     return html`
 
@@ -804,7 +813,7 @@ export class AppHome extends LitElement {
         <app-theme @color-chosen="${($event: any) => this.handlePrimaryColor($event.detail.color)}"></app-theme>
       </sl-drawer>
 
-      <post-dialog></post-dialog>
+      <post-dialog @published="${() => this.handleReload()}"></post-dialog>
 
       <sl-drawer id="reply-drawer" placement="bottom" label="Reply">
         <sl-textarea placeholder="What's on your mind?"></sl-textarea>
@@ -858,19 +867,6 @@ export class AppHome extends LitElement {
             </fluent-badge>
 
           </div>
-        </div>
-
-        <div class="setting">
-          <div>
-            <h4>Show Sensitive Content</h4>
-
-            <sl-switch @sl-change="${($event: any) => this.handleSensitiveContent($event.target.checked)}"
-              ?checked="${this.sensitiveMode}"></sl-switch>
-          </div>
-
-          <p>
-            Show sensitive content in your timeline.
-          </p>
         </div>
 
         <div class="setting">
@@ -1000,7 +996,7 @@ export class AppHome extends LitElement {
 
 
           <sl-tab-panel name="general">
-            <app-timeline .timelineType="Home"
+            <app-timeline class="homeTimeline" .timelineType="Home"
               @replies="${($event: any) => this.handleReplies($event.detail.data, $event.detail.id)}"></app-timeline>
           </sl-tab-panel>
           <sl-tab-panel name="media">

@@ -279,6 +279,15 @@ export class PostDialog extends LitElement {
                  dialog.hide();
 
                 worker.terminate();
+
+                // fire custom eventt
+                this.dispatchEvent(new CustomEvent('published', {
+                    bubbles: true,
+                    composed: true,
+                    detail: {
+                        status: status
+                    }
+                }));
             };
 
             worker.postMessage(status);
