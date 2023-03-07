@@ -411,7 +411,7 @@ export class Timeline extends LitElement {
         </fluent-combobox>
 
         <ul>
-            ${guard([this.timeline.length], () => this.timeline.map((tweet: Post) => html`
+            ${guard([this.timeline.length, this.timelineType], () => this.timeline.map((tweet: Post) => html`
                 <li class="timeline-list-item">
                   <timeline-item @delete="${() => this.refreshTimeline()}" @analyze="${($event: any) => this.showAnalyze($event.detail.data, $event.detail.imageData, $event.detail.tweet)}" @openimage="${($event: any) => this.showImage($event.detail.imageURL)}" ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
                 </li>

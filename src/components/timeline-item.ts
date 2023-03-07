@@ -317,6 +317,8 @@ export class TimelineItem extends LitElement {
 
     async loadImage() {
        // window.requestIdleCallback(() => {
+            // is this safari?
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
             const img = this.shadowRoot?.querySelectorAll('img');
             if (img) {
@@ -324,9 +326,6 @@ export class TimelineItem extends LitElement {
                 for (let i = 0; i < img.length; i++) {
 
                     const src = img[i].getAttribute('data-src');
-
-                    // is this safari?
-                    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
                     // handle blurhash
                     if (this.tweet && this.tweet.media_attachments[0] && this.tweet.media_attachments[0].blurhash && isSafari === false) {
