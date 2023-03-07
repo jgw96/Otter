@@ -7,6 +7,9 @@ import '../components/user-profile';
 import '@shoelace-style/shoelace/dist/components/card/card.js';
 import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 
+import '@shoelace-style/shoelace/dist/components/carousel/carousel.js';
+import '@shoelace-style/shoelace/dist/components/carousel-item/carousel-item.js';
+
 import { getSettings, Settings } from '../services/settings';
 
 // import * as blurhash from "blurhash-wasm";
@@ -46,8 +49,6 @@ export class TimelineItem extends LitElement {
                 width: 100%;
 
                 margin-bottom: 10px;
-
-                contain: content;
             }
 
             .sensitive {
@@ -63,6 +64,11 @@ export class TimelineItem extends LitElement {
                 display: flex;
                 align-items: center;
                 justify-content: center;
+            }
+
+            sl-carousel::part(base) {
+                gap: 8px;
+                padding-bottom: 1em;
             }
 
             @media(prefers-color-scheme: light) {
@@ -86,7 +92,6 @@ export class TimelineItem extends LitElement {
                 transition: opacity 0.3s ease-in-out;
 
                 contain: content;
-                content-visibility: auto;
             }
 
             .status-link-card {
@@ -135,8 +140,6 @@ export class TimelineItem extends LitElement {
                 --sl-panel-background-color: #1b1d26;
                 color: white;
 
-                animation: slideUp 0.3s ease-in-out;
-
                 overflow-x: hidden;
             }
 
@@ -157,8 +160,15 @@ export class TimelineItem extends LitElement {
                 color: var(--sl-color-primary-600);
             }
 
-            sl-card img {
+            sl-card sl-carousel {
+                width: 100%;
+            }
+
+            sl-card sl-carousel-item {
                 height: 340px;
+            }
+
+            sl-card img {
                 object-fit: contain;
                 border-radius: 6px 6px 0px 0px;
             }
@@ -308,96 +318,98 @@ export class TimelineItem extends LitElement {
     async loadImage() {
        // window.requestIdleCallback(() => {
 
-            const img = this.shadowRoot?.querySelector('img');
-
+            const img = this.shadowRoot?.querySelectorAll('img');
             if (img) {
+                // loop through a NodeList
+                for (let i = 0; i < img.length; i++) {
 
-                const src = img.getAttribute('data-src');
+                    const src = img[i].getAttribute('data-src');
 
-                // is this safari?
-                const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+                    // is this safari?
+                    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-                // handle blurhash
-                if (this.tweet && this.tweet.media_attachments[0] && this.tweet.media_attachments[0].blurhash && isSafari === false) {
-                    console.log("has blurhash", this.tweet?.media_attachments[0].blurhash);
-                    try {
-                        this.worker = new ImgWorker();
+                    // handle blurhash
+                    if (this.tweet && this.tweet.media_attachments[0] && this.tweet.media_attachments[0].blurhash && isSafari === false) {
+                        console.log("has blurhash", this.tweet?.media_attachments[0].blurhash);
+                        try {
+                            this.worker = new ImgWorker();
 
-                              this.canvas.width = this.tweet?.media_attachments[0].meta.original.width;
-                              this.canvas.height = this.tweet?.media_attachments[0].meta.original.height;
+                                this.canvas.width = this.tweet?.media_attachments[0].meta.original.width;
+                                this.canvas.height = this.tweet?.media_attachments[0].meta.original.height;
 
-                              this.worker!.onmessage = (e) => {
-                                console.log("worker message", e.data)
-                                // e.data is a bitmap
-                                // display bitmap on canvas
-                                this.ctx!.transferFromImageBitmap(e.data!)
+                                this.worker!.onmessage = (e) => {
+                                    console.log("worker message", e.data)
+                                    // e.data is a bitmap
+                                    // display bitmap on canvas
+                                    this.ctx!.transferFromImageBitmap(e.data!)
 
-                                img.setAttribute('src', this.canvas.toDataURL());
+                                    img[i].setAttribute('src', this.canvas.toDataURL());
 
-                                img.removeAttribute('data-src');
+                                    img[i].removeAttribute('data-src');
 
-                                        if (src) {
-                                            const placeholderImage = new Image();
+                                            if (src) {
+                                                const placeholderImage = new Image();
 
-                                            img.onload = () => {
-                                                window.requestIdleCallback(() => {
-                                                    // remove event listener
+                                                img[i].onload = () => {
+                                                    window.requestIdleCallback(() => {
+                                                        // remove event listener
 
-                                                    img.removeAttribute('data-src');
+                                                        img[i].removeAttribute('data-src');
 
-                                                }, {
-                                                    timeout: 1000
-                                                })
+                                                    }, {
+                                                        timeout: 1000
+                                                    })
+                                                }
+
+                                                placeholderImage.onload = () => {
+                                                    img[i].setAttribute('src', src);
+                                                };
+
+                                                placeholderImage.src = src;
                                             }
+                                        // }
+                                    //}, {
+                                    //    timeout: 3000
+                                    //})
 
-                                            placeholderImage.onload = () => {
-                                                img.setAttribute('src', src);
-                                            };
-
-                                            placeholderImage.src = src;
-                                        }
-                                    // }
-                                //}, {
-                                //    timeout: 3000
-                                //})
-
-                                this.worker!.terminate();
-                              }
-                                this.worker!.postMessage({
-                                    hash: this.tweet?.media_attachments[0].blurhash,
-                                    width: this.tweet?.media_attachments[0].meta.original.width,
-                                    height: this.tweet?.media_attachments[0].meta.original.height
-                                });
-                        // }, {
-                        //     timeout: 3000
-                        // });
-                    } catch (error) {
-                        console.log(error);
+                                    this.worker!.terminate();
+                                }
+                                    this.worker!.postMessage({
+                                        hash: this.tweet?.media_attachments[0].blurhash,
+                                        width: this.tweet?.media_attachments[0].meta.original.width,
+                                        height: this.tweet?.media_attachments[0].meta.original.height
+                                    });
+                            // }, {
+                            //     timeout: 3000
+                            // });
+                        } catch (error) {
+                            console.log(error);
+                        }
                     }
-                }
-                else {
-                                    // start loading real image
-                if (src) {
-                    const placeholderImage = new Image();
+                    else {
+                                        // start loading real image
+                    if (src) {
+                        const placeholderImage = new Image();
 
-                    img.onload = () => {
-                        window.requestIdleCallback(() => {
-                            // if (!this.tweet?.media_attachments[0] || !this.tweet?.media_attachments[0].blurhash) {
-                                img.removeAttribute('data-src');
-                            // }
-                            // remove event listener
-                            img.onload = null;
-                        }, {
-                            timeout: 1000
-                        })
+                        img[i].onload = () => {
+                            window.requestIdleCallback(() => {
+                                // if (!this.tweet?.media_attachments[0] || !this.tweet?.media_attachments[0].blurhash) {
+                                    img[i].removeAttribute('data-src');
+                                // }
+                                // remove event listener
+                                img[i].onload = null;
+                            }, {
+                                timeout: 1000
+                            })
+                        }
+
+                        placeholderImage.onload = () => {
+                            img[i].setAttribute('src', src);
+                        };
+
+                        placeholderImage.src = src;
                     }
-
-                    placeholderImage.onload = () => {
-                        img.setAttribute('src', src);
-                    };
-
-                    placeholderImage.src = src;
-                }
+                    }
                 }
             }
        // }, {
@@ -576,9 +588,17 @@ export class TimelineItem extends LitElement {
                       </div>` : null}
                       ${
                         this.tweet && this.tweet.media_attachments.length > 0 ? html`
-
-                          <img part="image" alt="${this.tweet?.media_attachments[0].description || ""}" slot="image" @click="${() => this.openInBox(this.tweet?.media_attachments[0].preview_url || "")}" data-src="${this.tweet?.media_attachments[0].preview_url}">
-
+                          <sl-carousel ?pagination="${this.tweet.media_attachments.length > 1}" slot="image">
+                            ${
+                                this.tweet.media_attachments.map((attachment) => {
+                                    return html`
+                                      <sl-carousel-item>
+                                      <img part="image" alt="${attachment.description || ""}" @click="${() => this.openInBox(attachment.preview_url || "")}" data-src="${attachment.preview_url}" />
+                                </sl-carousel-item>
+                                    `
+                                })
+                            }
+                          </sl-carousel>
                         ` : html``
                       }
 
@@ -615,10 +635,20 @@ export class TimelineItem extends LitElement {
                       <div class="sensitive">
                         <fluent-button @click="${() => this.viewSensitive()}" appearance="accent">View Sensitive Content</fluent-button>
                       </div>` : null}
-                    ${
-                        this.tweet?.reblog.media_attachments.length > 0 ? html`
 
-<img part="image" slot="image" alt="${this.tweet?.reblog.media_attachments[0].description || ""}" @click="${() => this.openInBox(this.tweet?.reblog?.media_attachments[0].preview_url || "")}" data-src="${this.tweet?.reblog.media_attachments[0].preview_url}">
+                      ${
+                        this.tweet.reblog && this.tweet.reblog.media_attachments.length > 0 ? html`
+                          <sl-carousel ?pagination="${this.tweet.reblog.media_attachments.length > 1}" slot="image">
+                            ${
+                                this.tweet.reblog.media_attachments.map((attachment) => {
+                                    return html`
+                                      <sl-carousel-item>
+                                        <img part="image" alt="${attachment.description || ""}" @click="${() => this.openInBox(attachment.preview_url || "")}" data-src="${attachment.preview_url}"/>
+                                      </sl-carousel-item>
+                                    `
+                                })
+                            }
+                          </sl-carousel>
                         ` : html``
                       }
 
