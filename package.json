@@ -24,7 +24,7 @@
     "@types/marked": "^4.0.8",
     "@vaadin/router": "^1.7.4",
     "blurhash-wasm": "^0.2.0",
-    "browser-fs-access": "^0.32.1",
+    "browser-fs-access": "^0.33.0",
     "fast-blurhash": "^1.1.2",
     "hotkeys-js": "^3.10.1",
     "idb-keyval": "^6.2.0",
