@@ -7,6 +7,9 @@ import '../components/user-profile';
 import '@shoelace-style/shoelace/dist/components/card/card.js';
 import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 
+import '@shoelace-style/shoelace/dist/components/carousel/carousel.js';
+import '@shoelace-style/shoelace/dist/components/carousel-item/carousel-item.js';
+
 import { getSettings, Settings } from '../services/settings';
 
 // import * as blurhash from "blurhash-wasm";
@@ -18,6 +21,7 @@ provideFluentDesignSystem().register(fluentButton());
 import ImgWorker from '../utils/img-worker?worker';
 import { router } from '../utils/router';
 import { Post } from '../interfaces/Post';
+import { getCurrentUser } from '../services/account';
 
 @customElement('timeline-item')
 export class TimelineItem extends LitElement {
@@ -29,6 +33,8 @@ export class TimelineItem extends LitElement {
     @state() isBookmarked = false;
 
     @state() settings: Settings | undefined;
+
+    @state() currentUser: any;
 
     canvas = document.createElement('canvas');
     ctx = this.canvas.getContext('bitmaprenderer');
@@ -43,8 +49,32 @@ export class TimelineItem extends LitElement {
                 width: 100%;
 
                 margin-bottom: 10px;
+            }
 
-                contain: content;
+            .sensitive {
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                background: #1b1d26;
+                z-index: 1;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            sl-carousel::part(base) {
+                gap: 8px;
+                padding-bottom: 1em;
+            }
+
+            @media(prefers-color-scheme: light) {
+                .sensitive {
+                    background: white;
+                }
             }
 
             .header-actions-block {
@@ -62,7 +92,6 @@ export class TimelineItem extends LitElement {
                 transition: opacity 0.3s ease-in-out;
 
                 contain: content;
-                content-visibility: auto;
             }
 
             .status-link-card {
@@ -111,8 +140,6 @@ export class TimelineItem extends LitElement {
                 --sl-panel-background-color: #1b1d26;
                 color: white;
 
-                animation: slideUp 0.3s ease-in-out;
-
                 overflow-x: hidden;
             }
 
@@ -133,8 +160,15 @@ export class TimelineItem extends LitElement {
                 color: var(--sl-color-primary-600);
             }
 
-            sl-card img {
+            sl-card sl-carousel {
+                width: 100%;
+            }
+
+            sl-card sl-carousel-item {
                 height: 340px;
+            }
+
+            sl-card img {
                 object-fit: contain;
                 border-radius: 6px 6px 0px 0px;
             }
@@ -244,6 +278,8 @@ export class TimelineItem extends LitElement {
     async firstUpdated( ) {
         this.settings = await getSettings();
 
+        this.currentUser = await getCurrentUser();
+
         if (!this.settings.data_saver) {
             // set up intersection observer
             const options = {
@@ -282,96 +318,98 @@ export class TimelineItem extends LitElement {
     async loadImage() {
        // window.requestIdleCallback(() => {
 
-            const img = this.shadowRoot?.querySelector('img');
-
+            const img = this.shadowRoot?.querySelectorAll('img');
             if (img) {
+                // loop through a NodeList
+                for (let i = 0; i < img.length; i++) {
 
-                const src = img.getAttribute('data-src');
+                    const src = img[i].getAttribute('data-src');
 
-                // is this safari?
-                const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+                    // is this safari?
+                    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-                // handle blurhash
-                if (this.tweet && this.tweet.media_attachments[0] && this.tweet.media_attachments[0].blurhash && isSafari === false) {
-                    console.log("has blurhash", this.tweet?.media_attachments[0].blurhash);
-                    try {
-                        this.worker = new ImgWorker();
+                    // handle blurhash
+                    if (this.tweet && this.tweet.media_attachments[0] && this.tweet.media_attachments[0].blurhash && isSafari === false) {
+                        console.log("has blurhash", this.tweet?.media_attachments[0].blurhash);
+                        try {
+                            this.worker = new ImgWorker();
 
-                              this.canvas.width = this.tweet?.media_attachments[0].meta.original.width;
-                              this.canvas.height = this.tweet?.media_attachments[0].meta.original.height;
+                                this.canvas.width = this.tweet?.media_attachments[0].meta.original.width;
+                                this.canvas.height = this.tweet?.media_attachments[0].meta.original.height;
 
-                              this.worker!.onmessage = (e) => {
-                                console.log("worker message", e.data)
-                                // e.data is a bitmap
-                                // display bitmap on canvas
-                                this.ctx!.transferFromImageBitmap(e.data!)
+                                this.worker!.onmessage = (e) => {
+                                    console.log("worker message", e.data)
+                                    // e.data is a bitmap
+                                    // display bitmap on canvas
+                                    this.ctx!.transferFromImageBitmap(e.data!)
 
-                                img.setAttribute('src', this.canvas.toDataURL());
+                                    img[i].setAttribute('src', this.canvas.toDataURL());
 
-                                img.removeAttribute('data-src');
+                                    img[i].removeAttribute('data-src');
 
-                                        if (src) {
-                                            const placeholderImage = new Image();
+                                            if (src) {
+                                                const placeholderImage = new Image();
 
-                                            img.onload = () => {
-                                                window.requestIdleCallback(() => {
-                                                    // remove event listener
+                                                img[i].onload = () => {
+                                                    window.requestIdleCallback(() => {
+                                                        // remove event listener
 
-                                                    img.removeAttribute('data-src');
+                                                        img[i].removeAttribute('data-src');
 
-                                                }, {
-                                                    timeout: 1000
-                                                })
+                                                    }, {
+                                                        timeout: 1000
+                                                    })
+                                                }
+
+                                                placeholderImage.onload = () => {
+                                                    img[i].setAttribute('src', src);
+                                                };
+
+                                                placeholderImage.src = src;
                                             }
+                                        // }
+                                    //}, {
+                                    //    timeout: 3000
+                                    //})
 
-                                            placeholderImage.onload = () => {
-                                                img.setAttribute('src', src);
-                                            };
-
-                                            placeholderImage.src = src;
-                                        }
-                                    // }
-                                //}, {
-                                //    timeout: 3000
-                                //})
-
-                                this.worker!.terminate();
-                              }
-                                this.worker!.postMessage({
-                                    hash: this.tweet?.media_attachments[0].blurhash,
-                                    width: this.tweet?.media_attachments[0].meta.original.width,
-                                    height: this.tweet?.media_attachments[0].meta.original.height
-                                });
-                        // }, {
-                        //     timeout: 3000
-                        // });
-                    } catch (error) {
-                        console.log(error);
+                                    this.worker!.terminate();
+                                }
+                                    this.worker!.postMessage({
+                                        hash: this.tweet?.media_attachments[0].blurhash,
+                                        width: this.tweet?.media_attachments[0].meta.original.width,
+                                        height: this.tweet?.media_attachments[0].meta.original.height
+                                    });
+                            // }, {
+                            //     timeout: 3000
+                            // });
+                        } catch (error) {
+                            console.log(error);
+                        }
                     }
-                }
-                else {
-                                    // start loading real image
-                if (src) {
-                    const placeholderImage = new Image();
+                    else {
+                                        // start loading real image
+                    if (src) {
+                        const placeholderImage = new Image();
 
-                    img.onload = () => {
-                        window.requestIdleCallback(() => {
-                            // if (!this.tweet?.media_attachments[0] || !this.tweet?.media_attachments[0].blurhash) {
-                                img.removeAttribute('data-src');
-                            // }
-                            // remove event listener
-                            img.onload = null;
-                        }, {
-                            timeout: 1000
-                        })
+                        img[i].onload = () => {
+                            window.requestIdleCallback(() => {
+                                // if (!this.tweet?.media_attachments[0] || !this.tweet?.media_attachments[0].blurhash) {
+                                    img[i].removeAttribute('data-src');
+                                // }
+                                // remove event listener
+                                img[i].onload = null;
+                            }, {
+                                timeout: 1000
+                            })
+                        }
+
+                        placeholderImage.onload = () => {
+                            img[i].setAttribute('src', src);
+                        };
+
+                        placeholderImage.src = src;
                     }
-
-                    placeholderImage.onload = () => {
-                        img.setAttribute('src', src);
-                    };
-
-                    placeholderImage.src = src;
-                }
+                    }
                 }
             }
        // }, {
@@ -491,12 +529,33 @@ export class TimelineItem extends LitElement {
         router.navigate(`/home/post?id=${id}`);
     }
 
+    async deleteStatus() {
+        if (this.tweet) {
+            const { deletePost } = await import('../services/posts');
+            await deletePost(this.tweet.id);
+
+            this.dispatchEvent(new CustomEvent('delete', {
+                detail: {
+                    id: this.tweet.id
+                }
+            }));
+        }
+    }
+
+    viewSensitive() {
+       (this.shadowRoot?.querySelector(".sensitive") as HTMLElement).style.display = "none";
+    }
+
     render() {
         return html`
           ${this.tweet?.reblog === null || this.tweet?.reblog === undefined ? html`
                 ${
                     this.tweet?.reply_to !== null && this.tweet?.reply_to !== undefined ? html`
                       <sl-card part="card">
+                      ${this.tweet?.sensitive ? html`
+                      <div class="sensitive">
+                        <fluent-button @click="${() => this.viewSensitive()}" appearance="accent">View Sensitive Content</fluent-button>
+                      </div>` : null}
                         <user-profile .account="${this.tweet?.reply_to.account}"></user-profile>
                         <div .innerHTML="${this.tweet?.reply_to.content}"></div>
 
@@ -523,40 +582,73 @@ export class TimelineItem extends LitElement {
 
 
                 <sl-card part="card" class="${classMap({ replyCard: this.tweet?.reply_to ? true : false})}">
+                      ${this.tweet?.sensitive ? html`
+                      <div class="sensitive">
+                        <fluent-button @click="${() => this.viewSensitive()}" appearance="accent">View Sensitive Content</fluent-button>
+                      </div>` : null}
                       ${
                         this.tweet && this.tweet.media_attachments.length > 0 ? html`
-
-                          <img part="image" alt="${this.tweet?.media_attachments[0].description || ""}" slot="image" @click="${() => this.openInBox(this.tweet?.media_attachments[0].preview_url || "")}" data-src="${this.tweet?.media_attachments[0].preview_url}">
-
+                          <sl-carousel ?pagination="${this.tweet.media_attachments.length > 1}" slot="image">
+                            ${
+                                this.tweet.media_attachments.map((attachment) => {
+                                    return html`
+                                      <sl-carousel-item>
+                                      <img part="image" alt="${attachment.description || ""}" @click="${() => this.openInBox(attachment.preview_url || "")}" data-src="${attachment.preview_url}" />
+                                </sl-carousel-item>
+                                    `
+                                })
+                            }
+                          </sl-carousel>
                         ` : html``
                       }
 
                       <div class="header-actions-block" slot="header">
                         <sl-icon-button @click="${() => this.shareStatus(this.tweet || null)}" src="/assets/share-social-outline.svg">
                         </sl-icon-button>
+
+                        ${
+                            this.tweet?.account.acct === this.currentUser?.acct ? html`
+                            <sl-icon-button @click="${() => this.deleteStatus()}" src="/assets/trash-outline.svg">
+                            </sl-icon-button>
+                            ` : null
+                        }
                       </div>
 
                         <user-profile .account="${this.tweet?.account}"></user-profile>
                         <div @click="${() => this.openPost(this.tweet?.id || "")}" .innerHTML="${this.tweet?.content}"></div>
 
                         <div class="actions" slot="footer">
-                        <fluent-button appearance="lightweight" pill @click="${() => this.analyzeStatus(this.tweet || null)}">
-                            <sl-icon src="/assets/search-outline.svg"></sl-icon>
-                          </fluent-button>
-                          ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies(this.tweet?.id || "")}">
-                          <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
-                        </fluent-button>` : null}
-                          <fluent-button appearance="lightweight" ?disabled="${this.isBookmarked || this.tweet?.bookmarked}" pill @click="${() => this.bookmark(this.tweet?.id || "")}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></fluent-button>
-                          ${this.settings && this.settings.wellness === false ? html`<fluent-button appearance="lightweight" ?disabled="${this.isBoosted || this.tweet?.favourited}" pill @click="${() => this.favorite(this.tweet?.id || "")}">${this.tweet?.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></fluent-button>` : null}
-                          ${this.settings && this.settings.wellness === false ? html`<fluent-button appearance="lightweight" ?disabled="${this.isReblogged || this.tweet?.reblogged}" pill @click="${() => this.reblog(this.tweet?.id || "")}">${this.tweet?.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></fluent-button>` : null}
+                            <fluent-button appearance="lightweight" pill @click="${() => this.analyzeStatus(this.tweet || null)}">
+                                <sl-icon src="/assets/search-outline.svg"></sl-icon>
+                            </fluent-button>
+                            ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies(this.tweet?.id || "")}">
+                            <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
+                            </fluent-button>` : null}
+                            <fluent-button appearance="lightweight" ?disabled="${this.isBookmarked || this.tweet?.bookmarked}" pill @click="${() => this.bookmark(this.tweet?.id || "")}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></fluent-button>
+                            ${this.settings && this.settings.wellness === false ? html`<fluent-button appearance="lightweight" ?disabled="${this.isBoosted || this.tweet?.favourited}" pill @click="${() => this.favorite(this.tweet?.id || "")}">${this.tweet?.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></fluent-button>` : null}
+                            ${this.settings && this.settings.wellness === false ? html`<fluent-button appearance="lightweight" ?disabled="${this.isReblogged || this.tweet?.reblogged}" pill @click="${() => this.reblog(this.tweet?.id || "")}">${this.tweet?.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></fluent-button>` : null}
                         </div>
                     </sl-card>
                     ` : html`
                     <sl-card slot="card">
-                    ${
-                        this.tweet?.reblog.media_attachments.length > 0 ? html`
+                    ${this.tweet?.sensitive ? html`
+                      <div class="sensitive">
+                        <fluent-button @click="${() => this.viewSensitive()}" appearance="accent">View Sensitive Content</fluent-button>
+                      </div>` : null}
 
-<img part="image" slot="image" alt="${this.tweet?.reblog.media_attachments[0].description || ""}" @click="${() => this.openInBox(this.tweet?.reblog?.media_attachments[0].preview_url || "")}" data-src="${this.tweet?.reblog.media_attachments[0].preview_url}">
+                      ${
+                        this.tweet.reblog && this.tweet.reblog.media_attachments.length > 0 ? html`
+                          <sl-carousel ?pagination="${this.tweet.reblog.media_attachments.length > 1}" slot="image">
+                            ${
+                                this.tweet.reblog.media_attachments.map((attachment) => {
+                                    return html`
+                                      <sl-carousel-item>
+                                        <img part="image" alt="${attachment.description || ""}" @click="${() => this.openInBox(attachment.preview_url || "")}" data-src="${attachment.preview_url}"/>
+                                      </sl-carousel-item>
+                                    `
+                                })
+                            }
+                          </sl-carousel>
                         ` : html``
                       }
 
@@ -582,7 +674,7 @@ export class TimelineItem extends LitElement {
                         ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies(this.tweet?.id || "")}">
                             <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
                         </fluent-button>` : null}
-                            <fluent-button appearance="lightweight" ?disabled="${this.isBoosted || this.tweet?.favourited}" pill @click="${() => this.bookmark(this.tweet?.id || "")}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></fluent-button>
+                            <fluent-button appearance="lightweight" ?disabled="${this.isBookmarked}" pill @click="${() => this.bookmark(this.tweet?.id || "")}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></fluent-button>
                             ${this.settings && this.settings.wellness === false ? html`<fluent-button appearance="lightweight" ?disabled="${this.isBoosted || this.tweet?.favourited}" pill @click="${() => this.favorite(this.tweet?.id || "")}">${this.tweet?.reblog.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></fluent-button>` : null}
                             ${this.settings && this.settings.wellness === false ? html`<fluent-button appearance="lightweight" ?disabled="${this.isReblogged || this.tweet?.reblogged}"  pill @click="${() => this.reblog(this.tweet?.id || "")}">${this.tweet?.reblog.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></fluent-button>` : null}
                         </div>

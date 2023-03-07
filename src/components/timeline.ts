@@ -10,6 +10,8 @@ import '../components/timeline-item';
 import '../components/search';
 import { Post } from '../interfaces/Post';
 
+import { guard } from 'lit/directives/guard.js';
+
 import { fluentCombobox, fluentOption, provideFluentDesignSystem } from '@fluentui/web-components';
 
 provideFluentDesignSystem().register(fluentCombobox());
@@ -268,7 +270,7 @@ export class Timeline extends LitElement {
 
     }
 
-    async refreshTimeline() {
+    public async refreshTimeline() {
         console.log("refreshing timeline", this.timelineType)
         switch (this.timelineType) {
             case "home":
@@ -409,11 +411,11 @@ export class Timeline extends LitElement {
         </fluent-combobox>
 
         <ul>
-            ${this.timeline.map((tweet: Post) => html`
+            ${guard([this.timeline.length], () => this.timeline.map((tweet: Post) => html`
                 <li class="timeline-list-item">
-                  <timeline-item @analyze="${($event: any) => this.showAnalyze($event.detail.data, $event.detail.imageData, $event.detail.tweet)}" @openimage="${($event: any) => this.showImage($event.detail.imageURL)}" ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
+                  <timeline-item @delete="${() => this.refreshTimeline()}" @analyze="${($event: any) => this.showAnalyze($event.detail.data, $event.detail.imageData, $event.detail.tweet)}" @openimage="${($event: any) => this.showImage($event.detail.imageURL)}" ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
                 </li>
-            `)}
+            `))}
 
             <fluent-button appearance="lightweight" ?loading="${this.loadingData}" id="load-more">Load More</fluent-button>
         </ul>

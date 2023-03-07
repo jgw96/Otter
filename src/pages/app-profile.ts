@@ -332,6 +332,13 @@ export class AppProfile extends LitElement {
         this.followed = true;
     }
 
+    async reloadPosts() {
+        const postsData = await getUsersPosts(this.id);
+        console.log(postsData);
+
+        this.posts = postsData;
+    }
+
     render() {
         return html`
         <app-header ?enableBack="${true}"></app-header>
@@ -398,7 +405,7 @@ export class AppProfile extends LitElement {
             <ul>
                 ${this.posts.map(post => html`
                 <li>
-                    <timeline-item .tweet=${post}></timeline-item>
+                    <timeline-item @delete="${() => this.reloadPosts()}" .tweet=${post}></timeline-item>
                 </li>
                 ` )}
             </ul>
