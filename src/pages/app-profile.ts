@@ -8,10 +8,13 @@ import '../components/timeline-item';
 import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 import '@shoelace-style/shoelace/dist/components/badge/badge.js';
 
+import { fluentBadge, provideFluentDesignSystem } from "@fluentui/web-components";
+provideFluentDesignSystem().register(fluentBadge());
+
 @customElement('app-profile')
 export class AppProfile extends LitElement {
 
-    @state() user: any;
+    @state() user: any | undefined;
     @state() posts: any[] = [];
     @state() followed: boolean = false;
     @state() showMiniProfile: boolean = false;
@@ -24,6 +27,36 @@ export class AppProfile extends LitElement {
                 overflow-y: scroll;
                 height: 100vh;
             }
+
+            h3 sl-skeleton {
+                width: 186px;
+                height: 22px;
+                border-radius: 8px;
+            }
+
+            #user-url sl-skeleton {
+                width: 300px;
+            }
+
+            #bio-placeholder {
+                display: flex;
+                width: 60%;
+                flex-direction: column;
+                gap: 8px;
+                height: 100px;
+            }
+
+            #bio-placeholder sl-skeleton {
+                height: 12px;
+                width: 100%;
+            }
+
+            #avatar-block sl-skeleton {
+                height: -webkit-fill-available;
+                width: -webkit-fill-available;
+                border-radius: 8px;
+            }
+
 
             sl-badge {
                 cursor: pointer;
@@ -344,24 +377,33 @@ export class AppProfile extends LitElement {
         <app-header ?enableBack="${true}"></app-header>
 
         <main>
-            ${this.user ? html`
             <div id="profile">
                 <div id="profile-top">
                     ${this.user ? html`
                     <div id="avatar-block" style=${styleMap({backgroundImage: `url(${this.user.header})`})}>
                         <img src="${this.user.avatar}" />
                     </div>
-                    ` : null}
+                    ` : html`<div id="avatar-block"><sl-skeleton></sl-skeleton></div>`}
                     <div id="username-block">
-                        <h3>${this.user ? this.user.display_name : "Loading..."}</h3>
+                        <h3>${this.user ? this.user.display_name : html`<sl-skeleton></sl-skeleton>`}</h3>
                     </div>
 
-                    <p id="user-url">${this.user ? this.user.url : "Loading..."}</p>
+                    <p id="user-url">${this.user ? this.user.url : html`<sl-skeleton></sl-skeleton>`}</p>
 
-                    <div .innerHTML=${this.user ? this.user.note : "Loading..." }></div>
+                    ${
+                        this.user && this.user.note ? html`
+                          <div .innerHTML=${this.user ? this.user.note : "" }></div>
+                        ` : html`
+                            <div id="bio-placeholder">
+                                <sl-skeleton></sl-skeleton>
+                                <sl-skeleton></sl-skeleton>
+                                <sl-skeleton></sl-skeleton>
+                            </div>
+                        `
+                    }
 
-                    <fluent-badge>${this.user ? this.user.followers_count : "Loading..."} followers</fluent-badge>
-                    <fluent-badge>${this.user ? this.user.following_count : "Loading..."} following</fluent-badge>
+                    <fluent-badge>${this.user ? this.user.followers_count : 0} followers</fluent-badge>
+                    <fluent-badge>${this.user ? this.user.following_count : 0} following</fluent-badge>
 
                     <div id="fields">
                         ${this.user ? this.user.fields.map((field: any) => html`
@@ -383,9 +425,7 @@ export class AppProfile extends LitElement {
                     </div>
                 </div>
             </div>
-            ` : html`<div id="fake-profile">
-                <sl-skeleton></sl-skeleton>
-            </div>`}
+
 
             ${
                 this.showMiniProfile && this.user ? html`

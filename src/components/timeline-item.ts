@@ -551,10 +551,6 @@ export class TimelineItem extends LitElement {
                 ${
                     this.tweet?.reply_to !== null && this.tweet?.reply_to !== undefined ? html`
                       <sl-card part="card">
-                      ${this.tweet?.sensitive ? html`
-                      <div class="sensitive">
-                        <fluent-button @click="${() => this.viewSensitive()}" appearance="accent">View Sensitive Content</fluent-button>
-                      </div>` : null}
                         <user-profile .account="${this.tweet?.reply_to.account}"></user-profile>
                         <div .innerHTML="${this.tweet?.reply_to.content}"></div>
 
@@ -581,10 +577,6 @@ export class TimelineItem extends LitElement {
 
 
                 <sl-card part="card" class="${classMap({ replyCard: this.tweet?.reply_to ? true : false})}">
-                      ${this.tweet?.sensitive ? html`
-                      <div class="sensitive">
-                        <fluent-button @click="${() => this.viewSensitive()}" appearance="accent">View Sensitive Content</fluent-button>
-                      </div>` : null}
                       ${
                         this.tweet && this.tweet.media_attachments.length > 0 ? html`
                           <sl-carousel ?pagination="${this.tweet.media_attachments.length > 1}" slot="image">
@@ -630,10 +622,6 @@ export class TimelineItem extends LitElement {
                     </sl-card>
                     ` : html`
                     <sl-card slot="card">
-                    ${this.tweet?.sensitive ? html`
-                      <div class="sensitive">
-                        <fluent-button @click="${() => this.viewSensitive()}" appearance="accent">View Sensitive Content</fluent-button>
-                      </div>` : null}
 
                       ${
                         this.tweet.reblog && this.tweet.reblog.media_attachments.length > 0 ? html`

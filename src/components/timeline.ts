@@ -40,6 +40,10 @@ export class Timeline extends LitElement {
                 margin-bottom: 12px;
             }
 
+            #mainList li {
+                scroll-snap-align: start;
+            }
+
             #list-actions {
                 display: none;
                 margin-bottom: 12px;
@@ -50,11 +54,6 @@ export class Timeline extends LitElement {
 
                 align-items: center;
                 justify-content: space-between;
-            }
-
-            .timeline-list-item {
-                content-visibility: auto;
-                contain: content;
             }
 
             @media(prefers-color-scheme: dark) {
@@ -410,7 +409,7 @@ export class Timeline extends LitElement {
             <fluent-option value="public">public</fluent-option>
         </fluent-combobox>
 
-        <ul>
+        <ul id="mainList" part="list">
             ${guard([this.timeline.length, this.timelineType], () => this.timeline.map((tweet: Post) => html`
                 <li class="timeline-list-item">
                   <timeline-item @delete="${() => this.refreshTimeline()}" @analyze="${($event: any) => this.showAnalyze($event.detail.data, $event.detail.imageData, $event.detail.tweet)}" @openimage="${($event: any) => this.showImage($event.detail.imageURL)}" ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>

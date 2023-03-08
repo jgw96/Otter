@@ -53,13 +53,8 @@ body {
 @media (prefers-color-scheme: dark) {
 
   body {
-    background-color: #0f1118ed;
-    backdrop-filter: blur(40px);
+    background-color: #202020;
     color: white;
-  }
-
-  html {
-    background: var(--primary-color);
   }
 }
 
@@ -70,9 +65,6 @@ body {
     color: black;
   }
 
-  html {
-    background: var(--primary-color);
-  }
 }
 
 
