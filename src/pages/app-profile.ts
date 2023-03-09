@@ -28,6 +28,10 @@ export class AppProfile extends LitElement {
                 height: 100vh;
             }
 
+            #profile {
+                view-transition-name: profile-image;
+            }
+
             h3 sl-skeleton {
                 width: 186px;
                 height: 22px;
