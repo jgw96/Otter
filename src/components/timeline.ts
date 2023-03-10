@@ -59,6 +59,7 @@ export class Timeline extends LitElement {
             @media(prefers-color-scheme: dark) {
                 fluent-button::part(control) {
                     --neutral-fill-rest: #242428;
+                    --netural-fill-stealth-active: #242428;
                     color: white;
                     border: none;
                 }
@@ -240,7 +241,9 @@ export class Timeline extends LitElement {
         `
     ];
 
-    async firstUpdated() {
+    async connectedCallback() {
+        super.connectedCallback();
+
         this.loadingData = true;
         await this.refreshTimeline();
         this.loadingData = false;
@@ -277,13 +280,19 @@ export class Timeline extends LitElement {
                 console.log("timelineData", timelineData);
 
                 this.timeline = [];
+                await this.hasUpdated;
+
                 this.timeline = timelineData;
+
+                this.requestUpdate();
                 break;
             case "public":
                 const timelineDataPub = await getPaginatedHomeTimeline("public");
                 console.log(timelineDataPub);
 
                 this.timeline = [];
+                await this.hasUpdated;
+
                 this.timeline = timelineDataPub;
 
                 this.requestUpdate();
@@ -352,10 +361,12 @@ export class Timeline extends LitElement {
         await dialog.show();
     }
 
-    changeTimelineType(type: "home" | "public" | "media") {
+    async changeTimelineType(type: "home" | "public" | "media") {
         this.timelineType = type;
 
-        this.refreshTimeline();
+        await this.refreshTimeline();
+
+        this.requestUpdate();
     }
 
     render() {

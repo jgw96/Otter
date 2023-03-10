@@ -36,6 +36,8 @@ export class RightClick extends LitElement {
                 pointer-events: none;
                 opacity: 0;
 
+                backdrop-filter: blur(48px);
+
                 animation-name: fadeIn;
                 animation-duration: 0.12s;
                 animation-fill-mode: forwards;

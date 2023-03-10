@@ -38,10 +38,11 @@ export class SearchPage extends LitElement {
 
             fluent-tab-panel {
                 margin-top: 16px;
+                animation: slideFromLeft 0.3s ease-in-out;
               }
 
             main {
-                padding-left: 16px;
+                padding-left: 0px;
                 padding-right: 16px;
                 padding-top: 0px;
             }
@@ -106,6 +107,17 @@ export class SearchPage extends LitElement {
                 border-radius: 6px;
                 padding: 8px;
                 padding-top: 0;
+            }
+
+            @keyframes slideFromLeft {
+                from {
+                    transform: translateX(-30%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
             }
 
             @media(prefers-color-scheme: dark) {

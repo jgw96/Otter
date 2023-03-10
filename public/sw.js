@@ -115,12 +115,12 @@ workbox.routing.registerRoute(
 
 // runtime caching
 workbox.routing.registerRoute(
-    ({ request }) => request.url.includes('/timelinePaginated'),
-    new workbox.strategies.StaleWhileRevalidate({
+    ({ request }) => request.url.includes('/timelines/home'),
+    new workbox.strategies.CacheFirst({
         cacheName: 'timeline',
         plugins: [
             new workbox.expiration.ExpirationPlugin({
-                maxEntries: 50,
+                maxEntries: 100,
                 // maxAgeSeconds for 30 minutes
                 maxAgeSeconds: 60 * 30,
             }),
@@ -189,8 +189,8 @@ workbox.routing.registerRoute(
 
 // avatar photos
 workbox.routing.registerRoute(
-    ({ request }) => request.url.includes('link.storjshare.io'),
-    new workbox.strategies.StaleWhileRevalidate({
+    ({ request }) => request.url.includes('/accounts/avatars'),
+    new workbox.strategies.CacheFirst({
         cacheName: 'avatar',
         plugins: [
             new workbox.expiration.ExpirationPlugin({
@@ -203,7 +203,7 @@ workbox.routing.registerRoute(
 
 workbox.routing.registerRoute(
     ({ request }) => request.url.includes('/user?code'),
-    new workbox.strategies.StaleWhileRevalidate({
+    new workbox.strategies.CacheFirst({
         cacheName: 'user',
         plugins: [
             new workbox.expiration.ExpirationPlugin({

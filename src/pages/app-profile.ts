@@ -28,7 +28,7 @@ export class AppProfile extends LitElement {
                 height: 100vh;
             }
 
-            #profile {
+            #profile img {
                 view-transition-name: profile-image;
             }
 
@@ -72,11 +72,20 @@ export class AppProfile extends LitElement {
                 border-radius: 50%;
               }
 
+              #follower-info {
+                display: flex;
+                gap: 4px;
+              }
+
             #fields {
                 display: flex;
-                flex-direction: column;
                 overflow-x: auto;
                 margin-top: 12px;
+
+                flex-direction: row;
+                gap: 4px;
+                flex-wrap: wrap;
+                margin-top: 1em;
             }
 
             #mini-profile {
@@ -114,6 +123,13 @@ export class AppProfile extends LitElement {
                 height: 40px;
                 border-radius: 50%;
                 border: solid 2px var(--sl-color-primary-600);
+            }
+
+            .field-name {
+                font-weight: bold;
+                margin-right: 4px;
+                border-right: solid white 2px;
+                padding-right: 6px;
             }
 
             main {
@@ -162,6 +178,9 @@ export class AppProfile extends LitElement {
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
+
+                animation-name: slideup;
+                animation-duration: 0.3s;
               }
 
             #fake-profile {
@@ -218,7 +237,7 @@ export class AppProfile extends LitElement {
                     padding-top: 8px;
                     border-radius: 4px;
 
-                    background: #1b1d26;
+                    background: rgb(32 32 35);
 
                     overflow-x: hidden;
                     text-overflow: ellipsis;
@@ -292,7 +311,7 @@ export class AppProfile extends LitElement {
 
               @keyframes slideup {
                 from {
-                    transform: translateY(100%);
+                    transform: translateY(30%);
                     opacity: 0;
                 }
 
@@ -341,26 +360,30 @@ export class AppProfile extends LitElement {
             const options = {
                 root: null,
                 rootMargin: '0px',
-                threshold: 0.5
+                threshold: 0.8
             };
 
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
+                    console.log('entry', entry)
                     if (entry.isIntersecting) {
-                        console.log('intersecting');
+                        console.log('intersecting', entry);
 
                         window.requestIdleCallback(async () => {
-                            this.showMiniProfile = !this.showMiniProfile;
+                            this.showMiniProfile = false;
                         })
+                    }
+                    else {
+                        this.showMiniProfile = true;
                     }
                 })
             }
             , options);
 
             // get second child element of postsList
-            const secondChild = this.shadowRoot!.querySelector('ul')!.children[1] as HTMLElement;
+            const profileDiv = this.shadowRoot?.getElementById('profile');
 
-            observer.observe(secondChild!);
+            observer.observe(profileDiv!);
         })
     }
 
@@ -406,18 +429,17 @@ export class AppProfile extends LitElement {
                         `
                     }
 
-                    <fluent-badge>${this.user ? this.user.followers_count : 0} followers</fluent-badge>
-                    <fluent-badge>${this.user ? this.user.following_count : 0} following</fluent-badge>
+                    <div id="follower-info">
+                      <fluent-badge appearance="accent">${this.user ? this.user.followers_count : 0} followers</fluent-badge>
+                      <fluent-badge appearance="accent">${this.user ? this.user.following_count : 0} following</fluent-badge>
+                    </div>
 
                     <div id="fields">
                         ${this.user ? this.user.fields.map((field: any) => html`
                         <div>
-                            <fluent-badge variant="primary">
-                                ${
-                                    field.name.toLowerCase() === "twitter" ? html`<img src="/assets/logo-twitter.svg" alt="twitter logo">` : null
-                                }
-
-                               <span .innerHTML="${field.value}"></span>
+                            <fluent-badge appearance="accent">
+                                <span class="field-name" .innerHTML="${field.name}"></span>
+                               <span class="field-value" .innerHTML="${field.value}"></span>
                             </fluent-badge>
                         </div>
                         `) : null}

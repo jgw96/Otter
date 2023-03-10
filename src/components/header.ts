@@ -88,6 +88,12 @@ export class AppHeader extends LitElement {
           background: #1e1e1e;
           color: white;
         }
+
+          fluent-button::part(control) {
+              --neutral-fill-stealth-active: #1b1d26;
+              --neutral-fill-stealth-hover: #1b1d26;
+          }
+
       }
     `;
   }

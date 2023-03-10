@@ -49,6 +49,7 @@ export class Search extends LitElement {
             @media(prefers-color-scheme: dark) {
                 fluent-text-field, fluent-text-field::part(control), fluent-text-field::part(root) {
                     background: #1e1e1e;
+                    color: white;
                 }
 
                 .account {
@@ -58,7 +59,9 @@ export class Search extends LitElement {
         `
     ];
 
-    protected async firstUpdated() {
+    protected async connectedCallback() {
+        super.connectedCallback();
+
         const options = {
             root: null,
             rootMargin: '0px',

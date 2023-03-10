@@ -49,6 +49,21 @@ export class TimelineItem extends LitElement {
                 width: 100%;
 
                 margin-bottom: 10px;
+
+                animation: slideUp 0.3s ease-in-out;
+            }
+
+            @media(prefers-color-scheme: dark) {
+                fluent-button::part(control) {
+                    --neutral-fill-stealth-active: #1b1d26;
+                    --neutral-fill-stealth-hover: #1b1d26;
+                }
+            }
+
+            fluent-button::part(content) {
+                display: flex;
+                align-items: center;
+                gap: 2px;
             }
 
             .sensitive {
@@ -137,7 +152,7 @@ export class TimelineItem extends LitElement {
                 --padding: 10px;
                 width: 100%;
 
-                --sl-panel-background-color: #1b1d26;
+                --sl-panel-background-color: rgb(32 32 35);;
                 color: white;
 
                 overflow-x: hidden;
@@ -165,7 +180,7 @@ export class TimelineItem extends LitElement {
             }
 
             sl-card sl-carousel-item {
-                height: 340px;
+                // height: 340px;
             }
 
             sl-card img {

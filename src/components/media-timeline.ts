@@ -103,7 +103,9 @@ export class MediaTimeline extends LitElement {
         `
     ];
 
-    async firstUpdated() {
+    async connectedCallback() {
+        super.connectedCallback();
+
         this.loadingData = true;
         await this.refreshTimeline();
         this.loadingData = false;

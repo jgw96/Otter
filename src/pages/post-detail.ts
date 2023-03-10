@@ -60,6 +60,23 @@ export class PostDetail extends LitElement {
                 margin-top: 0;
             }
 
+            #main {
+                min-height: 300px;
+
+                animation: slideup 0.3s ease-in-out;
+            }
+
+            @keyframes slideup {
+                from {
+                    transform: translateY(30%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+
             @media(max-width: 768px) {
                 main {
                     flex-direction: column;
