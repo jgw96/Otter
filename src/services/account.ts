@@ -18,11 +18,20 @@ export const checkFollowing = async (id: string)  => {
     }
 }
 
+let currentUser: any | null = null;
+
 export const getCurrentUser = async () => {
     try {
+        if (currentUser) {
+            return currentUser;
+        }
+
         console.log("calling")
         const response = await fetch('https://mammoth-backend.azurewebsites.net/user?code=' + accessToken + '&server=' + server);
         const data = await response.json();
+
+        currentUser = data;
+
         return data;
     }
     catch (err) {

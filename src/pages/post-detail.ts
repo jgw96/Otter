@@ -54,6 +54,8 @@ export class PostDetail extends LitElement {
 
             #replies {
                 flex: 2;
+                animation: slideup 0.3s ease-in-out;
+                animation-delay: 0.5s;
             }
 
             #replies h2 {
@@ -63,7 +65,7 @@ export class PostDetail extends LitElement {
             #main {
                 min-height: 300px;
 
-                animation: slideup 0.3s ease-in-out;
+                view-transition-name: card;
             }
 
             @keyframes slideup {

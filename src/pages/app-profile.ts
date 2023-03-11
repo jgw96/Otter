@@ -28,7 +28,7 @@ export class AppProfile extends LitElement {
                 height: 100vh;
             }
 
-            #profile img {
+            #avatar-block img {
                 view-transition-name: profile-image;
             }
 
@@ -179,8 +179,8 @@ export class AppProfile extends LitElement {
                 flex-direction: column;
                 justify-content: space-between;
 
-                animation-name: slideup;
-                animation-duration: 0.3s;
+                // animation-name: slideup;
+                // animation-duration: 0.3s;
               }
 
             #fake-profile {
@@ -410,7 +410,7 @@ export class AppProfile extends LitElement {
                     <div id="avatar-block" style=${styleMap({backgroundImage: `url(${this.user.header})`})}>
                         <img src="${this.user.avatar}" />
                     </div>
-                    ` : html`<div id="avatar-block"><sl-skeleton></sl-skeleton></div>`}
+                    ` : null}
                     <div id="username-block">
                         <h3>${this.user ? this.user.display_name : html`<sl-skeleton></sl-skeleton>`}</h3>
                     </div>

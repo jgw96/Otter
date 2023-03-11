@@ -49,8 +49,6 @@ export class TimelineItem extends LitElement {
                 width: 100%;
 
                 margin-bottom: 10px;
-
-                animation: slideUp 0.3s ease-in-out;
             }
 
             @media(prefers-color-scheme: dark) {
@@ -540,7 +538,17 @@ export class TimelineItem extends LitElement {
     }
 
     async openPost(id: string) {
-        router.navigate(`/home/post?id=${id}`);
+        // @ts-ignore
+        this.style.viewTransitionName = 'card';
+
+        // @ts-ignore
+        document.startViewTransition(async () => {
+
+            await router.navigate(`/home/post?id=${id}`);
+
+             // @ts-ignore
+             //this.style.viewTransitionName = '';
+        });
     }
 
     async deleteStatus() {

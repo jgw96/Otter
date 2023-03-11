@@ -1057,7 +1057,7 @@ export class AppHome extends LitElement {
 
         <div id="profile">
           <div id="profile-top">
-            ${guard([this.user], () => this.user &&  this.user.avatar ? html`<img src="${this.user.avatar}" />` : html`<img src="https://via.placeholder.com/150" />`)}
+            ${this.user &&  this.user.avatar ? html`<img src="${this.user.avatar}" />` : html`<img src="https://via.placeholder.com/150" />`}
             <div id="username-block">
               <h3>${this.user ? this.user.display_name : "Loading..."}</h3>
 

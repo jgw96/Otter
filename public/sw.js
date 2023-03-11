@@ -116,7 +116,7 @@ workbox.routing.registerRoute(
 // runtime caching
 workbox.routing.registerRoute(
     ({ request }) => request.url.includes('/timelines/home'),
-    new workbox.strategies.CacheFirst({
+    new workbox.strategies.StaleWhileRevalidate({
         cacheName: 'timeline',
         plugins: [
             new workbox.expiration.ExpirationPlugin({
@@ -203,7 +203,7 @@ workbox.routing.registerRoute(
 
 workbox.routing.registerRoute(
     ({ request }) => request.url.includes('/user?code'),
-    new workbox.strategies.CacheFirst({
+    new workbox.strategies.StaleWhileRevalidate({
         cacheName: 'user',
         plugins: [
             new workbox.expiration.ExpirationPlugin({

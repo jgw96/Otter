@@ -111,14 +111,21 @@ export class UserProfile extends LitElement {
         })
     }
 
-    openUser(el: any) {
-      router.navigate(`/account?id=${this.account?.id}`);
+    openUser() {
+        // @ts-ignore
+            this.style.viewTransitionName = 'profile-image';
+
+                    // @ts-ignore
+            document.startViewTransition(async () => {
+              await router.navigate(`/account?id=${this.account?.id}`);
+            });
+
     }
 
     render() {
         return html`
-        <div @click="${($event: any) => this.openUser($event.target)}" class=${classMap({ small: this.small===true, headerBlock: true })} slot="header">
-            <img src="/assets/icons/64-icon.png" data-src="${this.account.avatar_static}">
+        <div @click="${() => this.openUser()}" class=${classMap({ small: this.small===true, headerBlock: true })} slot="header">
+            <img id="avatar" src="/assets/icons/64-icon.png" data-src="${this.account.avatar_static}">
             <div>
                 <h4>${this.account?.display_name || "Loading..."}</h4>
                 <p>${this.account?.acct || "Loading..."}</p>
