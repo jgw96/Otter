@@ -182,8 +182,9 @@ export class TimelineItem extends LitElement {
             }
 
             sl-card img {
-                object-fit: contain;
+                object-fit: cover;
                 border-radius: 6px 6px 0px 0px;
+
             }
 
             .header-block {
@@ -310,6 +311,10 @@ export class TimelineItem extends LitElement {
                         else if (this.settings?.sensitive === true) {
                             await this.loadImage();
                         }
+
+                        window.requestIdleCallback(() => {
+                            localStorage.setItem(`latest-read`, this.tweet?.id || "");
+                        });
 
                         observer.unobserve(entry.target);
                     }
@@ -484,12 +489,22 @@ export class TimelineItem extends LitElement {
     }
 
     openInBox(imageURL: string) {
-        console.log("open image", imageURL)
-        this.dispatchEvent(new CustomEvent('openimage', {
-            detail: {
-                imageURL
-            }
-        }));
+
+            console.log("show image", imageURL);
+
+            // @ts-ignore
+            this.style.viewTransitionName = "image-preview";
+
+            //@ts-ignore
+            document.startViewTransition(() => {
+                router.navigate(`/imagepreview?src=${imageURL}`);
+
+                setTimeout(() => {
+                    // @ts-ignore
+                    this.style.viewTransitionName = '';
+                }, 800)
+            })
+
     }
 
     async analyzeStatus(tweet: Post | null) {
@@ -546,8 +561,10 @@ export class TimelineItem extends LitElement {
 
             await router.navigate(`/home/post?id=${id}`);
 
-             // @ts-ignore
-             //this.style.viewTransitionName = '';
+            setTimeout(() => {
+                // @ts-ignore
+                this.style.viewTransitionName = '';
+            }, 800)
         });
     }
 

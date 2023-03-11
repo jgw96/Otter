@@ -13,6 +13,7 @@ import { Post } from '../interfaces/Post';
 import { guard } from 'lit/directives/guard.js';
 
 import { fluentCombobox, fluentOption, provideFluentDesignSystem } from '@fluentui/web-components';
+import { router } from '../utils/router';
 
 provideFluentDesignSystem().register(fluentCombobox());
 provideFluentDesignSystem().register(fluentOption());
@@ -244,8 +245,15 @@ export class Timeline extends LitElement {
     async connectedCallback() {
         super.connectedCallback();
 
+        const { get } = await import("idb-keyval");
+        const savedTimelineType = await get("timelineType");
+
+        if (savedTimelineType) {
+            this.timelineType = savedTimelineType;
+        }
+
         this.loadingData = true;
-        await this.refreshTimeline();
+        await this.refreshTimeline(true);
         this.loadingData = false;
 
         window.requestIdleCallback(async () => {
@@ -272,11 +280,11 @@ export class Timeline extends LitElement {
 
     }
 
-    public async refreshTimeline() {
+    public async refreshTimeline(cache: boolean = false) {
         console.log("refreshing timeline", this.timelineType)
         switch (this.timelineType) {
             case "home":
-                const timelineData = await getPaginatedHomeTimeline("home");
+                const timelineData = await getPaginatedHomeTimeline("home", cache);
                 console.log("timelineData", timelineData);
 
                 this.timeline = [];
@@ -287,7 +295,7 @@ export class Timeline extends LitElement {
                 this.requestUpdate();
                 break;
             case "public":
-                const timelineDataPub = await getPaginatedHomeTimeline("public");
+                const timelineDataPub = await getPaginatedHomeTimeline("public", cache);
                 console.log(timelineDataPub);
 
                 this.timeline = [];
@@ -299,7 +307,7 @@ export class Timeline extends LitElement {
                 break;
             case "media":
                 console.log("media timeline")
-               const timelineDataMedia = await getPaginatedHomeTimeline("home");
+               const timelineDataMedia = await getPaginatedHomeTimeline("home", cache);
 
                // filter out tweets that don't have media
                 (timelineDataMedia as Array<Post>).filter((tweet: Post) => tweet.media_attachments.length > 0);
@@ -335,10 +343,15 @@ export class Timeline extends LitElement {
 
     async showImage(imageURL: string) {
         console.log("show image", imageURL);
-        this.imgPreview = imageURL;
+        // this.imgPreview = imageURL;
 
-        const dialog = this.shadowRoot?.querySelector('#img-preview') as any;
-        await dialog.show();
+        // const dialog = this.shadowRoot?.querySelector('#img-preview') as any;
+        // await dialog.show();
+
+        //@ts-ignore
+        document.startViewTransition(() => {
+            router.navigate(`/home/img-preview?src=${imageURL}`);
+        })
     }
 
     async showAnalyze(data: any, imageData: any, tweet: any) {
@@ -367,6 +380,10 @@ export class Timeline extends LitElement {
         await this.refreshTimeline();
 
         this.requestUpdate();
+
+        const { set } = await import('idb-keyval');
+
+        await set('timelineType', type);
     }
 
     render() {
@@ -415,7 +432,7 @@ export class Timeline extends LitElement {
         </sl-dialog>
 
 
-        <fluent-combobox @change="${($event: any) => this.changeTimelineType($event.target.value)}" placeholder="Home">
+        <fluent-combobox .value="${this.timelineType}" @change="${($event: any) => this.changeTimelineType($event.target.value)}" placeholder="Home">
             <fluent-option value="home">home</fluent-option>
             <fluent-option value="public">public</fluent-option>
         </fluent-combobox>
@@ -423,7 +440,7 @@ export class Timeline extends LitElement {
         <ul id="mainList" part="list">
             ${guard([this.timeline.length, this.timelineType], () => this.timeline.map((tweet: Post) => html`
                 <li class="timeline-list-item">
-                  <timeline-item @delete="${() => this.refreshTimeline()}" @analyze="${($event: any) => this.showAnalyze($event.detail.data, $event.detail.imageData, $event.detail.tweet)}" @openimage="${($event: any) => this.showImage($event.detail.imageURL)}" ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
+                  <timeline-item tweetID="${tweet.id}" @delete="${() => this.refreshTimeline()}" @analyze="${($event: any) => this.showAnalyze($event.detail.data, $event.detail.imageData, $event.detail.tweet)}" @openimage="${($event: any) => this.showImage($event.detail.imageURL)}" ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
                 </li>
             `))}
 

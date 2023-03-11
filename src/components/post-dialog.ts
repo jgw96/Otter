@@ -9,9 +9,10 @@ import { createAPost, createImage } from '../services/ai';
 // @ts-ignore
 import MarkdownWorker from '../utils/markdown-worker?worker';
 
-import { fluentButton, fluentTextArea, provideFluentDesignSystem } from '@fluentui/web-components';
+import { fluentButton, fluentTextArea, fluentTextField, provideFluentDesignSystem } from '@fluentui/web-components';
 provideFluentDesignSystem().register(fluentButton());
 provideFluentDesignSystem().register(fluentTextArea());
+provideFluentDesignSystem().register(fluentTextField());
 
 @customElement('post-dialog')
 export class PostDialog extends LitElement {
@@ -53,6 +54,29 @@ export class PostDialog extends LitElement {
                 font-size: 11px;
             }
 
+            #post-copilot {
+                background: rgb(0 0 0 / 6%);
+                border-radius: 6px;
+                padding-left: 10px;
+                padding-right: 10px;
+                padding-bottom: 10px;
+                padding-top: 10px;
+                margin-top: 12px;
+
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            #post-copilot span {
+                font-size: 12px;
+            }
+
+            #post-copilot fluent-button {
+                place-self: flex-end;
+                margin-top: 8px;
+            }
+
             ul {
                 padding: 0;
                 margin: 0;
@@ -73,8 +97,13 @@ export class PostDialog extends LitElement {
                 border: none;
             }
 
+            fluent-text-field {
+                width: 100%;
+                margin-top: 8px;
+            }
+
             @media(prefers-color-scheme: dark) {
-                fluent-text-area::part(control), fluent-button[appearance="neutral"]::part(control) {
+                fluent-text-area::part(control), fluent-button[appearance="neutral"]::part(control), fluent-text-field::part(control), fluent-text-field::part(root) {
                     background: #1e1e1e;
                     color: white;
                 }
@@ -317,22 +346,22 @@ export class PostDialog extends LitElement {
     }
 
     async generateStatus() {
-        const textarea = this.shadowRoot?.querySelector('fluent-text-area') as any;
+        const textarea = this.shadowRoot?.querySelector('fluent-text-field') as any;
 
         const prompt = textarea.value;
 
         console.log(prompt, prompt.length);
 
-        if (!prompt && prompt.length === 0) {
-            textarea.placeholder = "Start your post here, and AI will help generate a post for you";
+        this.generatingPost = true;
 
-            const listener = textarea.addEventListener("sl-change", async () => {
-                await this.handleGeneratePost(textarea.value, textarea, listener);
-            })
+        const data = await createAPost(prompt);
+
+        if (data && data.choices[0]) {
+            const publishText = this.shadowRoot?.querySelector('fluent-text-area') as any;
+            publishText.value = data.choices[0].text.trim();
         }
-        else {
-            await this.handleGeneratePost(prompt, textarea, undefined);
-        }
+
+        this.generatingPost = false;
     }
 
     private async handleGeneratePost(prompt: any, textarea: any, listener: any) {
@@ -372,11 +401,13 @@ export class PostDialog extends LitElement {
         <sl-dialog id="notify-dialog" label="New Post">
 
             <fluent-text-area @change="${($event: any) => this.handleStatus($event)}" autofocus placeholder="What's on your mind?"></fluent-text-area>
-            <p id="markdown-support">Supports Markdown</p>
+
+            <div id="post-copilot">
+                <span>Enter a prompt in the field below and Mammoth will generate a toot for you.</span>
+                <fluent-text-field @change="${() => this.generateStatus()}" placeholder="I got promoted!"></fluent-text-field>
+            </div>
 
             <div id="post-ai-actions">
-              <fluent-button ?loading="${this.generatingPost}" pill size="small" @click="${() => this.generateStatus()}">AI: Help with my post</fluent-button>
-
               ${this.showPrompt === false ? html`<fluent-button size="small" pill @click="${() => this.openAIPrompt()}">AI: Generate Image</fluent-button>` : null}
             </div>
 

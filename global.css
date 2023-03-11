@@ -20,7 +20,7 @@
 }
 
 @keyframes slide-from-right {
-  from { transform: translateX(30px); }
+  from { transform: translateX(-30px); }
 }
 
 @keyframes slide-to-left {

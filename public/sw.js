@@ -203,7 +203,7 @@ workbox.routing.registerRoute(
 
 workbox.routing.registerRoute(
     ({ request }) => request.url.includes('/user?code'),
-    new workbox.strategies.StaleWhileRevalidate({
+    new workbox.strategies.CacheFirst({
         cacheName: 'user',
         plugins: [
             new workbox.expiration.ExpirationPlugin({

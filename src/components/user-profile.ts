@@ -113,11 +113,16 @@ export class UserProfile extends LitElement {
 
     openUser() {
         // @ts-ignore
-            this.style.viewTransitionName = 'profile-image';
+            this.shadowRoot!.querySelector(".headerBlock")!.viewTransitionName = 'profile-image';
 
                     // @ts-ignore
             document.startViewTransition(async () => {
               await router.navigate(`/account?id=${this.account?.id}`);
+
+           setTimeout(() => {
+                // @ts-ignore
+                this.shadowRoot!.querySelector(".headerBlock")!.viewTransitionName = '';
+              }, 800);
             });
 
     }

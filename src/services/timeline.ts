@@ -4,8 +4,6 @@ let token = localStorage.getItem('token') || '';
 let accessToken = localStorage.getItem('accessToken') || '';
 let server = localStorage.getItem('server') || '';
 
-let latestHomeTimelineData: Post[] = [];
-
 export const getHomeTimeline = async () => {
     const response = await fetch(`https://mammoth-backend.azurewebsites.net/timeline?code=${token}&server=${server}`);
     const data = await response.json();
@@ -14,7 +12,11 @@ export const getHomeTimeline = async () => {
 
 let lastPageID = "";
 
-export const getPaginatedHomeTimeline = async (type = "home") => {
+export const getPaginatedHomeTimeline = async (type = "home", cache = false) => {
+
+    if (cache) {
+        lastPageID = "";
+    }
 
     if (lastPageID && lastPageID.length > 0) {
         let accessToken = localStorage.getItem('accessToken') || '';
@@ -29,8 +31,6 @@ export const getPaginatedHomeTimeline = async (type = "home") => {
         const data = await response.json();
 
         lastPageID = data[data.length - 1].id;
-
-        latestHomeTimelineData = [...latestHomeTimelineData, ...data];
 
         return data;
     }
@@ -47,8 +47,6 @@ export const getPaginatedHomeTimeline = async (type = "home") => {
         const data = await response.json();
 
         lastPageID = data[data.length - 1].id;
-
-        latestHomeTimelineData = [...latestHomeTimelineData, ...data];
 
         return data;
     }

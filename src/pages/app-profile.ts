@@ -28,8 +28,9 @@ export class AppProfile extends LitElement {
                 height: 100vh;
             }
 
-            #avatar-block img {
+            #profile {
                 view-transition-name: profile-image;
+                contain: paint;
             }
 
             h3 sl-skeleton {

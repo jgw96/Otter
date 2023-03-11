@@ -59,7 +59,7 @@ export class Search extends LitElement {
         `
     ];
 
-    protected async connectedCallback() {
+    public async connectedCallback() {
         super.connectedCallback();
 
         const options = {
