@@ -1,10 +1,11 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 
 import { fluentButton, provideFluentDesignSystem } from '@fluentui/web-components';
 import { router } from '../utils/router';
+import { enableVibrate } from '../utils/handle-vibrate';
 provideFluentDesignSystem().register(fluentButton());
 @customElement('app-header')
 export class AppHeader extends LitElement {
@@ -100,6 +101,14 @@ export class AppHeader extends LitElement {
 
   constructor() {
     super();
+  }
+
+  protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    window.requestIdleCallback(() => {
+      if (this.shadowRoot) {
+          enableVibrate(this.shadowRoot);
+      }
+    })
   }
 
   openSettings() {

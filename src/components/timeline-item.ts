@@ -22,6 +22,7 @@ import ImgWorker from '../utils/img-worker?worker';
 import { router } from '../utils/router';
 import { Post } from '../interfaces/Post';
 import { getCurrentUser } from '../services/account';
+import { enableVibrate } from '../utils/handle-vibrate';
 
 @customElement('timeline-item')
 export class TimelineItem extends LitElement {
@@ -331,6 +332,12 @@ export class TimelineItem extends LitElement {
 
             this.tweet.reply_to = replyStatus;
         }
+
+        window.requestIdleCallback(() => {
+            if (this.shadowRoot) {
+                enableVibrate(this.shadowRoot);
+            }
+        })
     }
 
     async loadImage() {
@@ -442,6 +449,8 @@ export class TimelineItem extends LitElement {
 
         this.isBoosted = true;
 
+        this.tweet && this.tweet.reblog ? this.tweet.reblog.favourites_count++ :this.tweet ? this.tweet.favourites_count++ : null;
+
         // fire custom event
         this.dispatchEvent(new CustomEvent('favorite', {
             detail: {
@@ -457,6 +466,8 @@ export class TimelineItem extends LitElement {
         await reblogPost(id);
 
         this.isReblogged = true;
+
+        this.tweet && this.tweet.reblog ? this.tweet.reblog.reblogs_count++ :this.tweet ? this.tweet.reblogs_count++ : null;
 
         // fire custom event
         this.dispatchEvent(new CustomEvent('reblog', {
@@ -595,10 +606,6 @@ export class TimelineItem extends LitElement {
                         <div .innerHTML="${this.tweet?.reply_to.content}"></div>
 
                         <div class="actions" slot="footer">
-                          <fluent-button appearance="lightweight" pill @click="${() => this.analyzeStatus(this.tweet || null)}">
-                            <sl-icon src="/assets/search-outline.svg"></sl-icon>
-                          </fluent-button>
-
                           ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies(this.tweet?.reply_to.id || "")}">
                           <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
                           </fluent-button>` : null}
@@ -649,9 +656,6 @@ export class TimelineItem extends LitElement {
                         <div @click="${() => this.openPost(this.tweet?.id || "")}" .innerHTML="${this.tweet?.content}"></div>
 
                         <div class="actions" slot="footer">
-                            <fluent-button appearance="lightweight" pill @click="${() => this.analyzeStatus(this.tweet || null)}">
-                                <sl-icon src="/assets/search-outline.svg"></sl-icon>
-                            </fluent-button>
                             ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies(this.tweet?.id || "")}">
                             <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
                             </fluent-button>` : null}
@@ -695,9 +699,6 @@ export class TimelineItem extends LitElement {
                         <div @click="${() => this.openPost(this.tweet?.reblog?.id || "")}" .innerHTML="${this.tweet?.reblog.content}"></div>
 
                         <div class="actions" slot="footer">
-                        <fluent-button appearance="lightweight" pill @click="${() => this.analyzeStatus(this.tweet || null)}">
-                            <sl-icon src="/assets/search-outline.svg"></sl-icon>
-                          </fluent-button>
                         ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies(this.tweet?.id || "")}">
                             <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
                         </fluent-button>` : null}

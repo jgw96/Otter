@@ -42,6 +42,7 @@ import { styles } from '../styles/shared-styles';
 import { getCurrentUser, getInstanceInfo } from '../services/account';
 import { router } from '../utils/router';
 import { init } from '../utils/key-shortcuts';
+import { enableVibrate } from '../utils/handle-vibrate';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -600,6 +601,12 @@ export class AppHome extends LitElement {
       }
     });
 
+    window.requestIdleCallback(() => {
+      if (this.shadowRoot) {
+          enableVibrate(this.shadowRoot);
+      }
+  })
+
   }
 
   async shareTarget(name: string) {
@@ -1005,11 +1012,11 @@ export class AppHome extends LitElement {
 
             <span class="tab-label">Notifications</span>
           </sl-tab>
-          <!-- <sl-tab slot="nav" panel="messages">
+          <sl-tab slot="nav" panel="messages">
                                           <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
 
                                           <span class="tab-label">Messages</span>
-                                        </sl-tab> -->
+                                        </sl-tab>
           <sl-tab id="bookmarks-tab" slot="nav" panel="bookmarks">
             <sl-icon src="/assets/bookmark-outline.svg"></sl-icon>
 

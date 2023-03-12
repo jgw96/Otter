@@ -2,6 +2,7 @@ import { LitElement, html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 import { classMap } from 'lit/directives/class-map.js';
+import { enableVibrate } from '../utils/handle-vibrate';
 import { router } from '../utils/router';
 
 @customElement('user-profile')
@@ -96,6 +97,12 @@ export class UserProfile extends LitElement {
             , options);
 
         observer.observe(this.shadowRoot?.querySelector('div') as Element);
+
+        window.requestIdleCallback(() => {
+            if (this.shadowRoot) {
+                enableVibrate(this.shadowRoot);
+            }
+        })
     }
 
     loadImage() {
