@@ -47,6 +47,19 @@ export const getCurrentUser = async () => {
     }
 }
 
+export const unfollowUser = async (id: string) => {
+    const response = await fetch(`https://${server}/api/v1/accounts/${id}/unfollow`, {
+        method: 'POST',
+        headers: new Headers({
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+        })
+    });
+
+    const data = await response.json();
+    return data;
+}
+
 export const getAccount = async (id: string) => {
     const response = await fetch(`https://mammoth-backend.azurewebsites.net/account?id=${id}&code=${accessToken}&server=${server}`);
     const data = await response.json();

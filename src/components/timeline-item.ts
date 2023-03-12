@@ -292,13 +292,6 @@ export class TimelineItem extends LitElement {
             const observer = new IntersectionObserver((entries, observer) => {
                 entries.forEach(async entry => {
                     if (entry.isIntersecting) {
-                        if (this.settings?.sensitive === false && this.tweet?.sensitive === false) {
-                            await this.loadImage();
-                        }
-                        else if (this.settings?.sensitive === true) {
-                            await this.loadImage();
-                        }
-
                         window.requestIdleCallback(() => {
                             localStorage.setItem(`latest-read`, this.tweet?.id || "");
                         });
@@ -324,107 +317,6 @@ export class TimelineItem extends LitElement {
                 enableVibrate(this.shadowRoot);
             }
         })
-    }
-
-    async loadImage() {
-       // window.requestIdleCallback(() => {
-            // is this safari?
-            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-
-            const img = this.shadowRoot?.querySelectorAll('img');
-            if (img) {
-                // loop through a NodeList
-                for (let i = 0; i < img.length; i++) {
-
-                    const src = img[i].getAttribute('data-src');
-
-                    // handle blurhash
-                    if (this.tweet && this.tweet.media_attachments[0] && this.tweet.media_attachments[0].blurhash && isSafari === false) {
-                        console.log("has blurhash", this.tweet?.media_attachments[0].blurhash);
-                        try {
-                            this.worker = new ImgWorker();
-
-                                this.canvas.width = this.tweet?.media_attachments[0].meta.original.width;
-                                this.canvas.height = this.tweet?.media_attachments[0].meta.original.height;
-
-                                this.worker!.onmessage = (e) => {
-                                    console.log("worker message", e.data)
-                                    // e.data is a bitmap
-                                    // display bitmap on canvas
-                                    this.ctx!.transferFromImageBitmap(e.data!)
-
-                                    img[i].setAttribute('src', this.canvas.toDataURL());
-
-                                    img[i].removeAttribute('data-src');
-
-                                            if (src) {
-                                                const placeholderImage = new Image();
-
-                                                img[i].onload = () => {
-                                                    window.requestIdleCallback(() => {
-                                                        // remove event listener
-
-                                                        img[i].removeAttribute('data-src');
-
-                                                    }, {
-                                                        timeout: 1000
-                                                    })
-                                                }
-
-                                                placeholderImage.onload = () => {
-                                                    img[i].setAttribute('src', src);
-                                                };
-
-                                                placeholderImage.src = src;
-                                            }
-                                        // }
-                                    //}, {
-                                    //    timeout: 3000
-                                    //})
-
-                                    this.worker!.terminate();
-                                }
-                                    this.worker!.postMessage({
-                                        hash: this.tweet?.media_attachments[0].blurhash,
-                                        width: this.tweet?.media_attachments[0].meta.original.width,
-                                        height: this.tweet?.media_attachments[0].meta.original.height
-                                    });
-                            // }, {
-                            //     timeout: 3000
-                            // });
-                        } catch (error) {
-                            console.log(error);
-                        }
-                    }
-                    else {
-                                        // start loading real image
-                    if (src) {
-                        const placeholderImage = new Image();
-
-                        img[i].onload = () => {
-                            window.requestIdleCallback(() => {
-                                // if (!this.tweet?.media_attachments[0] || !this.tweet?.media_attachments[0].blurhash) {
-                                    img[i].removeAttribute('data-src');
-                                // }
-                                // remove event listener
-                                img[i].onload = null;
-                            }, {
-                                timeout: 1000
-                            })
-                        }
-
-                        placeholderImage.onload = () => {
-                            img[i].setAttribute('src', src);
-                        };
-
-                        placeholderImage.src = src;
-                    }
-                    }
-                }
-            }
-       // }, {
-       //     timeout: 1000
-       // })
     }
 
     async favorite(id: string) {
