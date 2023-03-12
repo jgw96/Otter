@@ -348,10 +348,15 @@ export class Timeline extends LitElement {
         // const dialog = this.shadowRoot?.querySelector('#img-preview') as any;
         // await dialog.show();
 
-        //@ts-ignore
-        document.startViewTransition(() => {
+        if ("startViewTransition" in document) {
+            //@ts-ignore
+            document.startViewTransition(() => {
+                router.navigate(`/home/img-preview?src=${imageURL}`);
+            })
+        }
+        else {
             router.navigate(`/home/img-preview?src=${imageURL}`);
-        })
+        }
     }
 
     async showAnalyze(data: any, imageData: any, tweet: any) {

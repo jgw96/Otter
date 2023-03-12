@@ -500,9 +500,9 @@ export class TimelineItem extends LitElement {
     }
 
     openInBox(imageURL: string) {
+        console.log("show image", imageURL);
 
-            console.log("show image", imageURL);
-
+        if ("startViewTransition" in document) {
             // @ts-ignore
             this.style.viewTransitionName = "image-preview";
 
@@ -515,6 +515,10 @@ export class TimelineItem extends LitElement {
                     this.style.viewTransitionName = '';
                 }, 800)
             })
+        }
+        else {
+            router.navigate(`/imagepreview?src=${imageURL}`);
+        }
 
     }
 
@@ -564,19 +568,24 @@ export class TimelineItem extends LitElement {
     }
 
     async openPost(id: string) {
-        // @ts-ignore
-        this.style.viewTransitionName = 'card';
+        if ("startViewTransition" in document) {
+            // @ts-ignore
+            this.style.viewTransitionName = 'card';
 
-        // @ts-ignore
-        document.startViewTransition(async () => {
+            // @ts-ignore
+            document.startViewTransition(async () => {
 
+                await router.navigate(`/home/post?id=${id}`);
+
+                setTimeout(() => {
+                    // @ts-ignore
+                    this.style.viewTransitionName = '';
+                }, 800)
+            });
+        }
+        else {
             await router.navigate(`/home/post?id=${id}`);
-
-            setTimeout(() => {
-                // @ts-ignore
-                this.style.viewTransitionName = '';
-            }, 800)
-        });
+        }
     }
 
     async deleteStatus() {

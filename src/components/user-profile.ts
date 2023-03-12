@@ -120,23 +120,28 @@ export class UserProfile extends LitElement {
 
     openUser() {
         // @ts-ignore
-            this.shadowRoot!.querySelector(".headerBlock")!.viewTransitionName = 'profile-image';
+        this.shadowRoot!.querySelector(".headerBlock")!.viewTransitionName = 'profile-image';
 
-                    // @ts-ignore
+        if ("startViewTransition" in document) {
+            // @ts-ignore
             document.startViewTransition(async () => {
-              await router.navigate(`/account?id=${this.account?.id}`);
+                await router.navigate(`/account?id=${this.account?.id}`);
 
-           setTimeout(() => {
-                // @ts-ignore
-                this.shadowRoot!.querySelector(".headerBlock")!.viewTransitionName = '';
-              }, 800);
+                setTimeout(() => {
+                    // @ts-ignore
+                    this.shadowRoot!.querySelector(".headerBlock")!.viewTransitionName = '';
+                }, 800);
             });
+        }
+        else {
+            router.navigate(`/account?id=${this.account?.id}`);
+        }
 
     }
 
     render() {
         return html`
-        <div @click="${() => this.openUser()}" class=${classMap({ small: this.small===true, headerBlock: true })} slot="header">
+        <div @click="${() => this.openUser()}" class=${classMap({ small: this.small === true, headerBlock: true })} slot="header">
             <img id="avatar" src="/assets/icons/64-icon.png" data-src="${this.account.avatar_static}">
             <div>
                 <h4>${this.account?.display_name || "Loading..."}</h4>
