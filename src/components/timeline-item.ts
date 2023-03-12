@@ -7,8 +7,7 @@ import '../components/user-profile';
 import '@shoelace-style/shoelace/dist/components/card/card.js';
 import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 
-import '@shoelace-style/shoelace/dist/components/carousel/carousel.js';
-import '@shoelace-style/shoelace/dist/components/carousel-item/carousel-item.js';
+import '../components/image-carousel';
 
 import { getSettings, Settings } from '../services/settings';
 
@@ -78,11 +77,6 @@ export class TimelineItem extends LitElement {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-            }
-
-            sl-carousel::part(base) {
-                gap: 8px;
-                padding-bottom: 1em;
             }
 
             @media(prefers-color-scheme: light) {
@@ -172,14 +166,6 @@ export class TimelineItem extends LitElement {
             sl-card sl-icon {
                 color: var(--sl-color-primary-600);
                 color: var(--sl-color-primary-600);
-            }
-
-            sl-card sl-carousel {
-                width: 100%;
-            }
-
-            sl-card sl-carousel-item {
-                // height: 340px;
             }
 
             sl-card img {
@@ -635,17 +621,8 @@ export class TimelineItem extends LitElement {
                 <sl-card part="card" class="${classMap({ replyCard: this.tweet?.reply_to ? true : false})}">
                       ${
                         this.tweet && this.tweet.media_attachments.length > 0 ? html`
-                          <sl-carousel ?pagination="${this.tweet.media_attachments.length > 1}" slot="image">
-                            ${
-                                this.tweet.media_attachments.map((attachment) => {
-                                    return html`
-                                      <sl-carousel-item>
-                                      <img part="image" alt="${attachment.description || ""}" @click="${() => this.openInBox(attachment.preview_url || "")}" data-src="${attachment.preview_url}" />
-                                </sl-carousel-item>
-                                    `
-                                })
-                            }
-                          </sl-carousel>
+                          <image-carousel .images="${this.tweet.media_attachments}" slot="image">
+                          </image-carousel>
                         ` : html``
                       }
 
@@ -678,17 +655,8 @@ export class TimelineItem extends LitElement {
 
                       ${
                         this.tweet.reblog && this.tweet.reblog.media_attachments.length > 0 ? html`
-                          <sl-carousel ?pagination="${this.tweet.reblog.media_attachments.length > 1}" slot="image">
-                            ${
-                                this.tweet.reblog.media_attachments.map((attachment) => {
-                                    return html`
-                                      <sl-carousel-item>
-                                        <img part="image" alt="${attachment.description || ""}" @click="${() => this.openInBox(attachment.preview_url || "")}" data-src="${attachment.preview_url}"/>
-                                      </sl-carousel-item>
-                                    `
-                                })
-                            }
-                          </sl-carousel>
+                         <image-carousel .images="${this.tweet.reblog.media_attachments}" slot="image">
+                      </image-carousel>
                         ` : html``
                       }
 
