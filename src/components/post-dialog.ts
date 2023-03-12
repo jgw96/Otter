@@ -364,32 +364,6 @@ export class PostDialog extends LitElement {
         this.generatingPost = false;
     }
 
-    private async handleGeneratePost(prompt: any, textarea: any, listener: any) {
-        this.generatingPost = true;
-
-        if (prompt && prompt.length > 0) {
-            const data = await createAPost(prompt);
-
-            if (data && data.choices[0]) {
-                textarea.value = data.choices[0].text.trim();
-
-                this.generatingPost = false;
-
-                // drop event listerner
-                textarea.removeEventListener("sl-change", listener);
-            }
-            else {
-                this.generatingPost = false;
-
-                textarea.removeEventListener("sl-change", listener);
-            }
-        }
-        else {
-            this.generatingPost = false;
-            textarea.removeEventListener("sl-change", listener);
-        }
-    }
-
     handleStatus(ev: any) {
         if (ev.target.value.length > 0) {
             this.hasStatus = true;
