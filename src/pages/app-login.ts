@@ -5,6 +5,7 @@ import { fluentButton, fluentTextField, provideFluentDesignSystem } from '@fluen
 
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import { router } from '../utils/router';
+import { enableVibrate } from '../utils/handle-vibrate';
 
 provideFluentDesignSystem().register(fluentButton());
 provideFluentDesignSystem().register(fluentTextField());
@@ -145,6 +146,12 @@ export class AppLogin extends LitElement {
         else if (accessToken && server) {
             await router.navigate("/home");
         }
+
+        window.requestIdleCallback(() => {
+            if (this.shadowRoot) {
+                enableVibrate(this.shadowRoot);
+            }
+        })
 
     }
 

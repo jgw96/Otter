@@ -1,8 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
 
-import { guard } from 'lit/directives/guard.js';
-
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/tab-group/tab-group.js';
 import '@shoelace-style/shoelace/dist/components/tab/tab.js';
@@ -18,10 +16,12 @@ import '@shoelace-style/shoelace/dist/components/divider/divider.js';
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 
-import { fluentButton, fluentBadge, fluentToolbar, provideFluentDesignSystem } from '@fluentui/web-components';
+import { fluentButton, fluentBadge, fluentToolbar, fluentMenu, fluentMenuItem, provideFluentDesignSystem } from '@fluentui/web-components';
 provideFluentDesignSystem().register(fluentButton());
 provideFluentDesignSystem().register(fluentBadge());
 provideFluentDesignSystem().register(fluentToolbar());
+provideFluentDesignSystem().register(fluentMenu());
+provideFluentDesignSystem().register(fluentMenuItem());
 
 import '../components/timeline';
 import '../components/timeline-item';
@@ -40,6 +40,7 @@ import { styles } from '../styles/shared-styles';
 import { getCurrentUser, getInstanceInfo } from '../services/account';
 import { router } from '../utils/router';
 import { init } from '../utils/key-shortcuts';
+import { enableVibrate } from '../utils/handle-vibrate';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -75,6 +76,28 @@ export class AppHome extends LitElement {
 
       .tab-label {
         display: none;
+      }
+
+      fluent-menu {
+        background: #ffffff14;
+        backdrop-filter: blur(48px);
+        color: white;
+        z-index: 99;
+      }
+
+      fluent-menu-item {
+        color: white;
+      }
+
+      @media(prefers-color-scheme: light) {
+        fluent-menu-item {
+          color: black;
+        }
+
+        fluent-menu {
+          background: rgb(235 235 235);
+          backdrop-filter: none;
+        }
       }
 
       #settings-profile-inner {
@@ -297,6 +320,7 @@ export class AppHome extends LitElement {
       #replies-drawer #reply-post-actions {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         gap: 11px;
       }
 
@@ -575,6 +599,12 @@ export class AppHome extends LitElement {
       }
     });
 
+    window.requestIdleCallback(() => {
+      if (this.shadowRoot) {
+          enableVibrate(this.shadowRoot);
+      }
+  })
+
   }
 
   async shareTarget(name: string) {
@@ -775,33 +805,33 @@ export class AppHome extends LitElement {
     return html`
 
       <right-click>
-        <sl-menu>
-          <sl-menu-item @click="${() => this.openNewDialog()}">
+        <fluent-menu>
+          <fluent-menu-item @click="${() => this.openNewDialog()}">
             <sl-icon slot="prefix" src="/assets/add-outline.svg"></sl-icon>
             New Post
-          </sl-menu-item>
-          <sl-divider></sl-divider>
-          <sl-menu-item @click="${() => this.openATab(" search")}">
+          </fluent-menu-item>
+
+          <fluent-menu-item @click="${() => this.openATab(" search")}">
             <sl-icon src="/assets/search-outline.svg"></sl-icon>
             Explore
-          </sl-menu-item>
-          <sl-menu-item @click="${() => this.openATab(" notifications")}">
+          </fluent-menu-item>
+          <fluent-menu-item @click="${() => this.openATab(" notifications")}">
             <sl-icon src="/assets/notifications-outline.svg"></sl-icon>
             Notifications
-          </sl-menu-item>
-          <sl-menu-item @click="${() => this.openATab(" messages")}">
+          </fluent-menu-item>
+          <fluent-menu-item @click="${() => this.openATab(" messages")}">
             <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
             Messages
-          </sl-menu-item>
-          <sl-menu-item @click="${() => this.openATab(" bookmarks")}">
+          </fluent-menu-item>
+          <fluent-menu-item @click="${() => this.openATab(" bookmarks")}">
             <sl-icon src="/assets/bookmark-outline.svg"></sl-icon>
             Bookmarks
-          </sl-menu-item>
-          <sl-menu-item @click="${() => this.openATab(" faves")}">
+          </fluent-menu-item>
+          <fluent-menu-item @click="${() => this.openATab(" faves")}">
             <sl-icon src="/assets/heart-outline.svg"></sl-icon>
             Favorites
-          </sl-menu-item>
-        </sl-menu>
+          </fluent-menu-item>
+        </fluent-menu>
       </right-click>
 
       <app-header @open-settings="${() => this.openSettingsDrawer()}" @open-theming="${() => this.openThemingDrawer()}">
@@ -845,16 +875,16 @@ export class AppHome extends LitElement {
               <div id="user-actions">
                 <sl-dropdown>
                   <sl-icon-button slot="trigger" src="/assets/settings-outline.svg"></sl-icon-button>
-                  <sl-menu>
-                    <sl-menu-item @click="${() => this.viewMyProfile()}">
+                  <fluent-menu>
+                    <fluent-menu-item @click="${() => this.viewMyProfile()}">
                       <sl-icon slot="prefix" src="/assets/eye-outline.svg"></sl-icon>
                       View My Profile
-                    </sl-menu-item>
-                    <sl-menu-item @click="${() => this.shareMyProfile()}">
+                    </fluent-menu-item>
+                    <fluent-menu-item @click="${() => this.shareMyProfile()}">
                       <sl-icon slot="prefix" src="/assets/share-social-outline.svg"></sl-icon>
                       Share My Profile
-                    </sl-menu-item>
-                  </sl-menu>
+                    </fluent-menu-item>
+                  </fluent-menu>
                 </sl-dropdown>
               </div>
             </div>
@@ -980,11 +1010,11 @@ export class AppHome extends LitElement {
 
             <span class="tab-label">Notifications</span>
           </sl-tab>
-          <!-- <sl-tab slot="nav" panel="messages">
+          <sl-tab slot="nav" panel="messages">
                                           <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
 
                                           <span class="tab-label">Messages</span>
-                                        </sl-tab> -->
+                                        </sl-tab>
           <sl-tab id="bookmarks-tab" slot="nav" panel="bookmarks">
             <sl-icon src="/assets/bookmark-outline.svg"></sl-icon>
 
@@ -1032,23 +1062,23 @@ export class AppHome extends LitElement {
 
         <div id="profile">
           <div id="profile-top">
-            ${guard([this.user], () => this.user &&  this.user.avatar ? html`<img src="${this.user.avatar}" />` : html`<img src="https://via.placeholder.com/150" />`)}
+            ${this.user &&  this.user.avatar ? html`<img src="${this.user.avatar}" />` : html`<img src="https://via.placeholder.com/150" />`}
             <div id="username-block">
               <h3>${this.user ? this.user.display_name : "Loading..."}</h3>
 
               <div id="user-actions">
                 <sl-dropdown>
                   <sl-icon-button slot="trigger" src="/assets/settings-outline.svg"></sl-icon-button>
-                  <sl-menu>
-                    <sl-menu-item @click="${() => this.viewMyProfile()}">
+                  <fluent-menu>
+                    <fluent-menu-item @click="${() => this.viewMyProfile()}">
                       <sl-icon slot="prefix" src="/assets/eye-outline.svg"></sl-icon>
                       View My Profile
-                    </sl-menu-item>
-                    <sl-menu-item @click="${() => this.shareMyProfile()}">
+                    </fluent-menu-item>
+                    <fluent-menu-item @click="${() => this.shareMyProfile()}">
                       <sl-icon slot="prefix" src="/assets/share-social-outline.svg"></sl-icon>
                       Share My Profile
-                    </sl-menu-item>
-                  </sl-menu>
+                    </fluent-menu-item>
+                  </fluent-menu>
                 </sl-dropdown>
               </div>
             </div>

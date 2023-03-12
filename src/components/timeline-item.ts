@@ -22,6 +22,7 @@ import ImgWorker from '../utils/img-worker?worker';
 import { router } from '../utils/router';
 import { Post } from '../interfaces/Post';
 import { getCurrentUser } from '../services/account';
+import { enableVibrate } from '../utils/handle-vibrate';
 
 @customElement('timeline-item')
 export class TimelineItem extends LitElement {
@@ -49,6 +50,19 @@ export class TimelineItem extends LitElement {
                 width: 100%;
 
                 margin-bottom: 10px;
+            }
+
+            @media(prefers-color-scheme: dark) {
+                fluent-button::part(control) {
+                    --neutral-fill-stealth-active: #1b1d26;
+                    --neutral-fill-stealth-hover: #1b1d26;
+                }
+            }
+
+            fluent-button::part(content) {
+                display: flex;
+                align-items: center;
+                gap: 2px;
             }
 
             .sensitive {
@@ -137,7 +151,7 @@ export class TimelineItem extends LitElement {
                 --padding: 10px;
                 width: 100%;
 
-                --sl-panel-background-color: #1b1d26;
+                --sl-panel-background-color: rgb(32 32 35);;
                 color: white;
 
                 overflow-x: hidden;
@@ -165,12 +179,13 @@ export class TimelineItem extends LitElement {
             }
 
             sl-card sl-carousel-item {
-                height: 340px;
+                // height: 340px;
             }
 
             sl-card img {
-                object-fit: contain;
+                object-fit: cover;
                 border-radius: 6px 6px 0px 0px;
+
             }
 
             .header-block {
@@ -298,6 +313,10 @@ export class TimelineItem extends LitElement {
                             await this.loadImage();
                         }
 
+                        window.requestIdleCallback(() => {
+                            localStorage.setItem(`latest-read`, this.tweet?.id || "");
+                        });
+
                         observer.unobserve(entry.target);
                     }
                 });
@@ -313,6 +332,12 @@ export class TimelineItem extends LitElement {
 
             this.tweet.reply_to = replyStatus;
         }
+
+        window.requestIdleCallback(() => {
+            if (this.shadowRoot) {
+                enableVibrate(this.shadowRoot);
+            }
+        })
     }
 
     async loadImage() {
@@ -424,6 +449,8 @@ export class TimelineItem extends LitElement {
 
         this.isBoosted = true;
 
+        this.tweet && this.tweet.reblog ? this.tweet.reblog.favourites_count++ :this.tweet ? this.tweet.favourites_count++ : null;
+
         // fire custom event
         this.dispatchEvent(new CustomEvent('favorite', {
             detail: {
@@ -439,6 +466,8 @@ export class TimelineItem extends LitElement {
         await reblogPost(id);
 
         this.isReblogged = true;
+
+        this.tweet && this.tweet.reblog ? this.tweet.reblog.reblogs_count++ :this.tweet ? this.tweet.reblogs_count++ : null;
 
         // fire custom event
         this.dispatchEvent(new CustomEvent('reblog', {
@@ -471,12 +500,26 @@ export class TimelineItem extends LitElement {
     }
 
     openInBox(imageURL: string) {
-        console.log("open image", imageURL)
-        this.dispatchEvent(new CustomEvent('openimage', {
-            detail: {
-                imageURL
-            }
-        }));
+        console.log("show image", imageURL);
+
+        if ("startViewTransition" in document) {
+            // @ts-ignore
+            this.style.viewTransitionName = "image-preview";
+
+            //@ts-ignore
+            document.startViewTransition(() => {
+                router.navigate(`/imagepreview?src=${imageURL}`);
+
+                setTimeout(() => {
+                    // @ts-ignore
+                    this.style.viewTransitionName = '';
+                }, 800)
+            })
+        }
+        else {
+            router.navigate(`/imagepreview?src=${imageURL}`);
+        }
+
     }
 
     async analyzeStatus(tweet: Post | null) {
@@ -525,7 +568,24 @@ export class TimelineItem extends LitElement {
     }
 
     async openPost(id: string) {
-        router.navigate(`/home/post?id=${id}`);
+        if ("startViewTransition" in document) {
+            // @ts-ignore
+            this.style.viewTransitionName = 'card';
+
+            // @ts-ignore
+            document.startViewTransition(async () => {
+
+                await router.navigate(`/home/post?id=${id}`);
+
+                setTimeout(() => {
+                    // @ts-ignore
+                    this.style.viewTransitionName = '';
+                }, 800)
+            });
+        }
+        else {
+            await router.navigate(`/home/post?id=${id}`);
+        }
     }
 
     async deleteStatus() {
@@ -555,10 +615,6 @@ export class TimelineItem extends LitElement {
                         <div .innerHTML="${this.tweet?.reply_to.content}"></div>
 
                         <div class="actions" slot="footer">
-                          <fluent-button appearance="lightweight" pill @click="${() => this.analyzeStatus(this.tweet || null)}">
-                            <sl-icon src="/assets/search-outline.svg"></sl-icon>
-                          </fluent-button>
-
                           ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies(this.tweet?.reply_to.id || "")}">
                           <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
                           </fluent-button>` : null}
@@ -609,9 +665,6 @@ export class TimelineItem extends LitElement {
                         <div @click="${() => this.openPost(this.tweet?.id || "")}" .innerHTML="${this.tweet?.content}"></div>
 
                         <div class="actions" slot="footer">
-                            <fluent-button appearance="lightweight" pill @click="${() => this.analyzeStatus(this.tweet || null)}">
-                                <sl-icon src="/assets/search-outline.svg"></sl-icon>
-                            </fluent-button>
                             ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies(this.tweet?.id || "")}">
                             <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
                             </fluent-button>` : null}
@@ -655,9 +708,6 @@ export class TimelineItem extends LitElement {
                         <div @click="${() => this.openPost(this.tweet?.reblog?.id || "")}" .innerHTML="${this.tweet?.reblog.content}"></div>
 
                         <div class="actions" slot="footer">
-                        <fluent-button appearance="lightweight" pill @click="${() => this.analyzeStatus(this.tweet || null)}">
-                            <sl-icon src="/assets/search-outline.svg"></sl-icon>
-                          </fluent-button>
                         ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies(this.tweet?.id || "")}">
                             <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
                         </fluent-button>` : null}

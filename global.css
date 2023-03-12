@@ -20,11 +20,11 @@
 }
 
 @keyframes slide-from-right {
-  from { transform: translateY(30px); }
+  from { transform: translateX(-30px); }
 }
 
 @keyframes slide-to-left {
-  to { transform: translateY(-30px); }
+  to { transform: translateX(-30px); }
 }
 
 ::view-transition-old(root) {
@@ -53,7 +53,7 @@ body {
 @media (prefers-color-scheme: dark) {
 
   body {
-    background-color: #202020;
+    background-color: #181818;
     color: white;
   }
 }

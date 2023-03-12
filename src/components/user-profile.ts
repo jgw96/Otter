@@ -2,6 +2,7 @@ import { LitElement, html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 import { classMap } from 'lit/directives/class-map.js';
+import { enableVibrate } from '../utils/handle-vibrate';
 import { router } from '../utils/router';
 
 @customElement('user-profile')
@@ -96,6 +97,12 @@ export class UserProfile extends LitElement {
             , options);
 
         observer.observe(this.shadowRoot?.querySelector('div') as Element);
+
+        window.requestIdleCallback(() => {
+            if (this.shadowRoot) {
+                enableVibrate(this.shadowRoot);
+            }
+        })
     }
 
     loadImage() {
@@ -112,13 +119,30 @@ export class UserProfile extends LitElement {
     }
 
     openUser() {
-        router.navigate(`/account?id=${this.account?.id}`);
+        // @ts-ignore
+        this.shadowRoot!.querySelector(".headerBlock")!.viewTransitionName = 'profile-image';
+
+        if ("startViewTransition" in document) {
+            // @ts-ignore
+            document.startViewTransition(async () => {
+                await router.navigate(`/account?id=${this.account?.id}`);
+
+                setTimeout(() => {
+                    // @ts-ignore
+                    this.shadowRoot!.querySelector(".headerBlock")!.viewTransitionName = '';
+                }, 800);
+            });
+        }
+        else {
+            router.navigate(`/account?id=${this.account?.id}`);
+        }
+
     }
 
     render() {
         return html`
         <div @click="${() => this.openUser()}" class=${classMap({ small: this.small === true, headerBlock: true })} slot="header">
-            <img data-src="${this.account.avatar_static}">
+            <img id="avatar" src="/assets/icons/64-icon.png" data-src="${this.account.avatar_static}">
             <div>
                 <h4>${this.account?.display_name || "Loading..."}</h4>
                 <p>${this.account?.acct || "Loading..."}</p>

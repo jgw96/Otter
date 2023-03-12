@@ -18,6 +18,10 @@ export class Appfollowing extends LitElement {
                 height: 100vh;
             }
 
+            :host::-webkit-scrollbar {
+                display: none;
+            }
+
             main {
                 padding-top: 60px;
             }
@@ -36,6 +40,10 @@ export class Appfollowing extends LitElement {
 
                 padding-left: 6em;
                 padding-right: 6em;
+            }
+
+            ul::-webkit-scrollbar {
+                display: none;
             }
 
             h2 {

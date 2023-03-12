@@ -18,6 +18,10 @@ export class AppFollowers extends LitElement {
                 height: 100vh;
             }
 
+            :host::-webkit-scrollbar {
+                display: none;
+            }
+
             main {
                 padding-top: 60px;
             }
@@ -38,8 +42,13 @@ export class AppFollowers extends LitElement {
                 padding-right: 6em;
             }
 
+            ul::-webkit-scrollbar {
+                display: none;
+            }
+
             h2 {
                 padding-left: 4em;
+                animation: slideInFromLeft 0.3s ease-in-out;
             }
 
             ul::-webkit-scrollbar {
@@ -50,12 +59,36 @@ export class AppFollowers extends LitElement {
                 background: var(--sl-color-gray-50);
                 border-radius: 6px;
                 padding: 10px;
+
+                animation: slideUp 0.3s ease-in-out;
             }
 
 
             li a {
                 text-decoration: none;
                 color: white;
+            }
+
+            @keyframes slideUp {
+                from {
+                    transform: translateY(30%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes slideInFromLeft {
+                from {
+                    transform: translateX(-30%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
             }
 
             @media(prefers-color-scheme: light) {

@@ -4,7 +4,7 @@
   "description": "A starter kit for building PWAs!",
   "main": "index.js",
   "scripts": {
-    "dev-server": "vite --port 3000 --open",
+    "dev-server": "vite --port 3000",
     "dev": "npm run dev-server",
     "dev-task": "vite",
     "deploy": " npx @azure/static-web-apps-cli login --no-use-keychain && npx @azure/static-web-apps-cli deploy",

@@ -1,10 +1,6 @@
-import { Post } from "../interfaces/Post";
-
 let token = localStorage.getItem('token') || '';
 let accessToken = localStorage.getItem('accessToken') || '';
 let server = localStorage.getItem('server') || '';
-
-let latestHomeTimelineData: Post[] = [];
 
 export const getHomeTimeline = async () => {
     const response = await fetch(`https://mammoth-backend.azurewebsites.net/timeline?code=${token}&server=${server}`);
@@ -14,7 +10,11 @@ export const getHomeTimeline = async () => {
 
 let lastPageID = "";
 
-export const getPaginatedHomeTimeline = async (type = "home") => {
+export const getPaginatedHomeTimeline = async (type = "home", cache = false) => {
+
+    if (cache) {
+        lastPageID = "";
+    }
 
     if (lastPageID && lastPageID.length > 0) {
         let accessToken = localStorage.getItem('accessToken') || '';
@@ -29,8 +29,6 @@ export const getPaginatedHomeTimeline = async (type = "home") => {
         const data = await response.json();
 
         lastPageID = data[data.length - 1].id;
-
-        latestHomeTimelineData = [...latestHomeTimelineData, ...data];
 
         return data;
     }
@@ -48,8 +46,6 @@ export const getPaginatedHomeTimeline = async (type = "home") => {
 
         lastPageID = data[data.length - 1].id;
 
-        latestHomeTimelineData = [...latestHomeTimelineData, ...data];
-
         return data;
     }
 }
@@ -61,12 +57,27 @@ export const getPublicTimeline = async () => {
 }
 
 export const boostPost = async (id: string) => {
-    const response = await fetch(`https://mammoth-backend.azurewebsites.net/boost?id=${id}&code=${accessToken}&server=${server}`, {
+    // const response = await fetch(`https://mammoth-backend.azurewebsites.net/boost?id=${id}&code=${accessToken}&server=${server}`, {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     }
+    // });
+    // const data = await response.json();
+    // return data;
+
+    let accessToken = localStorage.getItem('accessToken') || '';
+
+    // boost post
+    const response = await fetch(`https://${server}/api/v1/statuses/${id}/favourite`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
+        headers: new Headers({
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+
+        })
+    })
+
     const data = await response.json();
     return data;
 }
@@ -118,9 +129,14 @@ export const getHashtagTimeline = async (hashtag: string) => {
 }
 
 export const getAStatus = async (id: string) => {
-    const response = await fetch(`https://mammoth-backend.azurewebsites.net/getstatus?id=${id}&code=${accessToken}&server=${server}`, {
+    // get a specific status
+    const response = await fetch(server + '/api/v1/statuses/' + id, {
         method: 'GET',
+        headers: new Headers({
+            'Authorization': `Bearer ${accessToken}`
+        })
     });
+
     const data = await response.json();
 
     return data;

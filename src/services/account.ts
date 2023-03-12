@@ -4,25 +4,39 @@ let token = localStorage.getItem('token') || '';
 let server = localStorage.getItem('server') || '';
 let accessToken = localStorage.getItem('accessToken') || '';
 
-export const checkFollowing = async (id: string)  => {
+export const checkFollowing = async (id: string) => {
     try {
         const response = await fetch(`https://mammoth-backend.azurewebsites.net/isfollowing?id=${id}&code=${accessToken}&server=${server}`);
         const data = await response.json();
 
         return data;
     }
-    catch(err) {
+    catch (err) {
         if (server) {
             await initAuth(server);
         }
     }
 }
 
+let currentUser: any | null = null;
+
 export const getCurrentUser = async () => {
     try {
-        console.log("calling")
-        const response = await fetch('https://mammoth-backend.azurewebsites.net/user?code=' + accessToken + '&server=' + server);
+        if (currentUser) {
+            return currentUser;
+        }
+
+        const response = await fetch('https://' + server + '/api/v1/accounts/verify_credentials', {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`
+            })
+        });
+
         const data = await response.json();
+
+        currentUser = data;
         return data;
     }
     catch (err) {
@@ -113,7 +127,7 @@ export const authToClient = async (code: string) => {
         try {
             const data = await getCurrentUser();
             console.log("data", data)
-             return tokenData;
+            return tokenData;
         }
         catch (err) {
             console.error("prrrrrrrrroblems", err)

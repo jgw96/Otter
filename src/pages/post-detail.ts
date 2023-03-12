@@ -54,10 +54,29 @@ export class PostDetail extends LitElement {
 
             #replies {
                 flex: 2;
+                animation: slideup 0.3s ease-in-out;
+                animation-delay: 0.5s;
             }
 
             #replies h2 {
                 margin-top: 0;
+            }
+
+            #main {
+                min-height: 300px;
+
+                view-transition-name: card;
+            }
+
+            @keyframes slideup {
+                from {
+                    transform: translateY(30%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
             }
 
             @media(max-width: 768px) {

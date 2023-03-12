@@ -96,11 +96,14 @@ export const router = new Router({
           lazy(() => import('../pages/post-detail.js')),
         ],
         render: () => html`<post-detail></post-detail>`
+      },
+      {
+        path: "/imagepreview",
+        title: "image preview",
+        plugins: [
+          lazy(() => import('../pages/image-preview.js')),
+        ],
+        render: () => html`<image-preview></image-preview>`
       }
-      // {
-      //   path: 'bar/:id',
-      //   title: ({ params }: any) => `Bar ${params.id}`,
-      //   render: ({ params }: any) => `bar ${params.id}`
-      // },
     ]
   });

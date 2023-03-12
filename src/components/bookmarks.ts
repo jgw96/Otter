@@ -42,7 +42,8 @@ export class Bookmarks extends LitElement {
         `
     ];
 
-    async firstUpdated() {
+    async connectedCallback() {
+        super.connectedCallback();
 
         const options = {
             root: null,
