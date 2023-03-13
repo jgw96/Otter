@@ -104,21 +104,29 @@ export class PostDetail extends LitElement {
         `
     ];
 
+    async connectedCallback() {
+        super.connectedCallback();
+
+        // remove ? from beginning of window.location.search
+        const query = window.location.search.substring(1);
+
+        const decoded = JSON.parse(decodeURIComponent(query));
+        // remove + and - from decoded.content
+        if (decoded.reblog) {
+            decoded.reblog.content = decoded.reblog.content.replace(/\+/g, ' ').replace(/\-/g, '');
+        }
+
+        decoded.content = decoded.content.replace(/\+/g, ' ').replace(/\-/g, '');
+
+        this.tweet = decoded;
+    }
+
     async firstUpdated() {
         // get id from query string
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
 
-        console.log('id', id);
-
-        const { getPostDetail } = await import('../services/posts');
-
         if (id) {
-            const post = await getPostDetail(id);
-            console.log('post', post);
-
-            this.tweet = post;
-
             // get post replies
             const replies = await getReplies(id);
             console.log('replies', replies);
@@ -157,10 +165,10 @@ export class PostDetail extends LitElement {
                     </fluent-button>
 
                     <!-- <sl-button pill variant="primary">
-                                Reply
+                                        Reply
 
-                                <sl-icon slot="suffix" src="/assets/add-outline.svg"></sl-icon>
-                            </sl-button> -->
+                                        <sl-icon slot="suffix" src="/assets/add-outline.svg"></sl-icon>
+                                    </sl-button> -->
                 </div>
             </div>
 

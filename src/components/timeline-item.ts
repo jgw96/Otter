@@ -7,8 +7,7 @@ import '../components/user-profile';
 import '@shoelace-style/shoelace/dist/components/card/card.js';
 import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 
-import '@shoelace-style/shoelace/dist/components/carousel/carousel.js';
-import '@shoelace-style/shoelace/dist/components/carousel-item/carousel-item.js';
+import '../components/image-carousel';
 
 import { getSettings, Settings } from '../services/settings';
 
@@ -78,11 +77,6 @@ export class TimelineItem extends LitElement {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-            }
-
-            sl-carousel::part(base) {
-                gap: 8px;
-                padding-bottom: 1em;
             }
 
             @media(prefers-color-scheme: light) {
@@ -172,14 +166,6 @@ export class TimelineItem extends LitElement {
             sl-card sl-icon {
                 color: var(--sl-color-primary-600);
                 color: var(--sl-color-primary-600);
-            }
-
-            sl-card sl-carousel {
-                width: 100%;
-            }
-
-            sl-card sl-carousel-item {
-                // height: 340px;
             }
 
             sl-card img {
@@ -306,13 +292,6 @@ export class TimelineItem extends LitElement {
             const observer = new IntersectionObserver((entries, observer) => {
                 entries.forEach(async entry => {
                     if (entry.isIntersecting) {
-                        if (this.settings?.sensitive === false && this.tweet?.sensitive === false) {
-                            await this.loadImage();
-                        }
-                        else if (this.settings?.sensitive === true) {
-                            await this.loadImage();
-                        }
-
                         window.requestIdleCallback(() => {
                             localStorage.setItem(`latest-read`, this.tweet?.id || "");
                         });
@@ -338,107 +317,6 @@ export class TimelineItem extends LitElement {
                 enableVibrate(this.shadowRoot);
             }
         })
-    }
-
-    async loadImage() {
-       // window.requestIdleCallback(() => {
-            // is this safari?
-            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-
-            const img = this.shadowRoot?.querySelectorAll('img');
-            if (img) {
-                // loop through a NodeList
-                for (let i = 0; i < img.length; i++) {
-
-                    const src = img[i].getAttribute('data-src');
-
-                    // handle blurhash
-                    if (this.tweet && this.tweet.media_attachments[0] && this.tweet.media_attachments[0].blurhash && isSafari === false) {
-                        console.log("has blurhash", this.tweet?.media_attachments[0].blurhash);
-                        try {
-                            this.worker = new ImgWorker();
-
-                                this.canvas.width = this.tweet?.media_attachments[0].meta.original.width;
-                                this.canvas.height = this.tweet?.media_attachments[0].meta.original.height;
-
-                                this.worker!.onmessage = (e) => {
-                                    console.log("worker message", e.data)
-                                    // e.data is a bitmap
-                                    // display bitmap on canvas
-                                    this.ctx!.transferFromImageBitmap(e.data!)
-
-                                    img[i].setAttribute('src', this.canvas.toDataURL());
-
-                                    img[i].removeAttribute('data-src');
-
-                                            if (src) {
-                                                const placeholderImage = new Image();
-
-                                                img[i].onload = () => {
-                                                    window.requestIdleCallback(() => {
-                                                        // remove event listener
-
-                                                        img[i].removeAttribute('data-src');
-
-                                                    }, {
-                                                        timeout: 1000
-                                                    })
-                                                }
-
-                                                placeholderImage.onload = () => {
-                                                    img[i].setAttribute('src', src);
-                                                };
-
-                                                placeholderImage.src = src;
-                                            }
-                                        // }
-                                    //}, {
-                                    //    timeout: 3000
-                                    //})
-
-                                    this.worker!.terminate();
-                                }
-                                    this.worker!.postMessage({
-                                        hash: this.tweet?.media_attachments[0].blurhash,
-                                        width: this.tweet?.media_attachments[0].meta.original.width,
-                                        height: this.tweet?.media_attachments[0].meta.original.height
-                                    });
-                            // }, {
-                            //     timeout: 3000
-                            // });
-                        } catch (error) {
-                            console.log(error);
-                        }
-                    }
-                    else {
-                                        // start loading real image
-                    if (src) {
-                        const placeholderImage = new Image();
-
-                        img[i].onload = () => {
-                            window.requestIdleCallback(() => {
-                                // if (!this.tweet?.media_attachments[0] || !this.tweet?.media_attachments[0].blurhash) {
-                                    img[i].removeAttribute('data-src');
-                                // }
-                                // remove event listener
-                                img[i].onload = null;
-                            }, {
-                                timeout: 1000
-                            })
-                        }
-
-                        placeholderImage.onload = () => {
-                            img[i].setAttribute('src', src);
-                        };
-
-                        placeholderImage.src = src;
-                    }
-                    }
-                }
-            }
-       // }, {
-       //     timeout: 1000
-       // })
     }
 
     async favorite(id: string) {
@@ -574,13 +452,16 @@ export class TimelineItem extends LitElement {
 
             // @ts-ignore
             document.startViewTransition(async () => {
+                if (this.tweet) {
+                    const serialized = new URLSearchParams(JSON.stringify(this.tweet)).toString();
 
-                await router.navigate(`/home/post?id=${id}`);
+                    await router.navigate(`/home/post?${serialized}`);
 
-                setTimeout(() => {
-                    // @ts-ignore
-                    this.style.viewTransitionName = '';
-                }, 800)
+                    setTimeout(() => {
+                        // @ts-ignore
+                        this.style.viewTransitionName = '';
+                    }, 800)
+                }
             });
         }
         else {
@@ -635,17 +516,8 @@ export class TimelineItem extends LitElement {
                 <sl-card part="card" class="${classMap({ replyCard: this.tweet?.reply_to ? true : false})}">
                       ${
                         this.tweet && this.tweet.media_attachments.length > 0 ? html`
-                          <sl-carousel ?pagination="${this.tweet.media_attachments.length > 1}" slot="image">
-                            ${
-                                this.tweet.media_attachments.map((attachment) => {
-                                    return html`
-                                      <sl-carousel-item>
-                                      <img part="image" alt="${attachment.description || ""}" @click="${() => this.openInBox(attachment.preview_url || "")}" data-src="${attachment.preview_url}" />
-                                </sl-carousel-item>
-                                    `
-                                })
-                            }
-                          </sl-carousel>
+                          <image-carousel .images="${this.tweet.media_attachments}" slot="image">
+                          </image-carousel>
                         ` : html``
                       }
 
@@ -678,17 +550,8 @@ export class TimelineItem extends LitElement {
 
                       ${
                         this.tweet.reblog && this.tweet.reblog.media_attachments.length > 0 ? html`
-                          <sl-carousel ?pagination="${this.tweet.reblog.media_attachments.length > 1}" slot="image">
-                            ${
-                                this.tweet.reblog.media_attachments.map((attachment) => {
-                                    return html`
-                                      <sl-carousel-item>
-                                        <img part="image" alt="${attachment.description || ""}" @click="${() => this.openInBox(attachment.preview_url || "")}" data-src="${attachment.preview_url}"/>
-                                      </sl-carousel-item>
-                                    `
-                                })
-                            }
-                          </sl-carousel>
+                         <image-carousel .images="${this.tweet.reblog.media_attachments}" slot="image">
+                      </image-carousel>
                         ` : html``
                       }
 
