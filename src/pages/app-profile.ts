@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js'
 import { styleMap } from 'lit/directives/style-map.js';
-import { checkFollowing, followUser, getAccount, getUsersPosts } from '../services/account';
+import { checkFollowing, followUser, getAccount, getUsersPosts, unfollowUser } from '../services/account';
 
 import '../components/timeline-item';
 
@@ -150,6 +150,10 @@ export class AppProfile extends LitElement {
                 justify-content: flex-end;
                 align-items: center;
                 flex-direction: row;
+            }
+
+            #unfollow::part(control) {
+                background: indianred;
             }
 
             #profile-card-actions sl-button::part(base) {
@@ -400,6 +404,11 @@ export class AppProfile extends LitElement {
         this.posts = postsData;
     }
 
+    async unfollow() {
+        await unfollowUser(this.user.id);
+        this.followed = false;
+    }
+
     render() {
         return html`
         <app-header ?enableBack="${true}"></app-header>
@@ -447,7 +456,7 @@ export class AppProfile extends LitElement {
                     </div>
 
                     <div id="profile-card-actions">
-                        ${this.followed ? html`<fluent-button appearance="accent" pill disabled>Following</fluent-button>` : html`<fluent-button pill appearance="accent"
+                        ${this.followed ? html`<fluent-button id="unfollow" @click="${() => this.unfollow()}" appearance="accent" pill>Unfollow</fluent-button>` : html`<fluent-button pill appearance="accent"
                             @click="${() => this.follow()}">Follow</fluent-button>`}
                     </div>
                 </div>
