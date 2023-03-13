@@ -567,7 +567,7 @@ export class TimelineItem extends LitElement {
         }
     }
 
-    async openPost(id: string) {
+    async openPost() {
         if ("startViewTransition" in document) {
             // @ts-ignore
             this.style.viewTransitionName = 'card';
@@ -584,7 +584,9 @@ export class TimelineItem extends LitElement {
             });
         }
         else {
-            await router.navigate(`/home/post?id=${id}`);
+            const serialized = new URLSearchParams(JSON.stringify(this.tweet)).toString();
+
+            await router.navigate(`/home/post?${serialized}`);
         }
     }
 
@@ -662,7 +664,7 @@ export class TimelineItem extends LitElement {
                       </div>
 
                         <user-profile .account="${this.tweet?.account}"></user-profile>
-                        <div @click="${() => this.openPost(this.tweet?.id || "")}" .innerHTML="${this.tweet?.content}"></div>
+                        <div @click="${() => this.openPost()}" .innerHTML="${this.tweet?.content}"></div>
 
                         <div class="actions" slot="footer">
                             ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies(this.tweet?.id || "")}">
@@ -705,7 +707,7 @@ export class TimelineItem extends LitElement {
                         </div>
                         <h5>${this.tweet?.reblog.account.acct} posted</h5>
 
-                        <div @click="${() => this.openPost(this.tweet?.reblog?.id || "")}" .innerHTML="${this.tweet?.reblog.content}"></div>
+                        <div @click="${() => this.openPost()}" .innerHTML="${this.tweet?.reblog.content}"></div>
 
                         <div class="actions" slot="footer">
                         ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies(this.tweet?.id || "")}">
