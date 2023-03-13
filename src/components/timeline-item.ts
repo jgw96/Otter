@@ -452,13 +452,16 @@ export class TimelineItem extends LitElement {
 
             // @ts-ignore
             document.startViewTransition(async () => {
+                if (this.tweet) {
+                    const serialized = new URLSearchParams(JSON.stringify(this.tweet)).toString();
 
-                await router.navigate(`/home/post?id=${id}`);
+                    await router.navigate(`/home/post?${serialized}`);
 
-                setTimeout(() => {
-                    // @ts-ignore
-                    this.style.viewTransitionName = '';
-                }, 800)
+                    setTimeout(() => {
+                        // @ts-ignore
+                        this.style.viewTransitionName = '';
+                    }, 800)
+                }
             });
         }
         else {
