@@ -7,14 +7,20 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     });
     const openai = new OpenAIApi(configuration);
 
-    const data = new Promise(async (resolve) => {
+    return new Promise(async (resolve) => {
         if (req.query.type && req.query.type === "create_image") {
             const response = await openai.createImage({
                 prompt: (req.query.prompt as string),
                 response_format: "b64_json"
             })
 
-            resolve(response.data)
+            context.res = {
+                status: 200,
+                body: response.data
+            };
+
+            resolve();
+
         }
         else if (req.query.type && req.query.type === "generate_status") {
             const response = await openai.createCompletion({
@@ -24,7 +30,12 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
                 temperature: 0,
             });
 
-            resolve(response.data)
+            context.res = {
+                status: 200,
+                body: response.data
+            };
+
+            resolve();
         }
         else if (req.query.type && req.query.type === "summarize_status") {
             const response = await openai.createCompletion({
@@ -34,14 +45,14 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
                 temperature: 0,
             });
 
-            resolve(response.data)
-        }
-    })
+            context.res = {
+                status: 200,
+                body: response.data
+            };
 
-    context.res = {
-        status: 200,
-        body: await data
-    };
+            resolve();
+        }
+    });
 };
 
 export default httpTrigger;
