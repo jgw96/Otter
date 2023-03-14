@@ -7,4 +7,9 @@
       "front_matter_title": ""
     }
   },
+  "azureFunctions.deploySubpath": "api",
+  "azureFunctions.postDeployTask": "npm install (functions)",
+  "azureFunctions.projectLanguage": "TypeScript",
+  "azureFunctions.projectRuntime": "~4",
+  "azureFunctions.preDeployTask": "npm prune (functions)",
 }

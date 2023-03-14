@@ -847,23 +847,6 @@ export class AppHome extends LitElement {
 
       <post-dialog @published="${() => this.handleReload()}"></post-dialog>
 
-      <sl-drawer id="reply-drawer" placement="bottom" label="Reply">
-        <sl-textarea placeholder="What's on your mind?"></sl-textarea>
-
-        ${this.attachmentPreview && this.attaching === false ? html`
-        <div class="img-preview">
-          <fluent-button circle size="small" @click="${() => this.removeImage()}">
-            <sl-icon src="/assets/close-outline.svg"></sl-icon>
-          </fluent-button>
-          <img src="${this.attachmentPreview}" />
-        </div>
-        ` : this.attaching === true ? html`<div class="img-preview">
-          <sl-skeleton></sl-skeleton>
-        </div>` : null}
-
-        <fluent-button @click="${() => this.replyToAStatus()}" slot="footer" appearance="accent">Publish</fluent-button>
-      </sl-drawer>
-
       <sl-drawer id="settings-drawer" placement="end" label="Settings">
 
         <div>

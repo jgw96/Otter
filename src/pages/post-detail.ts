@@ -6,6 +6,10 @@ import '../components/timeline-item';
 import { Post } from '../interfaces/Post';
 import { getReplies } from '../services/timeline';
 
+import { fluentButton, fluentTextArea, provideFluentDesignSystem } from "@fluentui/web-components";
+import { replyToPost } from '../services/posts';
+provideFluentDesignSystem().register(fluentButton(), fluentTextArea());
+
 @customElement('post-detail')
 export class PostDetail extends LitElement {
     @state() tweet: Post | null = null;
@@ -32,6 +36,10 @@ export class PostDetail extends LitElement {
 
             }
 
+            fluent-button::part(control) {
+                border: none;
+            }
+
             :host::-webkit-scrollbar {
                 display: none;
             }
@@ -50,6 +58,7 @@ export class PostDetail extends LitElement {
                 display: flex;
                 justify-content: flex-end;
                 gap: 6px;
+                flex-direction: column;
             }
 
             #replies {
@@ -62,10 +71,21 @@ export class PostDetail extends LitElement {
                 margin-top: 0;
             }
 
+            #reply-button {
+                place-self: flex-end;
+            }
+
             #main {
-                min-height: 300px;
+                min-height: 230px;
 
                 view-transition-name: card;
+            }
+
+            @media(prefers-color-scheme: dark) {
+                fluent-text-area::part(control), fluent-button[appearance="neutral"]::part(control), fluent-text-field::part(control), fluent-text-field::part(root) {
+                    background: #1e1e1e;
+                    color: white;
+                }
             }
 
             @keyframes slideup {
@@ -98,7 +118,7 @@ export class PostDetail extends LitElement {
                 }
 
                 #replies {
-                    flex: 1;
+                    width: 100%;
                 }
             }
         `
@@ -123,12 +143,13 @@ export class PostDetail extends LitElement {
 
     async firstUpdated() {
         // get id from query string
-        const urlParams = new URLSearchParams(window.location.search);
-        const id = urlParams.get('id');
+        await this.loadReplies();
+    }
 
-        if (id) {
+    private async loadReplies() {
+        if (this.tweet && this.tweet.id) {
             // get post replies
-            const replies = await getReplies(id);
+            const replies = await getReplies(this.tweet.id);
             console.log('replies', replies);
 
             this.replies = replies.descendants;
@@ -150,6 +171,21 @@ export class PostDetail extends LitElement {
         }
     }
 
+    async handleReply() {
+        const textArea = this.shadowRoot?.querySelector('fluent-text-area') as any;
+
+
+        if (textArea.value && this.tweet && this.tweet.id) {
+            await replyToPost(this.tweet.id, textArea.value);
+
+            await this.loadReplies();
+
+            this.replies = [...this.replies];
+
+            textArea.value = '';
+        }
+    }
+
     render() {
         return html`
         <app-header ?enableBack="${true}"></app-header>
@@ -158,17 +194,12 @@ export class PostDetail extends LitElement {
             <div id="main-block">
                 <timeline-item id="main" .tweet="${this.tweet}"></timeline-item>
                 <div id="post-actions">
-                    <fluent-button appearance="accent" @click="${() => this.shareStatus()}" pill variant="primary">
-                        Share
+                    <fluent-text-area placeholder="Reply to this post..."></fluent-text-area>
+                    <fluent-button @click="${() => this.handleReply()}" id="reply-button" appearance="accent">
+                        Reply
 
-                        <sl-icon slot="suffix" src="/assets/share-social-outline.svg"></sl-icon>
+                        <sl-icon slot="suffix" src="/assets/add-outline.svg"></sl-icon>
                     </fluent-button>
-
-                    <!-- <sl-button pill variant="primary">
-                                        Reply
-
-                                        <sl-icon slot="suffix" src="/assets/add-outline.svg"></sl-icon>
-                                    </sl-button> -->
                 </div>
             </div>
 

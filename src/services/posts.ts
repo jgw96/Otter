@@ -63,6 +63,26 @@ export async function publishPost(post: string, ids?: Array<string>) {
     return data;
 }
 
+export async function replyToPost(id: string, content: string) {
+    const formData = new FormData();
+
+    formData.append("in_reply_to_id", id);
+
+    formData.append("status", content && content.length > 0 ? content : "");
+
+    // make a fetch request to post a status using the mastodon api
+    const response = await fetch(`https://${server}/api/v1/statuses`, {
+        method: 'POST',
+        headers: new Headers({
+            "Authorization": `Bearer ${accessToken}`
+        }),
+        body: formData
+    });
+
+    const data = await response.json();
+    return data;
+}
+
 export async function uploadImageFromURL(url: string) {
     const response = await fetch(`https://${server}/api/v2/media`, {
         method: 'POST',
