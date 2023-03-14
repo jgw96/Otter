@@ -363,18 +363,8 @@ export class TimelineItem extends LitElement {
         this.isBookmarked = true;
     }
 
-    async replies(id: string) {
-        const { getReplies } = await import('../services/timeline');
-      const data = await getReplies(id);
-      console.log(data);
-
-        // fire custom event
-        this.dispatchEvent(new CustomEvent('replies', {
-            detail: {
-                data: data.descendants,
-                id
-            }
-        }));
+    async replies() {
+      await this.openPost();
     }
 
     openInBox(imageURL: string) {
@@ -498,7 +488,7 @@ export class TimelineItem extends LitElement {
                         <div .innerHTML="${this.tweet?.reply_to.content}"></div>
 
                         <div class="actions" slot="footer">
-                          ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies(this.tweet?.reply_to.id || "")}">
+                          ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies()}">
                           <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
                           </fluent-button>` : null}
 
@@ -539,7 +529,7 @@ export class TimelineItem extends LitElement {
                         <div @click="${() => this.openPost()}" .innerHTML="${this.tweet?.content}"></div>
 
                         <div class="actions" slot="footer">
-                            ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies(this.tweet?.id || "")}">
+                            ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies()}">
                             <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
                             </fluent-button>` : null}
                             <fluent-button appearance="lightweight" ?disabled="${this.isBookmarked || this.tweet?.bookmarked}" pill @click="${() => this.bookmark(this.tweet?.id || "")}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></fluent-button>
@@ -573,7 +563,7 @@ export class TimelineItem extends LitElement {
                         <div @click="${() => this.openPost()}" .innerHTML="${this.tweet?.reblog.content}"></div>
 
                         <div class="actions" slot="footer">
-                        ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies(this.tweet?.id || "")}">
+                        ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies()}">
                             <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
                         </fluent-button>` : null}
                             <fluent-button appearance="lightweight" ?disabled="${this.isBookmarked}" pill @click="${() => this.bookmark(this.tweet?.id || "")}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></fluent-button>
