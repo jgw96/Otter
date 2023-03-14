@@ -5,8 +5,11 @@ const visionEndpoint = "https://mammoth-vision.cognitiveservices.azure.com/";
 const visionKey = "8362308c1d174ffca10ca1eb77b1314f";
 
 export const createAPost = async (prompt: string) => {
-    const response = await fetch(`https://mammoth-backend.azurewebsites.net/generateStatus?prompt=${prompt}`, {
-        method: "POST"
+    const response = await fetch(`/api/HandleAIAction?type=generate_status&prompt=${prompt}`, {
+        method: "GET",
+        headers: new Headers({
+            "Content-Type": "application/json",
+        })
     });
     const data = await response.json();
 
@@ -14,8 +17,8 @@ export const createAPost = async (prompt: string) => {
 }
 
 export const createImage = async (prompt: string) => {
-    const response = await fetch(`https://mammoth-backend.azurewebsites.net/generateImage?prompt=${prompt}`, {
-        method: "POST"
+    const response = await fetch(`https://wonderful-glacier-07b022d1e.2.azurestaticapps.net/api/HandleAIAction?type=create_image&prompt=${prompt}`, {
+        method: "GET"
     });
     const data = await response.json();
 
