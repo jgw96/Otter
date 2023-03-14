@@ -7,52 +7,17 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     });
     const openai = new OpenAIApi(configuration);
 
-    return new Promise(async (resolve) => {
-        if (req.query.type && req.query.type === "create_image") {
-            const response = await openai.createImage({
-                prompt: (req.query.prompt as string),
-                response_format: "b64_json"
-            })
-
-            context.res = {
-                status: 200,
-                body: response.data
-            };
-
-            resolve();
-
-        }
-        else if (req.query.type && req.query.type === "generate_status") {
-            const response = await openai.createCompletion({
-                model: "text-davinci-003",
-                prompt: `Generate a post for Mastodon that is about: ${req.query.prompt}`,
-                max_tokens: 50,
-                temperature: 0,
-            });
-
-            context.res = {
-                status: 200,
-                body: response.data
-            };
-
-            resolve();
-        }
-        else if (req.query.type && req.query.type === "summarize_status") {
-            const response = await openai.createCompletion({
-                model: "text-davinci-003",
-                prompt: `Summarize what the following Mastodon post is saying: ${req.query.prompt}`,
-                max_tokens: 50,
-                temperature: 0,
-            });
-
-            context.res = {
-                status: 200,
-                body: response.data
-            };
-
-            resolve();
-        }
+    const response = await openai.createCompletion({
+        model: "text-davinci-003",
+        prompt: `Generate a post for Mastodon that is about: ${req.query.prompt}`,
+        max_tokens: 50,
+        temperature: 0,
     });
+
+    context.res = {
+        status: 200,
+        body: response.data
+    };
 };
 
 export default httpTrigger;
