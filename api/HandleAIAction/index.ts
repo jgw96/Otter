@@ -14,7 +14,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     // };
 
     const configuration = new Configuration({
-        apiKey: "",
+        apiKey: "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",
     });
     const openai = new OpenAIApi(configuration);
 };
