@@ -2,21 +2,48 @@ import { AzureFunction, Context, HttpRequest } from "@azure/functions";
 import { Configuration, OpenAIApi } from "openai";
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
-    // context.log('HTTP trigger function processed a request.');
-    // const name = (req.query.name || (req.body && req.body.name));
-    // const responseMessage = name
-    //     ? "Hello, " + name + ". This HTTP triggered function executed successfully."
-    //     : "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.";
-
-    // context.res = {
-    //     // status: 200, /* Defaults to 200 */
-    //     body: responseMessage
-    // };
-
     const configuration = new Configuration({
-        apiKey: "",
+        apiKey: process.env.OPENAI_TOKEN,
     });
     const openai = new OpenAIApi(configuration);
+
+    if (req.query.type && req.query.type === "create_image") {
+        const response = await openai.createImage({
+            prompt: (req.query.prompt as string),
+            response_format: "b64_json"
+        })
+
+        context.res = {
+            status: 200,
+            body: response.data
+        }
+    }
+    else if (req.query.type && req.query.type === "generate_status") {
+        const response = await openai.createCompletion({
+            model: "text-davinci-003",
+            prompt: `Generate a post for Mastodon that is about: ${req.query.prompt}`,
+            max_tokens: 50,
+            temperature: 0,
+        });
+
+        context.res = {
+            status: 200,
+            body: response.data
+        }
+    }
+    else if (req.query.type && req.query.type === "summarize_status") {
+        const response = await openai.createCompletion({
+            model: "text-davinci-003",
+            prompt: `Summarize what the following Mastodon post is saying: ${req.query.prompt}`,
+            max_tokens: 50,
+            temperature: 0,
+        });
+
+        context.res = {
+            status: 200,
+            body: response.data
+        }
+    }
 };
 
 export default httpTrigger;
