@@ -5,7 +5,7 @@ dev-dist
 build
 types
 .idea
-.github
+.github/workflows/main.yml
 /test-results/
 /playwright-report/
 /playwright/.cache/
