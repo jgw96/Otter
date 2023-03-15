@@ -43,7 +43,7 @@ export class SearchPage extends LitElement {
 
             main {
                 padding-left: 0px;
-                padding-right: 16px;
+                padding-right: 0px;
                 padding-top: 0px;
             }
 
