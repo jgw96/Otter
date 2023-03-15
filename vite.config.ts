@@ -1,11 +1,9 @@
-import { defineConfig } from 'vite';
+import { defineConfig, splitVendorChunkPlugin } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import copy from 'rollup-plugin-copy';
 import wasm from "vite-plugin-wasm";
 
 import minifyHTML from 'rollup-plugin-minify-html-literals';
-
-import VitePluginInjectPreload from 'vite-plugin-inject-preload';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -17,6 +15,7 @@ export default defineConfig({
     target: ['esnext', 'edge100', 'firefox100', 'chrome100', 'safari18']
   },
   plugins: [
+    splitVendorChunkPlugin(),
     VitePWA({
       strategies: "injectManifest",
       injectManifest: {
@@ -27,24 +26,20 @@ export default defineConfig({
           '**/*.{html,js,css,json,svg}',
         ],
       },
+      injectRegister: false,
+      manifest: false,
       devOptions: {
         enabled: true
       },
-    }),
-    VitePluginInjectPreload({
-      files: [
-        {
-          match: /index.[a-z-0-9]*.(js)$/,
-        }
-      ]
     }),
     wasm(),
     minifyHTML(),
     copy({
       targets: [
-      { src: 'light.css', dest: 'dist/' },
-      { src: 'dark.css', dest: 'dist/' },
-      { src: 'global.css', dest: 'dist/' },
-    ]}),
+        { src: 'light.css', dest: 'dist/' },
+        { src: 'dark.css', dest: 'dist/' },
+        { src: 'global.css', dest: 'dist/' },
+      ]
+    }),
   ],
 })

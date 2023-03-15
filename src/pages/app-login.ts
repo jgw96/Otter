@@ -3,7 +3,6 @@ import { customElement, state } from 'lit/decorators.js';
 
 import { fluentButton, fluentTextField, provideFluentDesignSystem } from '@fluentui/web-components';
 
-import '@shoelace-style/shoelace/dist/components/input/input.js';
 import { router } from '../utils/router';
 import { enableVibrate } from '../utils/handle-vibrate';
 

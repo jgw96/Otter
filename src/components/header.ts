@@ -1,8 +1,6 @@
 import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
-import '@shoelace-style/shoelace/dist/components/button/button.js';
-
 import { fluentButton, provideFluentDesignSystem } from '@fluentui/web-components';
 import { router } from '../utils/router';
 import { enableVibrate } from '../utils/handle-vibrate';
