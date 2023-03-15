@@ -416,6 +416,14 @@ export class AppHome extends LitElement {
         contain: content;
       }
 
+    sl-tab-panel[aria-hidden="false"] {
+      display: initial;
+    }
+
+    sl-tab-panel[aria-hidden="true"] {
+      display: none;
+    }
+
     sl-tab-panel::part(base)::-webkit-scrollbar) {
       display: none;
     }
