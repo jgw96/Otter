@@ -18,7 +18,10 @@ export const createAPost = async (prompt: string) => {
 
 export const createImage = async (prompt: string) => {
     const response = await fetch(`/api/createImage?prompt=${prompt}`, {
-        method: "GET"
+        method: "GET",
+        headers: new Headers({
+            "Content-Type": "application/json",
+        })
     });
     const data = await response.json();
 
