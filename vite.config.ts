@@ -27,6 +27,7 @@ export default defineConfig({
           '**/*.{html,js,css,json,svg}',
         ],
       },
+      injectRegister: false,
       devOptions: {
         enabled: true
       },
@@ -35,6 +36,11 @@ export default defineConfig({
       files: [
         {
           match: /index.[a-z-0-9]*.(js)$/,
+          attributes: {
+            as: 'script',
+            rel: 'modulepreload',
+            crossorigin: 'anonymous',
+          },
         }
       ]
     }),
@@ -42,9 +48,10 @@ export default defineConfig({
     minifyHTML(),
     copy({
       targets: [
-      { src: 'light.css', dest: 'dist/' },
-      { src: 'dark.css', dest: 'dist/' },
-      { src: 'global.css', dest: 'dist/' },
-    ]}),
+        { src: 'light.css', dest: 'dist/' },
+        { src: 'dark.css', dest: 'dist/' },
+        { src: 'global.css', dest: 'dist/' },
+      ]
+    }),
   ],
 })
