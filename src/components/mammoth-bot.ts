@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
 
 import { fluentTextArea, provideFluentDesignSystem } from '@fluentui/web-components';
 import { requestMammothBot } from '../services/ai';
@@ -20,6 +20,19 @@ export class MammothBot extends LitElement {
                 border-radius: 8px;
             }
 
+            @media(prefers-color-scheme: light) {
+                :host {
+                    background: #f3f3f3;
+                }
+            }
+
+            span {
+                font-size: 10px;
+                margin-bottom: 7px;
+                margin-left: 4px;
+                color: #d2d2d2;
+            }
+
             fluent-text-area::part(control) {
                 height: 130px;
                 width: 26vw;
@@ -28,6 +41,12 @@ export class MammothBot extends LitElement {
 
             ul::-webkit-scrollbar {
                 display: none;
+            }
+
+            .wrapper {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
             }
 
             ul {
@@ -44,6 +63,28 @@ export class MammothBot extends LitElement {
                 display: flex;
                 flex-direction: column;
                 gap: 10px;
+            }
+
+            .copy-button {
+                background: #ffffff14;
+                backdrop-filter: blur(40px);
+                border: none;
+                border-radius: 6px;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 4px;
+            }
+
+            @media(prefers-color-scheme: light) {
+                .copy-button {
+                    background: var(--primary-color);
+                }
+            }
+
+            .copy-button img {
+                height: 12px;
             }
 
             ul li {
@@ -111,14 +152,26 @@ export class MammothBot extends LitElement {
         list.scrollTo(0, list.scrollHeight);
     }
 
+    copyContent(content: string) {
+        // copy to clipboard
+        navigator.clipboard.writeText(content);
+    }
+
     render() {
         return html`
+           <span>alpha</span>
             <ul>
                 ${
                     this.previousMessages.map((message: any) => {
                         return html`
                             <li>
-                                <div class="role">${message.role}</div>
+                                <div class="wrapper">
+                                  <div class="role">${message.role}</div>
+
+                                  <button @click="${() => this.copyContent(message.content)}" class="copy-button">
+                                    <img src="/assets/copy-outline.svg">
+                                  </button>
+                                </div>
                                 <div>${message.content}</div>
                             </li>
                         `;

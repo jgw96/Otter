@@ -79,6 +79,13 @@ export class TimelineItem extends LitElement {
                 justify-content: center;
             }
 
+
+            @media(prefers-color-scheme: light) {
+                sl-card {
+                    --sl-panel-background-color: #f3f3f3;
+                }
+            }
+
             @media(prefers-color-scheme: light) {
                 .sensitive {
                     background: white;
@@ -250,7 +257,6 @@ export class TimelineItem extends LitElement {
 
             @media(prefers-color-scheme: light) {
                 sl-card {
-                    --sl-panel-background-color: white;
                     color: #000000e3;
                 }
 
@@ -260,6 +266,12 @@ export class TimelineItem extends LitElement {
 
                 .actions fluent-button::part(base) {
                     color: white;
+                }
+            }
+
+            @media(prefers-color-scheme: light) {
+                sl-card {
+                    --sl-panel-background-color: #f3f3f3;
                 }
             }
 
