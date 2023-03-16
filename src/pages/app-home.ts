@@ -24,6 +24,7 @@ import '../components/favorites';
 import '../components/notifications';
 import '../components/app-theme';
 import '../components/right-click';
+import '../components/mammoth-bot';
 
 import './app-messages';
 import './search-page';
@@ -66,6 +67,12 @@ export class AppHome extends LitElement {
         justify-content: center;
         align-items: center;
         flex-direction: column;
+      }
+
+      mammoth-bot {
+        position: fixed;
+        bottom: 12px;
+        right: 12px;
       }
 
       .tab-label {
@@ -459,6 +466,10 @@ export class AppHome extends LitElement {
 
     @media(max-width: 600px) {
       #profile {
+        display: none;
+      }
+
+      mammoth-bot {
         display: none;
       }
 
@@ -1087,6 +1098,8 @@ export class AppHome extends LitElement {
                   </fluent-button>
                 </div> -->
         </div>
+
+        <mammoth-bot></mammoth-bot>
       </main>
 
       <pwa-install disable-install-description="true"></pwa-install>
