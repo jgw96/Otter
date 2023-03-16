@@ -1,10 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const url = 'https://wonderful-glacier-07b022d1e.2.azurestaticapps.net/';
-
-// get username and password from environment variables
-const username = process.env.MAS_USERNAME || "";
-const password = process.env.MAS_PASSWORD || "";
+const url = 'http://localhost:3000';
 
 // before each test
 test.beforeEach(async ({ page }) => {

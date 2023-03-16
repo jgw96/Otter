@@ -8,9 +8,9 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     const openai = new OpenAIApi(configuration);
 
     const response = await openai.createCompletion({
-        model: "text-davinci-003",
+        model: "gpt-3.5-turbo",
         prompt: `Generate a post for Mastodon that is about: ${req.query.prompt}`,
-        max_tokens: 50,
+        max_tokens: 100,
         temperature: 0,
     });
 
