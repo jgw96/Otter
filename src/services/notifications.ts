@@ -77,9 +77,13 @@ export const subToPush = async () => {
 
     if (res) {
         try {
+
+            // set minInterval to twice a day
+            const minInterval = 12 * 60 * 60 * 1000;
+
             // @ts-ignore
             await registration.periodicSync.register("get-notifications", {
-                minInterval: 24 * 60 * 60 * 1000,
+                minInterval,
             });
 
             // ask for permission to show notifications
