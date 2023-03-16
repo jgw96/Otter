@@ -567,8 +567,6 @@ export class AppHome extends LitElement {
   }
 
   async firstUpdated() {
-    console.log('This is your home page');
-
     const urlParams = new URLSearchParams(window.location.search);
 
     if (urlParams.has("name")) {
@@ -636,19 +634,19 @@ export class AppHome extends LitElement {
     console.log("share target result", result);
 
     if (result.length > 0) {
-      const blob = await result[0]!.blob();
+      // const blob = await result[0]!.blob();
 
       await this.openNewDialog();
 
-      this.attaching = true;
+      // this.attaching = true;
 
-      const { uploadImageFromBlob } = await import("../services/posts");
-      const data = await uploadImageFromBlob(blob);
+      // const { uploadImageFromBlob } = await import("../services/posts");
+      // const data = await uploadImageFromBlob(blob);
 
-      this.attaching = false;
+      // this.attaching = false;
 
-      this.attachmentID = data.id;
-      this.attachmentPreview = data.preview_url;
+      // this.attachmentID = data.id;
+      // this.attachmentPreview = data.preview_url;
     }
   }
 

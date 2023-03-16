@@ -219,7 +219,49 @@ export class PostDialog extends LitElement {
     public async openNewDialog() {
         const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
         dialog.show();
+
+        const urlParams = new URLSearchParams(window.location.search);
+
+        if (urlParams.has("name")) {
+          const name = urlParams.get("name");
+
+          if (name) {
+            await this.shareTarget(name);
+          }
+        }
     }
+
+    async shareTarget(name: string) {
+        const cache = await caches.open("shareTarget");
+        const result = [];
+
+        for (const request of await cache.keys()) {
+          // If the request URL matches, add the response to the result
+          if (
+            (request.url.endsWith(".png") && request.url.includes(name)) ||
+            request.url.endsWith(".jpg") && request.url.includes(name)) {
+            result.push(await cache.match(name));
+          }
+        }
+
+        console.log("share target result", result);
+
+        if (result.length > 0) {
+          const blob = await result[0]!.blob();
+
+          // await this.openNewDialog();
+
+          this.attaching = true;
+
+          const { uploadImageFromBlob } = await import("../services/posts");
+          const data = await uploadImageFromBlob(blob);
+
+          this.attaching = false;
+
+          this.attachmentID = data.id;
+          this.attachmentPreview = data.preview_url;
+        }
+      }
 
     async attachFile() {
         this.attaching = true;
