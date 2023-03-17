@@ -634,19 +634,7 @@ export class AppHome extends LitElement {
     console.log("share target result", result);
 
     if (result.length > 0) {
-      // const blob = await result[0]!.blob();
-
       await this.openNewDialog();
-
-      // this.attaching = true;
-
-      // const { uploadImageFromBlob } = await import("../services/posts");
-      // const data = await uploadImageFromBlob(blob);
-
-      // this.attaching = false;
-
-      // this.attachmentID = data.id;
-      // this.attachmentPreview = data.preview_url;
     }
   }
 

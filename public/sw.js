@@ -4,6 +4,11 @@ importScripts(
     'https://storage.googleapis.com/workbox-cdn/releases/6.5.4/workbox-sw.js'
 );
 
+importScripts(
+    // idb-keyval
+    'https://cdn.jsdelivr.net/npm/idb-keyval@6/dist/umd.js'
+)
+
 addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SKIP_WAITING') {
         self.skipWaiting();
@@ -30,26 +35,120 @@ const renderWidget = async (widget) => {
     await self.widgets.updateByTag(widget.definition.tag, { template, data });
 }
 
-self.addEventListener('push', (event) => {
-    if (event.data) {
-        console.log('This push event has data: ', event.data.json());
-
-        const notifData = event.data.json();
-
-        const promiseChain = self.registration.showNotification("Mammoth", {
-            body: `You have a new ${notifData.type} from ${notifData.account.username}`,
-        });
-        event.waitUntil(promiseChain);
-    } else {
-        console.log('This push event has no data.');
-    }
-});
-
 // This is your Service Worker, you can put any of your custom Service Worker
 // code in this file, above the `precacheAndRoute` line.
 
 const bgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin('retryqueue', {
     maxRetentionTime: 48 * 60,
+});
+
+const followAUser = async (id) => {
+    // follow a user with the mastodon api
+    const accessToken = await self.idbKeyval.get('accessToken');
+    const server = await self.idbKeyval.get('server');
+
+    await fetch(`https://${server}/api/v1/accounts/${id}/follow`, {
+        method: 'POST',
+        headers: new Headers({
+            "Authorization": `Bearer ${accessToken}`
+        })
+    });
+}
+
+const getNotifications = async () => {
+    // get access token from idb
+    const accessToken = await self.idbKeyval.get('accessToken');
+    const server = await self.idbKeyval.get('server');
+
+    const notifyResponse = await fetch(`https://${server}/api/v1/notifications`, {
+        method: 'GET',
+        headers: new Headers({
+            "Authorization": `Bearer ${accessToken}`
+        })
+    });
+
+    const data = await notifyResponse.json();
+
+    const notifyCheck = data.length > 0 ? true : false;
+
+    return new Promise((resolve) => {
+        if (notifyCheck) {
+            // show badge
+            navigator.setAppBadge(data.length);
+
+            // build message for notification
+            let message = '';
+            let actions = [];
+            let title = 'Mammoth';
+            // if data[0].type === 'mention' || 'reblog' || 'favourite'
+            switch (data[0].type) {
+                case 'mention':
+                    message = `${data[0].status.content}`;
+                    title = `${data[0].account.display_name} mentioned you`
+
+                    break;
+                case 'reblog':
+                    message = `${data[0].account.display_name} boosted your post`;
+
+                    break;
+                case 'favourite':
+                    message = `${data[0].account.display_name} favorited your post`;
+
+                    break;
+
+                case 'follow':
+                    message = `${data[0].account.display_name} followed you`;
+                    title = 'New Follower';
+                    actions = [{
+                        action: 'follow',
+                        title: 'Follow back'
+                    }];
+
+                    break;
+
+                default:
+                    message = `You have ${data.length} new notifications`;
+                    break;
+            }
+
+
+            // show notification
+            const notify = self.registration.showNotification('Mammoth', {
+                body: message,
+                icon: '/assets/icons/512-icon.png',
+                tag: 'mammoth',
+                renotify: false,
+                actions: actions,
+                data: {
+                    url: data[0].account.url
+                }
+            });
+
+            notify.addEventListener('click', event => {
+                event.notification.close();
+                navigator.clearAppBadge();
+
+                // if event.action === 'follow'
+                if (event.action === 'follow') {
+                    followAUser(data[0].account.id);
+                }
+
+                clients.openWindow("/home?tab=notifications");
+            });
+
+            resolve();
+
+        }
+    })
+
+}
+
+// periodic background sync
+self.addEventListener('periodicsync', async (event) => {
+    // See the "Think before you sync" section for
+    // checks you could perform before syncing.
+    event.waitUntil(getNotifications());
+    // Other logic for different tags as needed.
 });
 
 async function shareTargetHandler({ event }) {

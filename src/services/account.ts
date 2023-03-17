@@ -1,8 +1,12 @@
 // https://mammoth-backend.azurewebsites.net/
+import { set } from 'idb-keyval';
+let accessToken = localStorage.getItem('accessToken') || '';
+set('accessToken', accessToken);
+set('server', localStorage.getItem('server') || '')
 
 let token = localStorage.getItem('token') || '';
 let server = localStorage.getItem('server') || '';
-let accessToken = localStorage.getItem('accessToken') || '';
+
 
 export const checkFollowing = async (id: string) => {
     try {

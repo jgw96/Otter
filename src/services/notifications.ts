@@ -74,6 +74,34 @@ export const subToPush = async () => {
     });
     const res = await response.json();
     console.log('subToPush', res);
+
+    if (res) {
+        try {
+
+            // set minInterval to twice a day
+            const minInterval = 12 * 60 * 60 * 1000;
+
+            // @ts-ignore
+            await registration.periodicSync.register("get-notifications", {
+                minInterval,
+            });
+
+            // ask for permission to show notifications
+            const permission = await Notification.requestPermission();
+            if (permission === "granted") {
+                // show notification
+                registration?.showNotification("Mammoth", {
+                    body: "You have successfully subscribed to push notifications!",
+                    icon: "/assets/icons/128-icon.png",
+                    vibrate: [200, 100, 200],
+                    tag: "mammoth-subscribe"
+                });
+
+            }
+        } catch {
+            console.log("Periodic Sync could not be registered!");
+        }
+    }
 }
 
 export const modifyPush = async (flags?: any[]) => {
