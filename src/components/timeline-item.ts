@@ -112,23 +112,23 @@ export class TimelineItem extends LitElement {
             .status-link-card {
                 display: flex;
                 align-items: center;
-                justify-content: space-around;
+                justify-content: flex-start;
                 gap: 10px;
                 background: rgb(255 255 255 / 11%);
                 border-radius: 6px;
-                padding: 10px;
+                padding: 8px;
+                overflow: hidden;
             }
 
             .status-link-card a {
                 display: flex;
                 align-items: center;
-                justify-content: space-around;
                 gap: 10px;
             }
 
             .status-link-card img {
                 width: 100%;
-                max-width: 300px;
+                max-width: 180px;
                 border-radius: 6px;
                 height: initial;
             }
@@ -539,6 +539,17 @@ export class TimelineItem extends LitElement {
 
                         <user-profile .account="${this.tweet?.account}"></user-profile>
                         <div @click="${() => this.openPost()}" .innerHTML="${this.tweet?.content}"></div>
+
+                        ${this.tweet?.card ? html`<div class="status-link-card">
+                            <a href="${this.tweet.card.url}" target="_blank" rel="noopener noreferrer">
+                                ${this.tweet.card.image? html`<div class="status-link-card__image">
+                                    <img src="${this.tweet.card.image}" alt="${this.tweet.card.title}">
+                    </div>` : null}
+                                <div class="status-link-card__content">
+                                    <h5 class="status-link-card__title">${this.tweet.card.title}</h5>
+                                </div>
+                                </a>
+                        </div>` : null}
 
                         <div class="actions" slot="footer">
                             ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies()}">

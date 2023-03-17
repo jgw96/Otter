@@ -118,6 +118,17 @@ export class MammothBot extends LitElement {
                     background: #1e1e1e;
                 }
             }
+
+            @media(max-width: 600px) {
+                fluent-text-area::part(control) {
+                    display: block;
+                    width: 100%;
+                }
+
+                ul {
+                    width: 95%;
+                }
+            }
         `
     ];
 

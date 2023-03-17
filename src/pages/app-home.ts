@@ -537,6 +537,11 @@ export class AppHome extends LitElement {
       left: 12px;
     }
 
+    #bot-drawer mammoth-bot {
+      display: flex !important;
+      position: initial !important;
+    }
+
     @media(max-width: 600px) {
       sl-tab-group::part(tabs) {
         width: initial;
@@ -800,6 +805,11 @@ export class AppHome extends LitElement {
     timeline.refreshTimeline();
   }
 
+  openBotDrawer() {
+    const drawer = this.shadowRoot?.getElementById('bot-drawer') as any;
+    drawer.show();
+  }
+
   render() {
     return html`
 
@@ -833,7 +843,7 @@ export class AppHome extends LitElement {
         </fluent-menu>
       </right-click>
 
-      <app-header @open-settings="${() => this.openSettingsDrawer()}" @open-theming="${() => this.openThemingDrawer()}">
+      <app-header @open-settings="${() => this.openSettingsDrawer()}" @open-theming="${() => this.openThemingDrawer()}" @open-bot="${() => this.openBotDrawer()}">
       </app-header>
 
       <fluent-button appearance="lightweight" @click="${() => this.doFocusMode()}" circle size="small" id="focusModeButton">
@@ -842,6 +852,10 @@ export class AppHome extends LitElement {
 
       <sl-drawer label="Theming" id="theming-drawer">
         <app-theme @color-chosen="${($event: any) => this.handlePrimaryColor($event.detail.color)}"></app-theme>
+      </sl-drawer>
+
+      <sl-drawer label="MammothBot" id="bot-drawer" placement="end">
+        <mammoth-bot></mammoth-bot>
       </sl-drawer>
 
       <post-dialog @published="${() => this.handleReload()}"></post-dialog>

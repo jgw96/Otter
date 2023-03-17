@@ -37,6 +37,16 @@ export class AppHeader extends LitElement {
         contain: layout;
       }
 
+      .bot-open {
+        display: none;
+      }
+
+      @media (max-width: 600px) {
+        .bot-open {
+          display: block;
+        }
+      }
+
       #actions {
         display: flex;
         gap: 4px;
@@ -119,6 +129,11 @@ export class AppHeader extends LitElement {
     this.dispatchEvent(new CustomEvent('open-theming'));
   }
 
+  handleBotDrawer() {
+    // fire custom event
+    this.dispatchEvent(new CustomEvent('open-bot'));
+  }
+
   goBack() {
     router.navigate('/home');
   }
@@ -136,6 +151,9 @@ export class AppHeader extends LitElement {
         </div>
 
         <div id="actions">
+          <fluent-button appearance="lightweight" title="Open Bot Drawer" id="open-button"  class="bot-open" circle size="small" @click="${() => this.handleBotDrawer()}">
+            <sl-icon src="/assets/diamond-outline.svg" alt="Bot"></sl-icon>
+          </fluent-button>
           <fluent-button appearance="lightweight" title="Open Theme Settings" id="open-button" circle size="small" @click="${() => this.handleTheming()}">
             <sl-icon src="/assets/color-palette-outline.svg" alt="Theme"></sl-icon>
           </fluent-button>
