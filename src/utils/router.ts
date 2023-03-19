@@ -90,7 +90,7 @@ export const router = new Router({
         render: () => html`<app-hashtags></app-hashtags>`
       },
       {
-        path: '/home/post',
+        path: '/post',
         title: 'post',
         plugins: [
           lazy(() => import('../pages/post-detail.js')),
