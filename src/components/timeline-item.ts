@@ -36,9 +36,6 @@ export class TimelineItem extends LitElement {
 
     @state() currentUser: any;
 
-    canvas = document.createElement('canvas');
-    ctx = this.canvas.getContext('bitmaprenderer');
-
     worker: Worker | undefined;
 
     static styles = [
@@ -65,18 +62,25 @@ export class TimelineItem extends LitElement {
             }
 
             .sensitive {
-                position: fixed;
-                top: 0;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                width: 100%;
-                background: #1b1d26;
+                background: rgb(32 32 35);
                 z-index: 1;
-
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                flex-direction: column;
+                border-radius: 6px;
+                padding-top: 8px;
+                padding-bottom: 8px;
+            }
+
+            .sensitive span {
+                font-weight: bold;
+                display: block;
+                width: 136px;
+            }
+
+            .sensitive p {
+                text-align: center;
             }
 
 
@@ -487,12 +491,26 @@ export class TimelineItem extends LitElement {
     }
 
     viewSensitive() {
-       (this.shadowRoot?.querySelector(".sensitive") as HTMLElement).style.display = "none";
+        if (this.tweet) {
+            this.tweet.sensitive = false;
+            this.requestUpdate("tweet", this.tweet)
+        }
     }
 
     render() {
         return html`
-          ${this.tweet?.reblog === null || this.tweet?.reblog === undefined ? html`
+        ${this.tweet && this.tweet.sensitive === true ? html`
+        <div class="sensitive">
+            <span>Sensitive Content</span>
+            <p>${this.tweet.spoiler_text || "No spoiler text provided"}</p>
+
+            <fluent-button appearance="lightweight" pill @click="${() => this.viewSensitive()}">
+                View
+                <sl-icon src="/assets/eye-outline.svg"></sl-icon>
+            </fluent-button>
+        </div>
+        ` : html`
+        ${this.tweet?.reblog === null || this.tweet?.reblog === undefined ? html`
                 ${
                     this.tweet?.reply_to !== null && this.tweet?.reply_to !== undefined ? html`
                       <sl-card part="card">
@@ -587,6 +605,7 @@ export class TimelineItem extends LitElement {
 
                     `}
 
+        `}
         `;
     }
 }

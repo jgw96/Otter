@@ -15,9 +15,10 @@ export class ImageCarousel extends LitElement {
             }
 
             img {
-                object-fit: cover;
+                object-fit: contain;
                 display: block;
                 width: 100%;
+                height: 400px;
             }
 
             #list {
@@ -69,7 +70,7 @@ export class ImageCarousel extends LitElement {
         return html`
             <div id="list">
                 ${this.images.map(image => html`<div>
-                  <img @click="${() => this.openInBox(image.preview_url)}" src="${image.preview_url}" alt="${image.description}" />
+                  <img loading="async" @click="${() => this.openInBox(image.preview_url)}" src="${image.preview_url}" alt="${image.description}" />
                 </div>`)}
             </div>
         `;
