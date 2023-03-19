@@ -457,7 +457,7 @@ export class TimelineItem extends LitElement {
                 if (this.tweet) {
                     const serialized = new URLSearchParams(JSON.stringify(this.tweet)).toString();
 
-                    await router.navigate(`/home/post?${serialized}`);
+                    await router.navigate(`/post?${serialized}`);
 
                     setTimeout(() => {
                         // @ts-ignore
@@ -469,7 +469,7 @@ export class TimelineItem extends LitElement {
         else {
             const serialized = new URLSearchParams(JSON.stringify(this.tweet)).toString();
 
-            await router.navigate(`/home/post?${serialized}`);
+            await router.navigate(`/post?${serialized}`);
         }
     }
 
