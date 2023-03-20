@@ -493,7 +493,7 @@ export class TimelineItem extends LitElement {
     viewSensitive() {
         if (this.tweet) {
             this.tweet.sensitive = false;
-            this.requestUpdate("tweet", this.tweet)
+            this.requestUpdate()
         }
     }
 

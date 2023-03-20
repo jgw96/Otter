@@ -1,13 +1,17 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
-import { fluentButton, fluentTextField, provideFluentDesignSystem } from '@fluentui/web-components';
+import { fluentButton, fluentTextField, fluentCombobox, fluentOption, provideFluentDesignSystem } from '@fluentui/web-components';
 
 import { router } from '../utils/router';
 import { enableVibrate } from '../utils/handle-vibrate';
+import { getPeers } from '../services/account';
 
 provideFluentDesignSystem().register(fluentButton());
 provideFluentDesignSystem().register(fluentTextField());
+provideFluentDesignSystem().register(fluentCombobox());
+provideFluentDesignSystem().register(fluentButton());
+provideFluentDesignSystem().register(fluentOption());
 
 let scrollWidth: number = 0;
 
@@ -15,6 +19,8 @@ let scrollWidth: number = 0;
 export class AppLogin extends LitElement {
 
     @state() loadIntro: boolean = false;
+    @state() instances: any[] = [];
+    @state() chosenServer: string = '';
 
     static styles = [
         css`
@@ -32,6 +38,23 @@ export class AppLogin extends LitElement {
                 inset: 0px;
                 height: 72vh;
                 width: 100vw;
+            }
+
+            @media(prefers-color-scheme: dark) {
+                fluent-combobox::part(control) {
+                    background: #242428;
+                    color: white;
+                }
+
+                fluent-option {
+                    background: #242428;
+                    color: white;
+                }
+
+                fluent-combobox::part(listbox) {
+                    background: #242428;
+                    color: white;
+                }
             }
 
             #intro-carousel {
@@ -152,22 +175,25 @@ export class AppLogin extends LitElement {
             }
         })
 
+        this.getInstances();
+
     }
 
     async login() {
-        let serverURL = (this.shadowRoot?.querySelector('fluent-text-field[name="serverURL"]') as HTMLInputElement)?.value;
+        let serverURL = this.chosenServer
+        if (serverURL.length > 0) {
+            if (serverURL.includes("https://")) {
+                // remove https://
+                serverURL = serverURL.replace("https://", "");
+            }
 
-        if (serverURL.includes("https://")) {
-            // remove https://
-            serverURL = serverURL.replace("https://", "");
-        }
-
-        try {
-            const { initAuth } = await import('../services/account');
-            await initAuth(serverURL);
-        }
-        catch (err) {
-            console.error(err);
+            try {
+                const { initAuth } = await import('../services/account');
+                await initAuth(serverURL);
+            }
+            catch (err) {
+                console.error(err);
+            }
         }
     }
 
@@ -207,6 +233,23 @@ export class AppLogin extends LitElement {
 
         scrollWidth = 0;
       }
+
+    async getInstances() {
+        const instances = await getPeers();
+
+        this.instances = instances;
+    }
+
+    handleServerInput(server: string) {
+        console.log(server)
+
+        this.chosenServer = server;
+    }
+
+    joinMastodon() {
+        // open https://joinmastodon.org/servers in new tab
+        window.open("https://joinmastodon.org/servers", "_blank");
+    }
 
     render() {
         return html`
@@ -277,9 +320,18 @@ export class AppLogin extends LitElement {
         <main>
 
             <div id="login-block">
-                <fluent-text-field type="text" name="serverURL" placeholder="Server URL"></fluent-text-field>
+                <fluent-combobox @change="${($event: any) => this.handleServerInput($event.target.value)}">
+                    ${
+                        this.instances.map((instance: any) => {
+                            return html`
+                            <fluent-option value="${instance}">${instance}</fluent-option>
+                            `
+                        })
+                    }
+                </fluent-combobox>
 
                 <fluent-button @click="${() => this.login()}" appearance="accent">Login</fluent-button>
+                <fluent-button @click="${() => this.joinMastodon()}" appearance="lightweight">Sign up for Mastodon Account</fluent-button>
             </div>
 
             <fluent-button @click="${() => this.openIntro()}" appearance="lightweight">Intro To Mastodon</fluent-button>

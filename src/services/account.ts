@@ -7,6 +7,14 @@ set('server', localStorage.getItem('server') || '')
 let token = localStorage.getItem('token') || '';
 let server = localStorage.getItem('server') || '';
 
+export const getPeers = async () => {
+    const response = await fetch(`https://mastodon.social/api/v1/instance/peers`);
+    const data = await response.json();
+
+    // return first 300
+    return data.slice(0, 500);
+}
+
 
 export const checkFollowing = async (id: string) => {
     try {
