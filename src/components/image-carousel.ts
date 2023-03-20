@@ -21,6 +21,10 @@ export class ImageCarousel extends LitElement {
                 height: 400px;
             }
 
+            video {
+                width: 100%;
+            }
+
             #list {
                 display: flex;
                 scroll-snap-type: x mandatory;

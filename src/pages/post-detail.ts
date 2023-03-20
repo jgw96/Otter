@@ -104,6 +104,18 @@ export class PostDetail extends LitElement {
                     flex-direction: column;
                 }
 
+                #post-actions {
+                    position: fixed;
+                    bottom: 10px;
+                    left: 10px;
+                    right: 10px;
+                    background: #f8f8f80f;
+                    padding: 8px;
+                    border-radius: 6px;
+                    z-index: 999;
+                    backdrop-filter: blur(42px);
+                }
+
                 #main-block {
                     display: initial;
                     position: initial;
@@ -204,7 +216,6 @@ export class PostDetail extends LitElement {
             </div>
 
             <div id="replies">
-
                 ${this.replies.length > 0 ? html`<h2>Replies</h2>` : html`<h2>No Replies</h2>`}
                 ${this.replies.map(reply => html`
                 <timeline-item .tweet="${reply}"></timeline-item>
