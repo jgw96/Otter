@@ -32,6 +32,7 @@ export class PostDialog extends LitElement {
     @state() generatedImage: string | undefined;
 
     @state() hasStatus: boolean = false;
+    @state() sensitive: boolean = false;
 
     aiBlob: Blob | undefined;
 
@@ -318,6 +319,8 @@ export class PostDialog extends LitElement {
         const status = (this.shadowRoot?.querySelector('fluent-text-area') as any).value;
         console.log(status);
 
+        let spoilerText = "";
+
         if (status && status.length > 0) {
             const worker = new MarkdownWorker();
 
@@ -326,7 +329,12 @@ export class PostDialog extends LitElement {
                 console.log(html);
 
                 if (this.attachmentIDs) {
-                    await publishPost(status, this.attachmentIDs);
+                    if (this.sensitive === true) {
+                        const sensitiveInput = this.shadowRoot?.getElementById('sensitive-input') as any;
+                        spoilerText = sensitiveInput.value;
+                    }
+
+                    await publishPost(status, this.attachmentIDs, this.sensitive, spoilerText);
 
                     this.attachmentIDs = [];
                     this.attachmentPreviews = [];
@@ -336,7 +344,12 @@ export class PostDialog extends LitElement {
                     (this.shadowRoot?.querySelector("fluent-text-area") as any)!.value = "";
                  }
                  else {
-                    await publishPost(status);
+                    if (this.sensitive === true) {
+                        const sensitiveInput = this.shadowRoot?.getElementById('sensitive-input') as any;
+                        spoilerText = sensitiveInput.value;
+                    }
+
+                    await publishPost(status, undefined, this.sensitive, spoilerText);
 
                     this.attachmentIDs = [];
                     this.attachmentPreviews = [];
@@ -412,11 +425,19 @@ export class PostDialog extends LitElement {
         }
     }
 
+    async markAsSensitive() {
+        this.sensitive = !this.sensitive;
+    }
+
     render() {
         return html`
         <sl-dialog id="notify-dialog" label="New Post">
 
             <fluent-text-area @change="${($event: any) => this.handleStatus($event)}" autofocus placeholder="What's on your mind?"></fluent-text-area>
+
+            ${this.sensitive ? html`<div id="sensitive-warning">
+                <fluent-text-field id="sensitive-input" placeholder="Write your warning here"></fluent-text-field>
+            </div>` : null}
 
             <div id="post-copilot">
                 <span>Enter a prompt in the field below and Mammoth will generate a toot for you.</span>
@@ -462,8 +483,12 @@ export class PostDialog extends LitElement {
                 }
             </div>` : null}
 
+            <fluent-button slot="footer" @click="${() => this.markAsSensitive()}">
+                <sl-icon src="/assets/eye-outline.svg"></sl-icon>
+            </fluent-button>
+
             <fluent-button pill slot="footer" @click="${() => this.attachFile()}">
-                <sl-icon src="/assets/albums-outline.svg"></sl-icon>
+                <sl-icon src="/assets/attach-outline.svg"></sl-icon>
             </fluent-button>
             <fluent-button ?disabled="${this.hasStatus === false}" pill @click="${() => this.publish()}" slot="footer" appearance="accent">Publish</fluent-button>
         </sl-dialog>

@@ -39,14 +39,22 @@ export async function getPostDetail(id: string) {
     return data;
 }
 
-export async function publishPost(post: string, ids?: Array<string>) {
+export async function publishPost(post: string, ids?: Array<string>, sensitive: boolean = false, spoilerText: string = "") {
     const formData = new FormData();
 
     formData.append("status", post && post.length > 0 ? post : "");
 
-    if (ids) {
+    if (ids && ids.length > 0) {
         for(const id of ids) {
             formData.append("media_ids[]", id);
+        }
+    }
+
+    if (sensitive) {
+        formData.append("sensitive", "true");
+
+        if (spoilerText && spoilerText.length > 0) {
+            formData.append("spoiler_text", spoilerText);
         }
     }
 
