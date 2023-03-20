@@ -21,6 +21,10 @@ export class ImageCarousel extends LitElement {
                 height: 400px;
             }
 
+            video {
+                width: 100%;
+            }
+
             #list {
                 display: flex;
                 scroll-snap-type: x mandatory;
@@ -69,9 +73,16 @@ export class ImageCarousel extends LitElement {
     render() {
         return html`
             <div id="list">
-                ${this.images.map(image => html`<div>
-                  <img loading="async" @click="${() => this.openInBox(image.preview_url)}" src="${image.preview_url}" alt="${image.description}" />
-                </div>`)}
+                ${this.images.map(image =>
+                    image.type === "image" ? html`
+                <div @click="${() => this.openInBox(image.preview_url)}">
+                  <img loading="async" src="${image.preview_url}" alt="${image.description}" />
+                </div>
+                ` : image.type === "video" ? html`
+                <div>
+                  <video controls src="${image.url}"></video>
+                </div>
+                ` : null) }
             </div>
         `;
     }

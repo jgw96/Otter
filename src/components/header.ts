@@ -71,6 +71,12 @@ export class AppHeader extends LitElement {
         app-region: no-drag;
       }
 
+      @media (min-width: 768px) {
+        #mammoth-bot {
+          display: none;
+        }
+      }
+
       @media(prefers-color-scheme: light) {
         header {
           color: black;
@@ -119,6 +125,11 @@ export class AppHeader extends LitElement {
     this.dispatchEvent(new CustomEvent('open-theming'));
   }
 
+  openBotDrawer() {
+    // fire custom event
+    this.dispatchEvent(new CustomEvent('open-bot-drawer'));
+  }
+
   goBack() {
     router.navigate('/home');
   }
@@ -136,11 +147,15 @@ export class AppHeader extends LitElement {
         </div>
 
         <div id="actions">
+          <fluent-button @click="${() => this.openBotDrawer()}" appearance="lightweight" title=="Open MammothBot" id="mammoth-bot">
+            <sl-icon src="/assets/sparkles-outline.svg" alt="MammothBot"></sl-icon>
+          </fluent-button>
+
           <fluent-button appearance="lightweight" title="Open Theme Settings" id="open-button" circle size="small" @click="${() => this.handleTheming()}">
             <sl-icon src="/assets/color-palette-outline.svg" alt="Theme"></sl-icon>
           </fluent-button>
 
-          <fluent-button appearance="lightweight"  title="Open Settings" @click="${() => this.openSettings()}" circle size="small">
+          <fluent-button id="settings-button" appearance="lightweight"  title="Open Settings" @click="${() => this.openSettings()}" circle size="small">
             <sl-icon src="/assets/settings-outline.svg"></sl-icon>
           </fluent-button>
         </div>

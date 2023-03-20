@@ -75,6 +75,11 @@ export class AppHome extends LitElement {
         right: 12px;
       }
 
+      #bot-drawer mammoth-bot {
+        display: flex;
+        position: unset;
+      }
+
       .tab-label {
         display: none;
       }
@@ -800,6 +805,11 @@ export class AppHome extends LitElement {
     timeline.refreshTimeline();
   }
 
+  openBotDrawer() {
+    const drawer = this.shadowRoot?.getElementById('bot-drawer') as any;
+    drawer.show();
+  }
+
   render() {
     return html`
 
@@ -833,7 +843,7 @@ export class AppHome extends LitElement {
         </fluent-menu>
       </right-click>
 
-      <app-header @open-settings="${() => this.openSettingsDrawer()}" @open-theming="${() => this.openThemingDrawer()}">
+      <app-header @open-bot-drawer="${() => this.openBotDrawer()}" @open-settings="${() => this.openSettingsDrawer()}" @open-theming="${() => this.openThemingDrawer()}">
       </app-header>
 
       <fluent-button appearance="lightweight" @click="${() => this.doFocusMode()}" circle size="small" id="focusModeButton">
@@ -963,6 +973,10 @@ export class AppHome extends LitElement {
           <sl-input placeholder="Reply"></sl-input>
           <fluent-button appearance="accent" @click="${() => this.replyToAStatus()}">Reply</fluent-button>
         </div>
+      </sl-drawer>
+
+      <sl-drawer id="bot-drawer" placement="bottom" label="Mammoth Bot">
+        <mammoth-bot></mammoth-bot>
       </sl-drawer>
 
       <fluent-toolbar>
