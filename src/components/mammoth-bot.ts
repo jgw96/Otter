@@ -108,6 +108,19 @@ export class MammothBot extends LitElement {
                 border: none;
             }
 
+            @media(max-width: 800px) {
+                fluent-text-area::part(control) {
+                    display: flex;
+                    position: unset;
+
+                    width: 100%;
+                  }
+
+                  ul {
+                    width: 92%;
+                  }
+            }
+
             @media(prefers-color-scheme: dark) {
                 fluent-text-area::part(control), fluent-button[appearance="neutral"]::part(control), fluent-text-field::part(control), fluent-text-field::part(root) {
                     background: #1e1e1e;
