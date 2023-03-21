@@ -104,6 +104,14 @@ export const router = new Router({
           lazy(() => import('../pages/image-preview.js')),
         ],
         render: () => html`<image-preview></image-preview>`
+      },
+      {
+        path: "/editaccount",
+        title: "edit account",
+        plugins: [
+          lazy(() => import('../pages/edit-page.js')),
+        ],
+        render: () => html`<edit-page></edit-page>`
       }
     ]
   });
