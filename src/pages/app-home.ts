@@ -800,6 +800,10 @@ export class AppHome extends LitElement {
     router.navigate(`/account?id=${this.user.id}`)
   }
 
+  editMyProfile() {
+    router.navigate(`/editaccount`)
+  }
+
   handleReload() {
     const timeline = this.shadowRoot?.querySelector('.homeTimeline') as any;
     timeline.refreshTimeline();
@@ -875,6 +879,9 @@ export class AppHome extends LitElement {
                     <fluent-menu-item @click="${() => this.shareMyProfile()}">
                       <sl-icon slot="prefix" src="/assets/share-social-outline.svg"></sl-icon>
                       Share My Profile
+                    </fluent-menu-item>
+                    <fluent-menu-item @click="${() => this.editMyProfile()}">
+                      Edit My Profile
                     </fluent-menu-item>
                   </fluent-menu>
                 </sl-dropdown>
@@ -1073,6 +1080,9 @@ export class AppHome extends LitElement {
                     <fluent-menu-item @click="${() => this.shareMyProfile()}">
                       <sl-icon slot="prefix" src="/assets/share-social-outline.svg"></sl-icon>
                       Share My Profile
+                    </fluent-menu-item>
+                    <fluent-menu-item @click="${() => this.editMyProfile()}">
+                       Edit My Profile
                     </fluent-menu-item>
                   </fluent-menu>
                 </sl-dropdown>

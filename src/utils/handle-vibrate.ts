@@ -5,8 +5,8 @@ export function enableVibrate(root: ShadowRoot) {
     // add a click event listener to each button
     buttons.forEach((button) => {
         button.addEventListener('click', () => {
-            // vibrate for 100ms
-            navigator.vibrate(100);
+            // vibrate for 30ms
+            navigator.vibrate(30);
         });
     });
 }
