@@ -7,6 +7,33 @@ set('server', localStorage.getItem('server') || '')
 let token = localStorage.getItem('token') || '';
 let server = localStorage.getItem('server') || '';
 
+export const editAccount = async (display_name: string, note: string, locked: string, bot: string, avatar: any, header: any,  ) => {
+    const currentUser = await getCurrentUser();
+
+    const formData = new FormData();
+
+    formData.append("display_name", display_name || currentUser.display_name);
+    formData.append("note", note || currentUser.note);
+    formData.append("avatar", avatar || currentUser.avatar);
+    formData.append("header", header || currentUser.header);
+    formData.append("locked", locked.toString() || currentUser.locked);
+    formData.append("bot", bot.toString() || currentUser.bot);
+
+
+    const response = await fetch(`https://${server}/api/v1/accounts/update_credentials`, {
+        method: 'PATCH',
+        headers: new Headers({
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+        }),
+        body: formData
+    });
+
+    const data = await response.json();
+    return data;
+}
+
+
 export const getPeers = async () => {
     const response = await fetch(`https://mastodon.social/api/v1/instance/peers`);
     const data = await response.json();
