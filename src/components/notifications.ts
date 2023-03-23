@@ -58,6 +58,10 @@ export class Notifications extends LitElement {
                 gap: 10px;
             }
 
+            fluent-button::part(control) {
+                border: none;
+            }
+
             sl-switch {
                 --sl-toggle-size-small: 16px;
               }
