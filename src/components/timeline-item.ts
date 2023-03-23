@@ -83,6 +83,37 @@ export class TimelineItem extends LitElement {
                 text-align: center;
             }
 
+            .link-card {
+                align-items: center;
+                display: flex;
+                gap: 10px;
+
+                background: #ffffff0d;
+                border-radius: 6px;
+            }
+
+            .link-card h4 {
+                margin-bottom: 0;
+                margin-top: 0;
+            }
+
+            .link-card img {
+                height: 140px;
+                border-radius: 6px;
+                width: 140px;
+                object-fit: cover;
+            }
+
+            .link-card-content {
+                width: 52%;
+            }
+
+            .link-card-content p {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
 
             @media(prefers-color-scheme: light) {
                 sl-card {
@@ -100,6 +131,11 @@ export class TimelineItem extends LitElement {
                 display: flex;
                 justify-content: flex-end;
                 align-items: center;
+            }
+
+            .header-actions-block span {
+                color: #878792;
+                font-size: 14px;
             }
 
             img[data-src] {
@@ -497,6 +533,12 @@ export class TimelineItem extends LitElement {
         }
     }
 
+    openLinkCard(url: string) {
+        if (url) {
+            window.open(url, "_blank");
+        }
+    }
+
     render() {
         return html`
         ${this.tweet && this.tweet.sensitive === true ? html`
@@ -553,10 +595,32 @@ export class TimelineItem extends LitElement {
                             </sl-icon-button>
                             ` : null
                         }
+
+                        <span>
+                            ${
+                                new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(
+                                    Math.floor(-(new Date() as any - (new Date(this.tweet?.created_at || "") as any)) / 1000 / 60),
+                                    'minutes'
+                                  )
+                                }
+                        </span>
                       </div>
 
                         <user-profile .account="${this.tweet?.account}"></user-profile>
                         <div @click="${() => this.openPost()}" .innerHTML="${this.tweet?.content}"></div>
+
+                        ${
+                            this.tweet && this.tweet.card ? html`
+                              <div @click="${() => this.openLinkCard(this.tweet?.card?.url || "")}" class="link-card">
+                                <img src="${this.tweet.card.image || "/assets/bookmark-outline.svg"}" alt="${this.tweet.card.title}" />
+
+                                <div class="link-card-content">
+                                    <h4>${this.tweet.card.title}</h4>
+                                    <p>${this.tweet.card.description}</p>
+                                </div>
+                              </div>
+                            ` : null
+                        }
 
                         <div class="actions" slot="footer">
                             ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies()}">
