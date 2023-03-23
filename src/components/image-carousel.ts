@@ -15,10 +15,8 @@ export class ImageCarousel extends LitElement {
             }
 
             img {
-                object-fit: contain;
                 display: block;
                 width: 100%;
-                height: 400px;
             }
 
             video {
