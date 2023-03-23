@@ -63,8 +63,6 @@ export class PostDetail extends LitElement {
 
             #replies {
                 flex: 2;
-                animation: slideup 0.3s ease-in-out;
-                animation-delay: 0.5s;
             }
 
             #replies h2 {

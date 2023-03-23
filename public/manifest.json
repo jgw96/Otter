@@ -123,7 +123,7 @@
     },
     {
       "name": "Explore",
-      "url": "/search",
+      "url": "/?tab=search",
       "description": "Head straight to the explore page",
       "icons": [
         {
@@ -134,36 +134,24 @@
       ]
     },
     {
-      "name": "My Profile",
-      "url": "/account",
-      "description": "Head straight to your account",
+      "name": "Notifications",
+      "url": "/?tab=notifications",
+      "description": "Head straight to the notifications page",
       "icons": [
         {
-          "src": "assets/shortcuts/eye-outline.png",
+          "src": "assets/shortcuts/notifications-outline.png",
           "sizes": "96x96",
           "type": "image/png"
         }
       ]
     },
     {
-      "name": "My Followers",
-      "url": "/followers",
-      "description": "Head straight to your followers",
+      "name": "Messages",
+      "url": "/?tab=messages",
+      "description": "Head straight to the messages page",
       "icons": [
         {
-          "src": "assets/shortcuts/eye-outline.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
-      "name": "My Following",
-      "url": "/following",
-      "description": "Head straight to your following",
-      "icons": [
-        {
-          "src": "assets/shortcuts/eye-outline.png",
+          "src": "assets/shortcuts/chatbox-outline.png",
           "sizes": "96x96",
           "type": "image/png"
         }
