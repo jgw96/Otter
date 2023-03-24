@@ -143,7 +143,8 @@ export const getInstanceInfo = async () => {
 }
 
 export const initAuth = async (serverURL: string) => {
-    const response = await fetch(`https://mammoth-backend.azurewebsites.net/authenticate?server=https://${serverURL}`, {
+    const redirect_uri = location.origin;
+    const response = await fetch(`https://mammoth-backend.azurewebsites.net/authenticate?server=https://${serverURL}&redirect_uri=${redirect_uri}`, {
         method: 'POST'
     });
 
@@ -164,8 +165,9 @@ export const authToClient = async (code: string) => {
     try {
         token = code;
         localStorage.setItem('token', code);
+        const redirect_uri = location.origin;
 
-        const response = await fetch(`https://mammoth-backend.azurewebsites.net/client?code=${token}&server=${server}`, {
+        const response = await fetch(`https://mammoth-backend.azurewebsites.net/client?code=${token}&server=${server}&redirect_uri=${redirect_uri}`, {
             method: 'POST'
         });
 
