@@ -417,7 +417,6 @@ export class AppHome extends LitElement {
         backdrop-filter: blur(40px);
 
         content-visibility: auto;
-        contain: strict;
       }
 
       sl-card::part(footer) {
