@@ -539,6 +539,27 @@ export class TimelineItem extends LitElement {
         }
     }
 
+    async summarizePost(postContent: string | null) {
+        if (!postContent) return;
+
+        // remove all html tags
+        const text = postContent.replace(/(<([^>]+)>)/gi, "");
+
+        const { summarize } = await import('../services/ai');
+        const summaryData = await summarize(text);
+
+        if (summaryData) {
+            console.log(summaryData);
+
+            this.dispatchEvent(new CustomEvent('summarize', {
+                detail: {
+                    data: summaryData.choices[0].message.content,
+                    tweet: this.tweet
+                }
+            }));
+        }
+    }
+
     render() {
         return html`
         ${this.tweet && this.tweet.sensitive === true ? html`
@@ -586,6 +607,10 @@ export class TimelineItem extends LitElement {
                       }
 
                       <div class="header-actions-block" slot="header">
+                        <sl-icon-button @click="${() => this.summarizePost(this.tweet?.content || null)}" src="/assets/search-outline.svg">
+
+                        </sl-icon-button>
+
                         <sl-icon-button @click="${() => this.shareStatus(this.tweet || null)}" src="/assets/share-social-outline.svg">
                         </sl-icon-button>
 

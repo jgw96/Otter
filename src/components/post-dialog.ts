@@ -413,7 +413,7 @@ export class PostDialog extends LitElement {
 
         if (data && data.choices[0]) {
             const publishText = this.shadowRoot?.querySelector('fluent-text-area') as any;
-            publishText.value = data.choices[0].text.trim();
+            publishText.value = data.choices[0].message.content.trim();
         }
 
         this.generatingPost = false;

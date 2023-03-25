@@ -19,6 +19,18 @@ export const requestMammothBot = async (prompt: string, previousMessages: any[])
     return data;
 };
 
+export const summarize = async (prompt: string) => {
+    const response = await fetch(`/api/summarizeStatus?prompt=${prompt}`, {
+        method: "GET",
+        headers: new Headers({
+            "Content-Type": "application/json",
+        })
+    });
+    const data = await response.json();
+
+    return data;
+}
+
 export const createAPost = async (prompt: string) => {
     const response = await fetch(`/api/HandleAIAction?prompt=${prompt}`, {
         method: "GET",
