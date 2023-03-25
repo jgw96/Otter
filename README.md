@@ -4,7 +4,7 @@
 
 **Not familiar with Mastodon? [Learn More](https://joinmastodon.org/)**
 
-## Status: Currently In Public Alpha
+## Status: Currently In Public Beta
 
 <div>
   <img height="400px" src="/public/assets/screenshots/new/desktop-two.png" />
