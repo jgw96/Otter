@@ -58,6 +58,8 @@ export class AppHome extends LitElement {
 
   @state() attaching: boolean = false;
 
+  @state() summary: string = '';
+
   static get styles() {
     return [
       styles,
@@ -815,7 +817,13 @@ export class AppHome extends LitElement {
   }
 
   showSummary($event: any) {
-    console.log("show summary", $event.detail);
+    console.log("show summary", $event.detail.data);
+    const summary = $event.detail.data;
+    this.summary = summary;
+
+    const dialog = this.shadowRoot?.getElementById('summary-dialog') as any;
+    dialog.show();
+
   }
 
   render() {
@@ -861,6 +869,10 @@ export class AppHome extends LitElement {
       <sl-drawer label="Theming" id="theming-drawer">
         <app-theme @color-chosen="${($event: any) => this.handlePrimaryColor($event.detail.color)}"></app-theme>
       </sl-drawer>
+
+      <sl-dialog id="summary-dialog" label="Summary">
+        ${this.summary}
+      </sl-dialog>
 
       <post-dialog @published="${() => this.handleReload()}"></post-dialog>
 
