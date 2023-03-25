@@ -814,6 +814,10 @@ export class AppHome extends LitElement {
     drawer.show();
   }
 
+  showSummary($event: any) {
+    console.log("show summary", $event.detail);
+  }
+
   render() {
     return html`
 
@@ -1031,7 +1035,7 @@ export class AppHome extends LitElement {
 
 
           <sl-tab-panel name="general">
-            <app-timeline class="homeTimeline" .timelineType="Home"
+            <app-timeline @handle-summary="${($event: any) => this.showSummary($event)}" class="homeTimeline" .timelineType="Home"
               @replies="${($event: any) => this.handleReplies($event.detail.data, $event.detail.id)}"></app-timeline>
           </sl-tab-panel>
           <sl-tab-panel name="media">

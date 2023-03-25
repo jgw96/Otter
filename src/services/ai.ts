@@ -20,6 +20,7 @@ export const requestMammothBot = async (prompt: string, previousMessages: any[])
 };
 
 export const summarize = async (prompt: string) => {
+    // https://wonderful-glacier-07b022d1e.2.azurestaticapps.net/api/summarizeStatus?prompt=Its%20crazy%20how%20twitter%20will%20just%20demand%20justification%20if%20you%20decide%20to%20not%20use%20a%20certain%20tool,%20especially%20by%20people%20who%20are%20not%20even%20working%20on%20the%20project,%20and%20will%20be%20in%20no%20way%20affected%20by%20the%20author%E2%80%99s%20decision.The%20weirdest%20argument%20in%20the%20jsdoc%20vs%20ts%20types%20discussion%20is%20claiming%20that%20writing%20jsdoc%20is%20%22writing%20manual%20types%22.%20Are%20you...%20not%20writing%20the%20types%20when%20you%20use%20TS?%20Wtf%20does%20this%20even%20mean?
     const response = await fetch(`/api/summarizeStatus?prompt=${prompt}`, {
         method: "GET",
         headers: new Headers({

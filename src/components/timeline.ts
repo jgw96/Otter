@@ -391,6 +391,15 @@ export class Timeline extends LitElement {
         await set('timelineType', type);
     }
 
+    handleSummary($event: any) {
+        // keep passing it up
+        this.dispatchEvent(new CustomEvent('handle-summary', {
+            detail: {
+                data: $event.detail.data
+            }
+        }));
+    }
+
     render() {
         return html`
 
@@ -445,7 +454,7 @@ export class Timeline extends LitElement {
         <ul id="mainList" part="list">
             ${guard([this.timeline.length, this.timelineType], () => this.timeline.map((tweet: Post) => html`
                 <li class="timeline-list-item">
-                  <timeline-item tweetID="${tweet.id}" @delete="${() => this.refreshTimeline()}" @analyze="${($event: any) => this.showAnalyze($event.detail.data, $event.detail.imageData, $event.detail.tweet)}" @openimage="${($event: any) => this.showImage($event.detail.imageURL)}" ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
+                  <timeline-item @summarize="${($event: any) => this.handleSummary($event)}" tweetID="${tweet.id}" @delete="${() => this.refreshTimeline()}" @analyze="${($event: any) => this.showAnalyze($event.detail.data, $event.detail.imageData, $event.detail.tweet)}" @openimage="${($event: any) => this.showImage($event.detail.imageURL)}" ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
                 </li>
             `))}
 
