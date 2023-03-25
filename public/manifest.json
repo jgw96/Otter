@@ -167,9 +167,16 @@
       "ms_ac_template": "widgets/widget-template.json",
       "data": "widgets/widget-data.json",
       "type": "application/json",
+      "screenshots": [
+        {
+          "src": "assets/screenshots/new/desktop-one.png",
+          "sizes": "2732x2048",
+          "label": "The widget for Mammoth"
+        }
+      ],
       "icons": [
         {
-          "src": "./favicon-16.png",
+          "src": "assets/icons/favicon.ico",
           "sizes": "16x16"
         }
       ],
