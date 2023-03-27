@@ -55,6 +55,27 @@ const followAUser = async (id) => {
     });
 }
 
+const timelineSync = async () => {
+    return new Promise(async (resolve) => {
+        const accessToken = await self.idbKeyval.get('accessToken');
+        const server = await self.idbKeyval.get('server');
+
+        const timelineResponse = await fetch(`https://${server}/api/v1/timelines/home`, {
+            method: 'GET',
+            headers: new Headers({
+                "Authorization": `Bearer ${accessToken}`
+            })
+        });
+
+        const data = await timelineResponse.json();
+
+        // store timeline in idb
+        await self.idbKeyval.set('timeline-cache', data);
+
+        resolve();
+    });
+}
+
 const getNotifications = async () => {
     // get access token from idb
     const accessToken = await self.idbKeyval.get('accessToken');
@@ -145,10 +166,18 @@ const getNotifications = async () => {
 
 // periodic background sync
 self.addEventListener('periodicsync', async (event) => {
-    // See the "Think before you sync" section for
-    // checks you could perform before syncing.
-    event.waitUntil(getNotifications());
-    // Other logic for different tags as needed.
+    switch (event.tag) {
+        case 'get-notifications':
+            event.waitUntil(getNotifications());
+            break;
+
+        case 'timeline-sync':
+            event.waitUntil(timelineSync());
+            break;
+
+        default:
+            break;
+    }
 });
 
 async function shareTargetHandler({ event }) {
@@ -215,7 +244,7 @@ workbox.routing.registerRoute(
 // runtime caching
 workbox.routing.registerRoute(
     ({ request }) => request.url.includes('/timelines/home'),
-    new workbox.strategies.StaleWhileRevalidate({
+    new workbox.strategies.NetworkFirst({
         cacheName: 'timeline',
         plugins: [
             new workbox.expiration.ExpirationPlugin({

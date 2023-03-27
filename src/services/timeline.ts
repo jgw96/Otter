@@ -1,3 +1,5 @@
+import { get } from "idb-keyval";
+
 let token = localStorage.getItem('token') || '';
 let accessToken = localStorage.getItem('accessToken') || '';
 let server = localStorage.getItem('server') || '';
@@ -11,9 +13,43 @@ export const getHomeTimeline = async () => {
 let lastPageID = "";
 
 export const getPaginatedHomeTimeline = async (type = "home", cache = false) => {
+    console.log("cachedData", cache, type)
 
     if (cache) {
         lastPageID = "";
+
+        const registration: ServiceWorkerRegistration = await navigator.serviceWorker.ready;
+        if ('periodicSync' in registration) {
+            const tags = await (registration.periodicSync as any).getTags();
+
+            console.log("cachedData tags", tags);
+
+            if (tags.includes('timeline-sync')) {
+                const cachedData = await get("timeline-cache");
+
+                console.log("cachedData", cachedData);
+
+                lastPageID = cachedData[cachedData.length - 1].id;
+
+                return cachedData;
+            }
+        }
+    }
+
+    const registration: ServiceWorkerRegistration = await navigator.serviceWorker.ready;
+    if ('periodicSync' in registration) {
+        try {
+            const tags = await (registration.periodicSync as any).getTags();
+
+            if (tags.includes('timeline-sync') === false) {
+                await (registration.periodicSync as any).register('timeline-sync', {
+                    // An interval of one day.
+                    minInterval: 24 * 60 * 60 * 1000,
+                });
+            }
+        } catch (error) {
+            // Periodic background sync cannot be used.
+        }
     }
 
     if (lastPageID && lastPageID.length > 0) {

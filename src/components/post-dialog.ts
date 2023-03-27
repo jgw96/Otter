@@ -402,18 +402,21 @@ export class PostDialog extends LitElement {
 
     async generateStatus() {
         const textarea = this.shadowRoot?.querySelector('fluent-text-field') as any;
+        const publishText = this.shadowRoot?.querySelector('fluent-text-area') as any;
 
         const prompt = textarea.value;
 
-        console.log(prompt, prompt.length);
+        publishText.value = "Generating post...";
 
         this.generatingPost = true;
 
         const data = await createAPost(prompt);
 
         if (data && data.choices[0]) {
-            const publishText = this.shadowRoot?.querySelector('fluent-text-area') as any;
             publishText.value = data.choices[0].message.content.trim();
+        }
+        else {
+            publishText.value = "Failed to generate post.";
         }
 
         this.generatingPost = false;
