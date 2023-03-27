@@ -24,8 +24,9 @@ export const getPaginatedHomeTimeline = async (type = "home", cache = false) => 
 
             console.log("cachedData tags", tags);
 
-            if (tags.includes('timeline-sync')) {
-                const cachedData = await get("timeline-cache");
+            const cachedData = await get("timeline-cache");
+
+            if (tags.includes('timeline-sync') && cachedData && cachedData.length > 0) {
 
                 console.log("cachedData", cachedData);
 
