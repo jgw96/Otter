@@ -107,7 +107,7 @@ export class MediaTimeline extends LitElement {
         super.connectedCallback();
 
         this.loadingData = true;
-        await this.refreshTimeline();
+        // await this.refreshTimeline();
         this.loadingData = false;
 
         // update data when the user scrolls to the bottom of the page
