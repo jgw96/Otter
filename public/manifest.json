@@ -139,7 +139,7 @@
       "description": "Head straight to the notifications page",
       "icons": [
         {
-          "src": "assets/shortcuts/notifications-outline.png",
+          "src": "assets/notifications-outline.png",
           "sizes": "96x96",
           "type": "image/png"
         }
@@ -151,7 +151,7 @@
       "description": "Head straight to the messages page",
       "icons": [
         {
-          "src": "assets/shortcuts/chatbox-outline.png",
+          "src": "assets/chatbox-outline.png",
           "sizes": "96x96",
           "type": "image/png"
         }
