@@ -161,11 +161,17 @@ export class AppLogin extends LitElement {
 
         if (code) {
             const { authToClient } = await import('../services/account');
+
             await authToClient(code);
 
             await router.navigate("/home");
         }
         else if (accessToken && server) {
+            const { getCurrentUser } = await import("../services/account");
+            const currentUser = await getCurrentUser();
+
+           (window as any).appInsights.setAuthenticatedUserContext(currentUser.id);
+
             await router.navigate("/home");
         }
 
@@ -190,6 +196,8 @@ export class AppLogin extends LitElement {
             try {
                 const { initAuth } = await import('../services/account');
                 await initAuth(serverURL);
+
+                // (window as any).appInsights.setAuthenticatedUserContext(validatedId);
             }
             catch (err) {
                 console.error(err);

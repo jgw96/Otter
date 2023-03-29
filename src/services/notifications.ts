@@ -97,6 +97,9 @@ export const subToPush = async () => {
                     tag: "mammoth-subscribe"
                 });
 
+                const currentUser = localStorage.getItem("currentUserID");
+                (window as any).appInsights.trackEvent({name: "subbed_to_notify", properties: {user: currentUser}});
+
             }
         } catch {
             console.log("Periodic Sync could not be registered!");

@@ -115,3 +115,7 @@ export const router = new Router({
       }
     ]
   });
+
+  router.addEventListener('route-changed', ({context}: any) => {
+    (window as any).appInsights.trackPageView(context.url.pathname);
+  });
