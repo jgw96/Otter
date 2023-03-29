@@ -69,9 +69,10 @@ export class RightClick extends LitElement {
         const contextMenu = this.shadowRoot?.getElementById("context-menu");
         const scope = document.querySelector("body");
 
-        console.log("contextMenu", contextMenu, scope);
+        // check if we are on mobile device
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-        if (scope && contextMenu) {
+        if (scope && contextMenu && !isMobile) {
             if (scope && contextMenu) {
                 scope.addEventListener("contextmenu", (event) => {
                     event.preventDefault();
