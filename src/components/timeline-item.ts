@@ -283,10 +283,11 @@ export class TimelineItem extends LitElement {
                 display: flex;
                 justify-content: flex-start;
                 align-items: center;
-                padding-left: 16px;
-                font-size: 18px;
-                color: white;
+                color: var(--primary-color);
                 margin-top: 6px;
+
+                font-size: 14px;
+                gap: 8px;
             }
 
             @media(max-width: 600px) {
@@ -358,10 +359,15 @@ export class TimelineItem extends LitElement {
         }
 
         if(this.tweet && this.tweet.in_reply_to_id !== null) {
+            console.log("getting reply to status", this.tweet)
             const { getAStatus } = await import('../services/timeline');
             const replyStatus = await getAStatus(this.tweet?.in_reply_to_id || "");
 
             this.tweet.reply_to = replyStatus;
+
+            this.requestUpdate();
+
+            console.log("reply status", replyStatus);
         }
 
         window.requestIdleCallback(() => {
@@ -574,8 +580,13 @@ export class TimelineItem extends LitElement {
         </div>
         ` : html`
         ${this.tweet?.reblog === null || this.tweet?.reblog === undefined ? html`
-                ${
+        ${
                     this.tweet?.reply_to !== null && this.tweet?.reply_to !== undefined ? html`
+                      <div id="reply-to">
+                        <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
+                        Thread
+                      </div>
+
                       <sl-card part="card">
                         <user-profile .account="${this.tweet?.reply_to.account}"></user-profile>
                         <div .innerHTML="${this.tweet?.reply_to.content}"></div>
@@ -590,13 +601,8 @@ export class TimelineItem extends LitElement {
                           ${this.settings && this.settings.wellness === false ? html`<fluent-button appearance="lightweight" ?disabled="${this.isReblogged || this.tweet?.reply_to.reblogged}" pill @click="${() => this.reblog(this.tweet?.reply_to.id || "")}">${this.tweet?.reply_to.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></fluent-button>` : null}
                         </div>
                       </sl-card>
-
-                      <div id="reply-to">
-                        <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
-                      </div>
                     ` : null
                 }
-
 
                 <sl-card part="card" class="${classMap({ replyCard: this.tweet?.reply_to ? true : false})}">
                       ${
