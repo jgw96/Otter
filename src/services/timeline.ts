@@ -52,7 +52,7 @@ export const getPaginatedHomeTimeline = async (type = "home", cache = false) => 
     if (lastPageID && lastPageID.length > 0) {
         let accessToken = localStorage.getItem('accessToken') || '';
 
-        const response = await fetch(`https://${server}/api/v1/timelines/${type}?limit=10&max_id=${lastPageID}`, {
+        const response = await fetch(`https://${server}/api/v1/timelines/${type}?limit=5&max_id=${lastPageID}`, {
             method: 'GET',
             headers: new Headers({
                 "Authorization": `Bearer ${accessToken}`
