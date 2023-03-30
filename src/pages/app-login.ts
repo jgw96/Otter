@@ -167,12 +167,17 @@ export class AppLogin extends LitElement {
             await router.navigate("/home");
         }
         else if (accessToken && server) {
-            const { getCurrentUser } = await import("../services/account");
-            const currentUser = await getCurrentUser();
-
-           (window as any).appInsights.setAuthenticatedUserContext(currentUser.id);
-
             await router.navigate("/home");
+
+            try {
+                const { getCurrentUser } = await import("../services/account");
+                const currentUser = await getCurrentUser();
+
+               (window as any).appInsights.setAuthenticatedUserContext(currentUser.id);
+            }
+            catch (err) {
+                console.error(err);
+            }
         }
 
         window.requestIdleCallback(() => {
