@@ -76,6 +76,8 @@ export const getCurrentUser = async () => {
         const data = await response.json();
 
         currentUser = data;
+
+        localStorage.setItem("currentUserID", currentUser.id);
         return data;
     }
     catch (err) {

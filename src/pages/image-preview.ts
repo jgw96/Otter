@@ -15,7 +15,6 @@ export class ImagePreview extends LitElement {
 
             img {
                 view-transition-name: image-preview;
-                max-width: 100%;
             }
 
             main {

@@ -13,8 +13,6 @@ export const getHomeTimeline = async () => {
 let lastPageID = "";
 
 export const getPaginatedHomeTimeline = async (type = "home", cache = false) => {
-    console.log("cachedData", cache, type)
-
     if (cache) {
         lastPageID = "";
 
@@ -27,8 +25,6 @@ export const getPaginatedHomeTimeline = async (type = "home", cache = false) => 
             const cachedData = await get("timeline-cache");
 
             if (tags.includes('timeline-sync') && cachedData && cachedData.length > 0 && type === "home") {
-
-                console.log("cachedData", cachedData);
 
                 lastPageID = cachedData[cachedData.length - 1].id;
 
@@ -56,7 +52,7 @@ export const getPaginatedHomeTimeline = async (type = "home", cache = false) => 
     if (lastPageID && lastPageID.length > 0) {
         let accessToken = localStorage.getItem('accessToken') || '';
 
-        const response = await fetch(`https://${server}/api/v1/timelines/${type}?limit=10&max_id=${lastPageID}`, {
+        const response = await fetch(`https://${server}/api/v1/timelines/${type}?limit=5&max_id=${lastPageID}`, {
             method: 'GET',
             headers: new Headers({
                 "Authorization": `Bearer ${accessToken}`
@@ -166,13 +162,16 @@ export const getHashtagTimeline = async (hashtag: string) => {
 }
 
 export const getAStatus = async (id: string) => {
+    console.log("reply id", id)
     // get a specific status
-    const response = await fetch(server + '/api/v1/statuses/' + id, {
+    const response = await fetch('https://' + server + '/api/v1/statuses/' + id, {
         method: 'GET',
         headers: new Headers({
             'Authorization': `Bearer ${accessToken}`
         })
     });
+
+    console.log("reply response", response);
 
     const data = await response.json();
 

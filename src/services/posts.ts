@@ -67,6 +67,9 @@ export async function publishPost(post: string, ids?: Array<string>, sensitive: 
         body: formData
     });
 
+    const currentUser = localStorage.getItem("currentUserID");
+    (window as any).appInsights.trackEvent({name: "posted", properties: {user: currentUser}});
+
     const data = await response.json();
     return data;
 }
@@ -86,6 +89,9 @@ export async function replyToPost(id: string, content: string) {
         }),
         body: formData
     });
+
+    const currentUser = localStorage.getItem("currentUserID");
+    (window as any).appInsights.trackEvent({name: "replied_to_post", properties: {user: currentUser}});
 
     const data = await response.json();
     return data;
