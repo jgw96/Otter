@@ -25,6 +25,7 @@ import '../components/notifications';
 import '../components/app-theme';
 import '../components/right-click';
 import '../components/mammoth-bot';
+import '../components/sponsor-button';
 
 import './app-messages';
 import './search-page';
@@ -133,6 +134,12 @@ export class AppHome extends LitElement {
         flex-direction: column;
         gap: 12px;
         align-items: end;
+
+        margin-top: 8px;
+      }
+
+      .sponsor a {
+        color: white;
       }
 
       #no-replies {
@@ -543,6 +550,12 @@ export class AppHome extends LitElement {
       left: 12px;
     }
 
+    @media(prefers-color-scheme: light) {
+      .sponsor a {
+        color: black;
+      }
+    }
+
     @media(max-width: 600px) {
       sl-tab-group::part(tabs) {
         width: initial;
@@ -861,9 +874,11 @@ export class AppHome extends LitElement {
       <app-header @open-bot-drawer="${() => this.openBotDrawer()}" @open-settings="${() => this.openSettingsDrawer()}" @open-theming="${() => this.openThemingDrawer()}">
       </app-header>
 
-      <fluent-button appearance="lightweight" @click="${() => this.doFocusMode()}" circle size="small" id="focusModeButton">
+      <!-- <fluent-button appearance="lightweight" @click="${() => this.doFocusMode()}" circle size="small" id="focusModeButton">
         <sl-icon src="/assets/eye-outline.svg"></sl-icon>
-      </fluent-button>
+      </fluent-button> -->
+
+      <sponsor-button id="focusModeButton"></sponsor-button>
 
       <sl-drawer label="Theming" id="theming-drawer">
         <app-theme @color-chosen="${($event: any) => this.handlePrimaryColor($event.detail.color)}"></app-theme>
@@ -962,6 +977,11 @@ export class AppHome extends LitElement {
           sponsoring me on GitHub!
           <iframe src="https://github.com/sponsors/jgw96/button" title="Sponsor jgw96" height="32" width="114"
             style="border: 0; border-radius: 6px;"></iframe>
+        </div>
+
+        <div class="sponsor">
+          Dont have a Github? You can also support me on Patreon!
+          <a href="https://www.patreon.com/lilpwa" target="_blank">patreon.com/lilpwa</a>
         </div>
 
         ${this.instanceInfo ? html`

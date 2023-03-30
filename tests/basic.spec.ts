@@ -19,7 +19,7 @@ test('ensure home page loads with server and token', async ({ page }) => {
     // add token to local storage
     await page.evaluate(() => {
         localStorage.setItem("server", "https://tech.lgbt");
-        localStorage.setItem("accessToken", "eXQJuum5bGmy5xkB_Xzx19_FThAmhI0W-dbBQp671CU");
+        localStorage.setItem("accessToken", "84oZCLxHFOUEP_rLET5r1FcRvNhGYfWoahtSSq4ZQ6I");
     });
 
     await page.reload();
@@ -33,7 +33,7 @@ test('ensure home page loads with server and token', async ({ page }) => {
 test('ensure timeline loads on home page', async ({ page }) => {
     await page.evaluate(() => {
         localStorage.setItem("server", "https://tech.lgbt");
-        localStorage.setItem("accessToken", "eXQJuum5bGmy5xkB_Xzx19_FThAmhI0W-dbBQp671CU");
+        localStorage.setItem("accessToken", "84oZCLxHFOUEP_rLET5r1FcRvNhGYfWoahtSSq4ZQ6I");
     });
 
     await page.reload();
@@ -47,7 +47,7 @@ test('ensure timeline loads on home page', async ({ page }) => {
 test('ensure that you can switch tabs, such as to the notifications tab', async ({ page }) => {
     await page.evaluate(() => {
         localStorage.setItem("server", "https://tech.lgbt");
-        localStorage.setItem("accessToken", "eXQJuum5bGmy5xkB_Xzx19_FThAmhI0W-dbBQp671CU");
+        localStorage.setItem("accessToken", "84oZCLxHFOUEP_rLET5r1FcRvNhGYfWoahtSSq4ZQ6I");
     });
 
     await page.reload();
