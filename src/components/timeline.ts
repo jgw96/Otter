@@ -350,9 +350,9 @@ export class Timeline extends LitElement {
 
         if ("startViewTransition" in document) {
             //@ts-ignore
-            document.startViewTransition(() => {
-                router.navigate(`/home/img-preview?src=${imageURL}`);
-            })
+            await document.startViewTransition();
+            router.navigate(`/home/img-preview?src=${imageURL}`);
+
         }
         else {
             router.navigate(`/home/img-preview?src=${imageURL}`);
