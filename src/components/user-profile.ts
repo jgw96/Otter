@@ -125,6 +125,7 @@ export class UserProfile extends LitElement {
         if ("startViewTransition" in document) {
             // @ts-ignore
             await document.startViewTransition();
+router.navigate(`/account?id=${this.account?.id}`);
             setTimeout(() => {
                 // @ts-ignore
                 this.shadowRoot!.querySelector(".headerBlock")!.viewTransitionName = '';
