@@ -18,12 +18,12 @@ export const router = new Router({
     ],
     routes: [
       {
-        path: '',
+        path: '/',
         title: 'login',
         render: () => html`<app-login></app-login>`
       },
       {
-        path: 'home',
+        path: '/home',
         title: 'home',
         plugins: [
           lazy(() => import('../pages/app-home.js')),
@@ -31,7 +31,7 @@ export const router = new Router({
         render: () => html`<app-home></app-home>`
       },
       {
-        path: 'search',
+        path: '/search',
         title: 'search',
         plugins: [
           lazy(() => import('../pages/search-page.js')),
@@ -39,7 +39,7 @@ export const router = new Router({
         render: () => html`<search-page></search-page>`
       },
       {
-        path: "account",
+        path: "/account",
         title: "profile",
         plugins: [
           lazy(() => import('../pages/app-profile.js')),
@@ -50,7 +50,7 @@ export const router = new Router({
 
       },
       {
-        path: 'followers',
+        path: '/followers',
         title: 'followers',
         plugins: [
           lazy(() => import('../pages/app-followers.js')),
@@ -58,7 +58,7 @@ export const router = new Router({
         render: () => html`<app-followers></app-followers>`
       },
       {
-        path: 'about',
+        path: '/about',
         title: 'about',
         plugins: [
           lazy(() => import('../pages/app-about/app-about.js')),
@@ -66,7 +66,7 @@ export const router = new Router({
         render: () => html`<app-about></app-about>`
       },
       {
-        path: 'messages',
+        path: '/messages',
         title: 'messages',
         plugins: [
           lazy(() => import('../pages/app-messages.js')),
@@ -74,7 +74,7 @@ export const router = new Router({
         render: () => html`<app-messages></app-messages>`
       },
       {
-        path: 'following',
+        path: '/following',
         title: 'following',
         plugins: [
           lazy(() => import('../pages/app-following.js')),
@@ -82,7 +82,7 @@ export const router = new Router({
         render: () => html`<app-following></app-following>`
       },
       {
-        path: 'hashtag',
+        path: '/hashtag',
         title: 'hashtags',
         plugins: [
           lazy(() => import('../pages/app-following.js')),
@@ -90,7 +90,7 @@ export const router = new Router({
         render: () => html`<app-hashtags></app-hashtags>`
       },
       {
-        path: '/post',
+        path: '/home/post',
         title: 'post',
         plugins: [
           lazy(() => import('../pages/post-detail.js')),
@@ -117,5 +117,7 @@ export const router = new Router({
   });
 
   router.addEventListener('route-changed', ({context}: any) => {
-    (window as any).appInsights.trackPageView(context.url.pathname);
+    if ((window as any).appInsights) {
+      (window as any).appInsights.trackPageView(context.url.pathname);
+    }
   });

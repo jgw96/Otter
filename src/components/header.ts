@@ -2,7 +2,7 @@ import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
 import { fluentButton, provideFluentDesignSystem } from '@fluentui/web-components';
-import { router } from '../utils/router';
+
 import { enableVibrate } from '../utils/handle-vibrate';
 provideFluentDesignSystem().register(fluentButton());
 @customElement('app-header')
@@ -130,8 +130,17 @@ export class AppHeader extends LitElement {
     this.dispatchEvent(new CustomEvent('open-bot-drawer'));
   }
 
-  goBack() {
-    router.navigate('/home');
+  async goBack() {
+    if ("navigation" in window) {
+      // @ts-ignore
+      if (window.navigation.canGoBack) {
+        // @ts-ignore
+        await window.navigation.back();
+      }
+    }
+    else {
+      window.history.back();
+    }
   }
 
   render() {

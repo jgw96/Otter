@@ -118,20 +118,17 @@ export class UserProfile extends LitElement {
         })
     }
 
-    openUser() {
+    async openUser() {
         // @ts-ignore
         this.shadowRoot!.querySelector(".headerBlock")!.viewTransitionName = 'profile-image';
 
         if ("startViewTransition" in document) {
             // @ts-ignore
-            document.startViewTransition(async () => {
-                await router.navigate(`/account?id=${this.account?.id}`);
-
-                setTimeout(() => {
-                    // @ts-ignore
-                    this.shadowRoot!.querySelector(".headerBlock")!.viewTransitionName = '';
-                }, 800);
-            });
+            await document.startViewTransition();
+            setTimeout(() => {
+                // @ts-ignore
+                this.shadowRoot!.querySelector(".headerBlock")!.viewTransitionName = '';
+            }, 800);
         }
         else {
             router.navigate(`/account?id=${this.account?.id}`);

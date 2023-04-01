@@ -45,7 +45,7 @@ export class ImageCarousel extends LitElement {
         `
     ];
 
-    openInBox(imageURL: string) {
+    async openInBox(imageURL: string) {
         console.log("show image", imageURL);
 
         if ("startViewTransition" in document) {
@@ -53,14 +53,13 @@ export class ImageCarousel extends LitElement {
             this.style.viewTransitionName = "image-preview";
 
             //@ts-ignore
-            document.startViewTransition(() => {
-                router.navigate(`/imagepreview?src=${imageURL}`);
+            await document.startViewTransition();
+            router.navigate(`/imagepreview?src=${imageURL}`);
 
                 setTimeout(() => {
                     // @ts-ignore
                     this.style.viewTransitionName = '';
                 }, 800)
-            })
         }
         else {
             router.navigate(`/imagepreview?src=${imageURL}`);

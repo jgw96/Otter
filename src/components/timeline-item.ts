@@ -425,7 +425,7 @@ export class TimelineItem extends LitElement {
       await this.openPost();
     }
 
-    openInBox(imageURL: string) {
+    async openInBox(imageURL: string) {
         console.log("show image", imageURL);
 
         if ("startViewTransition" in document) {
@@ -433,14 +433,14 @@ export class TimelineItem extends LitElement {
             this.style.viewTransitionName = "image-preview";
 
             //@ts-ignore
-            document.startViewTransition(() => {
-                router.navigate(`/imagepreview?src=${imageURL}`);
+            await document.startViewTransition();
+            router.navigate(`/imagepreview?src=${imageURL}`);
 
                 setTimeout(() => {
                     // @ts-ignore
                     this.style.viewTransitionName = '';
                 }, 800)
-            })
+
         }
         else {
             router.navigate(`/imagepreview?src=${imageURL}`);
@@ -494,28 +494,43 @@ export class TimelineItem extends LitElement {
     }
 
     async openPost() {
+        // @ts-ignore
         if ("startViewTransition" in document) {
             // @ts-ignore
             this.style.viewTransitionName = 'card';
 
             // @ts-ignore
-            document.startViewTransition(async () => {
-                if (this.tweet) {
-                    const serialized = new URLSearchParams(JSON.stringify(this.tweet)).toString();
+            // document.startViewTransition(async () => {
+            //     if (this.tweet) {
+            //         const serialized = new URLSearchParams(JSON.stringify(this.tweet)).toString();
 
-                    await router.navigate(`/post?${serialized}`);
+            //         await router.navigate(`/home/post?${serialized}`);
 
-                    setTimeout(() => {
-                        // @ts-ignore
-                        this.style.viewTransitionName = '';
-                    }, 800)
-                }
-            });
+            //         setTimeout(() => {
+            //             // @ts-ignore
+            //             this.style.viewTransitionName = '';
+            //         }, 800)
+            //     }
+            // });
+            await document.startViewTransition();
+
+            if (this.tweet) {
+                        const serialized = new URLSearchParams(JSON.stringify(this.tweet)).toString();
+
+                        await router.navigate(`/home/post?${serialized}`);
+
+                        setTimeout(() => {
+                            // @ts-ignore
+                            this.style.viewTransitionName = '';
+                        }, 800)
+                    }
+
+
         }
         else {
             const serialized = new URLSearchParams(JSON.stringify(this.tweet)).toString();
 
-            await router.navigate(`/post?${serialized}`);
+            await router.navigate(`/home/post?${serialized}`);
         }
     }
 
@@ -638,7 +653,7 @@ export class TimelineItem extends LitElement {
                       </div>
 
                         <user-profile .account="${this.tweet?.account}"></user-profile>
-                        <div @click="${() => this.openPost()}" .innerHTML="${this.tweet?.content}"></div>
+                        <div @click="${this.openPost}" .innerHTML="${this.tweet?.content}"></div>
 
                         ${
                             this.tweet && this.tweet.card ? html`
