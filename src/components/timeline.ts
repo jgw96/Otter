@@ -37,10 +37,6 @@ export class Timeline extends LitElement {
                 display: block;
             }
 
-            fluent-combobox {
-                margin-bottom: 12px;
-            }
-
             #mainList li {
                 width: 100%;
             }
@@ -55,6 +51,17 @@ export class Timeline extends LitElement {
 
                 align-items: center;
                 justify-content: space-between;
+            }
+
+            fluent-button {
+                border: none;
+            }
+
+            #timeline-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
             }
 
             @media(prefers-color-scheme: dark) {
@@ -445,11 +452,18 @@ export class Timeline extends LitElement {
             ${ this.imgPreview ? html`<img .src="${this.imgPreview}">` : null}
         </sl-dialog>
 
+        <div id="timeline-header">
+            <fluent-combobox .value="${this.timelineType}" @change="${($event: any) => this.changeTimelineType($event.target.value)}" placeholder="Home">
+                <fluent-option value="home">home</fluent-option>
+                <fluent-option value="public">public</fluent-option>
+            </fluent-combobox>
 
-        <fluent-combobox .value="${this.timelineType}" @change="${($event: any) => this.changeTimelineType($event.target.value)}" placeholder="Home">
-            <fluent-option value="home">home</fluent-option>
-            <fluent-option value="public">public</fluent-option>
-        </fluent-combobox>
+            <sl-button size="small" @click="${() => this.refreshTimeline(true)}">
+                <sl-icon src="/assets/refresh-circle-outline.svg"></fluent-icon>
+            </sl-button>
+        </div>
+
+
 
         <ul id="mainList" part="list">
             <!-- ${guard([this.timeline.length, this.timelineType], () => this.timeline.map((tweet: Post) => html`
