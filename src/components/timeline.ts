@@ -205,10 +205,13 @@ export class Timeline extends LitElement {
                     padding: 0 10px;
                 }
 
+                #timeline-header {
+                    padding-left: 12px;
+                    padding-right: 12px;
+                }
+
                 fluent-combobox {
-                    margin-left: 10px;
                     height: 2.5em;
-                    width: 95%;
                 }
 
                 #analyze ul {
