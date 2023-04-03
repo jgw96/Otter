@@ -329,7 +329,7 @@ export class TimelineItem extends LitElement {
         `
     ];
 
-    async firstUpdated( ) {
+    async firstUpdated() {
         this.settings = await getSettings();
 
         this.currentUser = await getCurrentUser();
@@ -353,12 +353,12 @@ export class TimelineItem extends LitElement {
                     }
                 });
             }
-            , options);
+                , options);
 
             observer.observe(this.shadowRoot?.querySelector('sl-card') as Element);
         }
 
-        if(this.tweet && this.tweet.in_reply_to_id !== null) {
+        if (this.tweet && this.tweet.in_reply_to_id !== null) {
             console.log("getting reply to status", this.tweet)
             const { getAStatus } = await import('../services/timeline');
             const replyStatus = await getAStatus(this.tweet?.in_reply_to_id || "");
@@ -385,7 +385,7 @@ export class TimelineItem extends LitElement {
 
         this.isBoosted = true;
 
-        this.tweet && this.tweet.reblog ? this.tweet.reblog.favourites_count++ :this.tweet ? this.tweet.favourites_count++ : null;
+        this.tweet && this.tweet.reblog ? this.tweet.reblog.favourites_count++ : this.tweet ? this.tweet.favourites_count++ : null;
 
         // fire custom event
         this.dispatchEvent(new CustomEvent('favorite', {
@@ -403,7 +403,7 @@ export class TimelineItem extends LitElement {
 
         this.isReblogged = true;
 
-        this.tweet && this.tweet.reblog ? this.tweet.reblog.reblogs_count++ :this.tweet ? this.tweet.reblogs_count++ : null;
+        this.tweet && this.tweet.reblog ? this.tweet.reblog.reblogs_count++ : this.tweet ? this.tweet.reblogs_count++ : null;
 
         // fire custom event
         this.dispatchEvent(new CustomEvent('reblog', {
@@ -422,7 +422,7 @@ export class TimelineItem extends LitElement {
     }
 
     async replies() {
-      await this.openPost();
+        await this.openPost();
     }
 
     async openInBox(imageURL: string) {
@@ -436,10 +436,10 @@ export class TimelineItem extends LitElement {
             await document.startViewTransition();
             router.navigate(`/imagepreview?src=${imageURL}`);
 
-                setTimeout(() => {
-                    // @ts-ignore
-                    this.style.viewTransitionName = '';
-                }, 800)
+            setTimeout(() => {
+                // @ts-ignore
+                this.style.viewTransitionName = '';
+            }, 800)
 
         }
         else {
@@ -457,7 +457,7 @@ export class TimelineItem extends LitElement {
             const imageURL = tweet.reblog ? tweet.reblog.media_attachments[0] ? tweet.reblog.media_attachments[0].preview_url : null : tweet.media_attachments[0] ? tweet.media_attachments[0]?.preview_url : null;
 
             if (imageURL) {
-            imageData = await analyzeStatusImage(imageURL);
+                imageData = await analyzeStatusImage(imageURL);
             }
 
             if (data) {
@@ -515,15 +515,15 @@ export class TimelineItem extends LitElement {
             await document.startViewTransition();
 
             if (this.tweet) {
-                        const serialized = new URLSearchParams(JSON.stringify(this.tweet)).toString();
+                const serialized = new URLSearchParams(JSON.stringify(this.tweet)).toString();
 
-                        await router.navigate(`/home/post?${serialized}`);
+                await router.navigate(`/home/post?${serialized}`);
 
-                        setTimeout(() => {
-                            // @ts-ignore
-                            this.style.viewTransitionName = '';
-                        }, 800)
-                    }
+                setTimeout(() => {
+                    // @ts-ignore
+                    this.style.viewTransitionName = '';
+                }, 800)
+            }
 
 
         }
@@ -581,6 +581,27 @@ export class TimelineItem extends LitElement {
         }
     }
 
+    async translatePost(postContent: string | null) {
+        if (!postContent) return;
+
+        // remove all html tags
+        const text = postContent.replace(/(<([^>]+)>)/gi, "");
+
+        const { translate } = await import('../services/ai');
+        const translateData = await translate(text);
+
+        if (translateData) {
+            console.log(translateData);
+
+            this.dispatchEvent(new CustomEvent('summarize', {
+                detail: {
+                    data: translateData.choices[0].message.content,
+                    tweet: this.tweet
+                }
+            }));
+        }
+    }
+
     render() {
         return html`
         ${this.tweet && this.tweet.sensitive === true ? html`
@@ -595,8 +616,7 @@ export class TimelineItem extends LitElement {
         </div>
         ` : html`
         ${this.tweet?.reblog === null || this.tweet?.reblog === undefined ? html`
-        ${
-                    this.tweet?.reply_to !== null && this.tweet?.reply_to !== undefined ? html`
+        ${this.tweet?.reply_to !== null && this.tweet?.reply_to !== undefined ? html`
                       <div id="reply-to">
                         <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
                         Thread
@@ -617,46 +637,50 @@ export class TimelineItem extends LitElement {
                         </div>
                       </sl-card>
                     ` : null
-                }
+                    }
 
-                <sl-card part="card" class="${classMap({ replyCard: this.tweet?.reply_to ? true : false})}">
-                      ${
-                        this.tweet && this.tweet.media_attachments.length > 0 ? html`
+                <sl-card part="card" class="${classMap({ replyCard: this.tweet?.reply_to ? true : false })}">
+                      ${this.tweet && this.tweet.media_attachments.length > 0 ? html`
                           <image-carousel .images="${this.tweet.media_attachments}" slot="image">
                           </image-carousel>
                         ` : html``
-                      }
+                    }
 
                       <div class="header-actions-block" slot="header">
-                        <sl-icon-button @click="${() => this.summarizePost(this.tweet?.content || null)}" src="/assets/search-outline.svg">
+                        <!-- <sl-icon-button @click="${() => this.summarizePost(this.tweet?.content || null)}" src="/assets/search-outline.svg">
 
-                        </sl-icon-button>
+                        </sl-icon-button> -->
+
+                        <sl-dropdown>
+                            <sl-button size="small" pill slot="trigger" caret>AI</sl-button>
+                            <sl-menu>
+                                <sl-menu-item @click="${() => this.summarizePost(this.tweet?.content || null)}">Summarize Post</sl-menu-item>
+                                <sl-menu-item>Translate Post (coming soon)</sl-menu-item>
+                            </sl-menu>
+                        </sl-dropdown>
 
                         <sl-icon-button @click="${() => this.shareStatus(this.tweet || null)}" src="/assets/share-social-outline.svg">
                         </sl-icon-button>
 
-                        ${
-                            this.tweet?.account.acct === this.currentUser?.acct ? html`
+                        ${this.tweet?.account.acct === this.currentUser?.acct ? html`
                             <sl-icon-button @click="${() => this.deleteStatus()}" src="/assets/trash-outline.svg">
                             </sl-icon-button>
                             ` : null
-                        }
+                    }
 
                         <span>
-                            ${
-                                new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(
-                                    Math.floor(-(new Date() as any - (new Date(this.tweet?.created_at || "") as any)) / 1000 / 60),
-                                    'minutes'
-                                  )
-                                }
+                            ${new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(
+                        Math.floor(-(new Date() as any - (new Date(this.tweet?.created_at || "") as any)) / 1000 / 60),
+                        'minutes'
+                    )
+                    }
                         </span>
                       </div>
 
                         <user-profile .account="${this.tweet?.account}"></user-profile>
                         <div @click="${this.openPost}" .innerHTML="${this.tweet?.content}"></div>
 
-                        ${
-                            this.tweet && this.tweet.card ? html`
+                        ${this.tweet && this.tweet.card ? html`
                               <div @click="${() => this.openLinkCard(this.tweet?.card?.url || "")}" class="link-card">
                                 <img src="${this.tweet.card.image || "/assets/bookmark-outline.svg"}" alt="${this.tweet.card.title}" />
 
@@ -666,7 +690,7 @@ export class TimelineItem extends LitElement {
                                 </div>
                               </div>
                             ` : null
-                        }
+                    }
 
                         <div class="actions" slot="footer">
                             ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies()}">
@@ -680,12 +704,11 @@ export class TimelineItem extends LitElement {
                     ` : html`
                     <sl-card slot="card">
 
-                      ${
-                        this.tweet.reblog && this.tweet.reblog.media_attachments.length > 0 ? html`
+                      ${this.tweet.reblog && this.tweet.reblog.media_attachments.length > 0 ? html`
                          <image-carousel .images="${this.tweet.reblog.media_attachments}" slot="image">
                       </image-carousel>
                         ` : html``
-                      }
+                    }
 
                         <div class="header-block" slot="header">
 
