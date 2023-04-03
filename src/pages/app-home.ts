@@ -884,7 +884,7 @@ export class AppHome extends LitElement {
         <app-theme @color-chosen="${($event: any) => this.handlePrimaryColor($event.detail.color)}"></app-theme>
       </sl-drawer>
 
-      <sl-dialog id="summary-dialog" label="Summary">
+      <sl-dialog id="summary-dialog" label="">
         ${this.summary}
       </sl-dialog>
 

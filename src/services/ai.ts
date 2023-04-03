@@ -32,6 +32,18 @@ export const summarize = async (prompt: string) => {
     return data;
 }
 
+export const translate = async (prompt: string, language: string = "en-us") => {
+    const response = await fetch(`/api/translateStatus?prompt=${prompt}&language=${language}`, {
+        method: "GET",
+        headers: new Headers({
+            "Content-Type": "application/json",
+        })
+    });
+    const data = await response.json();
+
+    return data;
+}
+
 export const createAPost = async (prompt: string) => {
     const response = await fetch(`/api/HandleAIAction?prompt=${prompt}`, {
         method: "GET",
