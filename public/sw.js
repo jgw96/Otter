@@ -164,6 +164,60 @@ const getNotifications = async () => {
 
 }
 
+self.addEventListener('push', async (event) => {
+    const data = event.data.json();
+
+    // show badge
+    navigator.setAppBadge(data.length);
+
+    // build message for notification
+    let message = '';
+    let actions = [];
+    let title = 'Mammoth';
+    // if data[0].type === 'mention' || 'reblog' || 'favourite'
+    switch (data[0].type) {
+        case 'mention':
+            message = `${data[0].status.content}`;
+            title = `${data[0].account.display_name} mentioned you`
+
+            break;
+        case 'reblog':
+            message = `${data[0].account.display_name} boosted your post`;
+
+            break;
+        case 'favourite':
+            message = `${data[0].account.display_name} favorited your post`;
+
+            break;
+
+        case 'follow':
+            message = `${data[0].account.display_name} followed you`;
+            title = 'New Follower';
+            actions = [{
+                action: 'follow',
+                title: 'Follow back'
+            }];
+
+            break;
+
+        default:
+            message = `You have ${data.length} new notifications`;
+            break;
+    }
+
+    // show notification
+    self.registration.showNotification('Mammoth', {
+        body: message,
+        icon: '/assets/icons/512-icon.png',
+        tag: 'mammoth',
+        renotify: false,
+        actions: actions,
+        data: {
+            url: data[0].account.url
+        }
+    });
+})
+
 // periodic background sync
 self.addEventListener('periodicsync', async (event) => {
     switch (event.tag) {

@@ -70,10 +70,37 @@ export const subToPush = async () => {
             "Authorization": `Bearer ${accessToken}`,
             "Content-Type": "application/json"
         }),
-        body: JSON.stringify(subscription)
+        body: JSON.stringify({
+            subscription: subscription,
+            data: {
+                alerts: {
+                    follow: true,
+                    reblog: true,
+                    favourite: true,
+                    mention: true,
+                },
+                policy: "all"
+            }
+        })
     });
     const res = await response.json();
     console.log('subToPush', res);
+
+    // ask for permission to show notifications
+    const permission = await Notification.requestPermission();
+    if (permission === "granted") {
+        // show notification
+        registration?.showNotification("Mammoth", {
+            body: "You have successfully subscribed to push notifications!",
+            icon: "/assets/icons/128-icon.png",
+            vibrate: [200, 100, 200],
+            tag: "mammoth-subscribe"
+        });
+
+        const currentUser = localStorage.getItem("currentUserID");
+        (window as any).appInsights.trackEvent({ name: "subbed_to_notify", properties: { user: currentUser } });
+
+    }
 
     if (res) {
         try {
@@ -85,22 +112,6 @@ export const subToPush = async () => {
             await registration.periodicSync.register("get-notifications", {
                 minInterval,
             });
-
-            // ask for permission to show notifications
-            const permission = await Notification.requestPermission();
-            if (permission === "granted") {
-                // show notification
-                registration?.showNotification("Mammoth", {
-                    body: "You have successfully subscribed to push notifications!",
-                    icon: "/assets/icons/128-icon.png",
-                    vibrate: [200, 100, 200],
-                    tag: "mammoth-subscribe"
-                });
-
-                const currentUser = localStorage.getItem("currentUserID");
-                (window as any).appInsights.trackEvent({name: "subbed_to_notify", properties: {user: currentUser}});
-
-            }
         } catch {
             console.log("Periodic Sync could not be registered!");
         }
