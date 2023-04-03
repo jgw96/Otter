@@ -655,7 +655,7 @@ export class TimelineItem extends LitElement {
                             <sl-button size="small" pill slot="trigger" caret>AI</sl-button>
                             <sl-menu>
                                 <sl-menu-item @click="${() => this.summarizePost(this.tweet?.content || null)}">Summarize Post</sl-menu-item>
-                                <sl-menu-item>Translate Post (coming soon)</sl-menu-item>
+                                <sl-menu-item @click="${() => this.translatePost(this.tweet?.content || null)}">Translate Post (coming soon)</sl-menu-item>
                             </sl-menu>
                         </sl-dropdown>
 
