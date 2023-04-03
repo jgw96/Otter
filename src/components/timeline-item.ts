@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit';
+import { LitElement, html, css, PropertyValueMap } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js'
 import { classMap } from 'lit/directives/class-map.js';
 
@@ -27,6 +27,7 @@ import { enableVibrate } from '../utils/handle-vibrate';
 export class TimelineItem extends LitElement {
     @property({ type: Object }) tweet: Post | undefined;
     @property({ type: Boolean }) show: boolean = false;
+    @property({ type: Boolean }) showreply: boolean = false;
 
     @state() isBoosted = false;
     @state() isReblogged = false;
@@ -90,6 +91,8 @@ export class TimelineItem extends LitElement {
 
                 background: #ffffff0d;
                 border-radius: 6px;
+
+                overflow: hidden;
             }
 
             .link-card h4 {
@@ -377,6 +380,23 @@ export class TimelineItem extends LitElement {
         })
     }
 
+    async attributeChangedCallback(name: string, _old: string | null, value: string | null) {
+        super.attributeChangedCallback(name, _old, value);
+
+        console.log('attribute changed', name, value)
+
+        if (name === 'showreply') {
+            console.log('here');
+            this.showreply = value === 'true';
+        }
+    }
+
+    protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+        super.updated(_changedProperties);
+
+        console.log("updated", _changedProperties, _changedProperties.get("showreply"));
+    }
+
     async favorite(id: string) {
         console.log("favorite", id);
 
@@ -616,7 +636,7 @@ export class TimelineItem extends LitElement {
         </div>
         ` : html`
         ${this.tweet?.reblog === null || this.tweet?.reblog === undefined ? html`
-        ${this.tweet?.reply_to !== null && this.tweet?.reply_to !== undefined ? html`
+        ${this.tweet?.reply_to !== null && this.tweet?.reply_to !== undefined && this.show === true ? html`
                       <div id="reply-to">
                         <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
                         Thread
@@ -654,8 +674,8 @@ export class TimelineItem extends LitElement {
                         <sl-dropdown>
                             <sl-button size="small" pill slot="trigger" caret>AI</sl-button>
                             <sl-menu>
-                                <sl-menu-item @click="${() => this.summarizePost(this.tweet?.content || null)}">Summarize Post</sl-menu-item>
-                                <sl-menu-item @click="${() => this.translatePost(this.tweet?.content || null)}">Translate Post (coming soon)</sl-menu-item>
+                                <sl-menu-item @click="${() => this.summarizePost(this.tweet?.content || null)}">Summarize</sl-menu-item>
+                                <sl-menu-item @click="${() => this.translatePost(this.tweet?.content || null)}">Translate</sl-menu-item>
                             </sl-menu>
                         </sl-dropdown>
 
