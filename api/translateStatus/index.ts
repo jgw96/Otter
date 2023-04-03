@@ -7,11 +7,20 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     });
     const openai = new OpenAIApi(configuration);
 
-    const response = await openai.createCompletion({
+    const response = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
-        prompt: `Summarize the following post from Mastodon into ${req.query.language}: ${req.query.prompt}`,
-        max_tokens: 50,
-        temperature: 0,
+        messages: [
+            {
+                role: "system",
+                content: "You can translate social media posts"
+            },
+            {
+                role: "user",
+                content: `Translate the following post from Mastodon into ${req.query.language}: ${req.query.prompt}`
+            }
+        ],
+        temperature: 0.77,
+        max_tokens: 150,
     });
 
     context.res = {
