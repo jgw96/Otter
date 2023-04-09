@@ -4,6 +4,34 @@ let token = localStorage.getItem('token') || '';
 let accessToken = localStorage.getItem('accessToken') || '';
 let server = localStorage.getItem('server') || '';
 
+// when the app unloads, call savePlace
+window.addEventListener('beforeunload', async () => {
+    await savePlace(lastPageID);
+});
+
+setInterval(async () => {
+    if (lastPageID && lastPageID.length > 0) {
+        await savePlace(lastPageID);
+    }
+}, 30000)
+
+export const savePlace = async (id: string) => {
+    const formData = new FormData();
+    formData.append("home[last_read_id]", id);
+
+    const response = await fetch(`https://${server}/api/v1/markers`, {
+        method: 'POST',
+        headers: new Headers({
+            "Authorization": `Bearer ${accessToken}`
+        }),
+        body: formData
+    });
+
+    const data = await response.json();
+
+    lastPageID = data[data.length - 1].id;
+}
+
 export const getHomeTimeline = async () => {
     const response = await fetch(`https://mammoth-backend.azurewebsites.net/timeline?code=${token}&server=${server}`);
     const data = await response.json();
@@ -13,25 +41,6 @@ export const getHomeTimeline = async () => {
 let lastPageID = "";
 
 export const getPaginatedHomeTimeline = async (type = "home", cache = false) => {
-    if (cache) {
-        lastPageID = "";
-
-        const registration: ServiceWorkerRegistration = await navigator.serviceWorker.ready;
-        if ('periodicSync' in registration) {
-            const tags = await (registration.periodicSync as any).getTags();
-
-            console.log("cachedData tags", tags);
-
-            const cachedData = await get("timeline-cache");
-
-            if (tags.includes('timeline-sync') && cachedData && cachedData.length > 0 && type === "home") {
-
-                lastPageID = cachedData[cachedData.length - 1].id;
-
-                return cachedData;
-            }
-        }
-    }
 
     const registration: ServiceWorkerRegistration = await navigator.serviceWorker.ready;
     if ('periodicSync' in registration) {

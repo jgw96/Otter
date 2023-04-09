@@ -49,6 +49,10 @@ export class TimelineItem extends LitElement {
                 margin-bottom: 10px;
             }
 
+            sl-card {
+                content-visibility: auto;
+            }
+
             @media(prefers-color-scheme: dark) {
                 fluent-button::part(control) {
                     --neutral-fill-stealth-active: #1b1d26;
@@ -199,6 +203,8 @@ export class TimelineItem extends LitElement {
                 color: white;
 
                 overflow-x: hidden;
+
+                content-visibility: auto;
             }
 
             sl-card a {
@@ -378,23 +384,6 @@ export class TimelineItem extends LitElement {
                 enableVibrate(this.shadowRoot);
             }
         })
-    }
-
-    async attributeChangedCallback(name: string, _old: string | null, value: string | null) {
-        super.attributeChangedCallback(name, _old, value);
-
-        console.log('attribute changed', name, value)
-
-        if (name === 'showreply') {
-            console.log('here');
-            this.showreply = value === 'true';
-        }
-    }
-
-    protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
-        super.updated(_changedProperties);
-
-        console.log("updated", _changedProperties, _changedProperties.get("showreply"));
     }
 
     async favorite(id: string) {

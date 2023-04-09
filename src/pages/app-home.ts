@@ -409,7 +409,6 @@ export class AppHome extends LitElement {
 
         content-visibility: auto;
         contain: strict;
-
       }
 
       sl-dialog {

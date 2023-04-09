@@ -2,6 +2,9 @@ import { LitElement, html, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js'
 import { getPaginatedHomeTimeline } from '../services/timeline';
 
+// @ts-ignore
+import TimelineWorker from '../utils/timeline-worker?worker';
+
 import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 
 // import '@lit-labs/virtualizer';
@@ -266,6 +269,19 @@ export class Timeline extends LitElement {
         await this.refreshTimeline(true);
         this.loadingData = false;
 
+
+        const newTimelineWorker = new TimelineWorker();
+        newTimelineWorker.onmessage = (e: any) => {
+            console.log('timelineWorker', e.data);
+
+            const newItem = JSON.parse(e.data.payload);
+
+            this.timeline = [newItem, ...this.timeline];
+
+            this.requestUpdate();
+        }
+        newTimelineWorker.postMessage('start');
+
         window.requestIdleCallback(async () => {
             // setup intersection observer
             const loadMore = this.shadowRoot?.querySelector('#load-more') as any;
@@ -282,11 +298,11 @@ export class Timeline extends LitElement {
                     }
                 });
             }
-            , { threshold: 0.5 });
+                , { threshold: 0.5 });
 
             observer.observe(loadMore);
 
-        }, { timeout: 3000});
+        }, { timeout: 3000 });
 
     }
 
@@ -317,9 +333,9 @@ export class Timeline extends LitElement {
                 break;
             case "media":
                 console.log("media timeline")
-               const timelineDataMedia = await getPaginatedHomeTimeline("home", cache);
+                const timelineDataMedia = await getPaginatedHomeTimeline("home", cache);
 
-               // filter out tweets that don't have media
+                // filter out tweets that don't have media
                 (timelineDataMedia as Array<Post>).filter((tweet: Post) => tweet.media_attachments.length > 0);
                 console.log(timelineData);
 
@@ -420,9 +436,8 @@ export class Timeline extends LitElement {
                 <h2 id="learn-more-header">Learn More</h2>
                 <p>Learn more about the subjects mentioned in this status</p>
 
-                ${
-                    this.analyzeData && this.analyzeData.length > 0 ?
-                    html`
+                ${this.analyzeData && this.analyzeData.length > 0 ?
+                html`
                         <ul>
                             ${this.analyzeData!.map((entity: any) => html`
                                 <li>
@@ -435,10 +450,9 @@ export class Timeline extends LitElement {
                             `)}
                         </ul>
                     ` : null
-                }
+            }
 
-                ${
-                    this.imageDesc ? html`
+                ${this.imageDesc ? html`
                       <h2>Image Analysis</h2>
                       <p>Learn more about the image in this status</p>
 
@@ -447,12 +461,12 @@ export class Timeline extends LitElement {
 
 
                     ` : null
-                }
+            }
                 </div>
         </sl-dialog>
 
         <sl-dialog id="img-preview">
-            ${ this.imgPreview ? html`<img .src="${this.imgPreview}">` : null}
+            ${this.imgPreview ? html`<img .src="${this.imgPreview}">` : null}
         </sl-dialog>
 
         <div id="timeline-header">
