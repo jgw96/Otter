@@ -1,5 +1,3 @@
-import { get } from "idb-keyval";
-
 let token = localStorage.getItem('token') || '';
 let accessToken = localStorage.getItem('accessToken') || '';
 let server = localStorage.getItem('server') || '';
@@ -40,7 +38,16 @@ export const getHomeTimeline = async () => {
 
 let lastPageID = "";
 
-export const getPaginatedHomeTimeline = async (type = "home", cache = false) => {
+export const mixTimeline = async (type = "home") => {
+    const home = await getPaginatedHomeTimeline(type);
+    const trending = await getTrendingStatuses();
+
+    let timeline = home.concat(trending);
+
+    return timeline;
+}
+
+export const getPaginatedHomeTimeline = async (type = "home") => {
 
     const registration: ServiceWorkerRegistration = await navigator.serviceWorker.ready;
     if ('periodicSync' in registration) {
@@ -61,7 +68,11 @@ export const getPaginatedHomeTimeline = async (type = "home", cache = false) => 
     if (lastPageID && lastPageID.length > 0) {
         let accessToken = localStorage.getItem('accessToken') || '';
 
-        const response = await fetch(`https://${server}/api/v1/timelines/${type}?limit=5&max_id=${lastPageID}`, {
+        if (type === "home and some trending") {
+            type = "home";
+        }
+
+        const response = await fetch(`https://${server}/api/v1/timelines/${type}?limit=10&max_id=${lastPageID}`, {
             method: 'GET',
             headers: new Headers({
                 "Authorization": `Bearer ${accessToken}`

@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js'
-import { getPaginatedHomeTimeline } from '../services/timeline';
+import { getPaginatedHomeTimeline, mixTimeline } from '../services/timeline';
 
 // @ts-ignore
 import TimelineWorker from '../utils/timeline-worker?worker';
@@ -32,7 +32,7 @@ export class Timeline extends LitElement {
     @state() imageDesc: string | undefined = undefined;
     @state() analyzeTweet: Post | null = null;
 
-    @property({ type: String }) timelineType: "home" | "public" | "media" = "home";
+    @property({ type: String }) timelineType: "home" | "public" | "media" | "home and some trending" = "home and some trending";
 
     static styles = [
         css`
@@ -266,21 +266,9 @@ export class Timeline extends LitElement {
         }
 
         this.loadingData = true;
-        await this.refreshTimeline(true);
+        await this.refreshTimeline();
         this.loadingData = false;
 
-
-        const newTimelineWorker = new TimelineWorker();
-        newTimelineWorker.onmessage = (e: any) => {
-            console.log('timelineWorker', e.data);
-
-            const newItem = JSON.parse(e.data.payload);
-
-            this.timeline = [newItem, ...this.timeline];
-
-            this.requestUpdate();
-        }
-        newTimelineWorker.postMessage('start');
 
         window.requestIdleCallback(async () => {
             // setup intersection observer
@@ -306,11 +294,22 @@ export class Timeline extends LitElement {
 
     }
 
-    public async refreshTimeline(cache: boolean = false) {
+    public async refreshTimeline() {
         console.log("refreshing timeline", this.timelineType)
         switch (this.timelineType) {
+            case "home and some trending":
+                const timelineDataMix = await mixTimeline("home");
+                console.log("timelineData", timelineDataMix);
+
+                this.timeline = [];
+                await this.hasUpdated;
+
+                this.timeline = timelineDataMix;
+
+                this.requestUpdate();
+                break;
             case "home":
-                const timelineData = await getPaginatedHomeTimeline("home", cache);
+                const timelineData = await getPaginatedHomeTimeline("home");
                 console.log("timelineData", timelineData);
 
                 this.timeline = [];
@@ -321,7 +320,7 @@ export class Timeline extends LitElement {
                 this.requestUpdate();
                 break;
             case "public":
-                const timelineDataPub = await getPaginatedHomeTimeline("public", cache);
+                const timelineDataPub = await getPaginatedHomeTimeline("public");
                 console.log(timelineDataPub);
 
                 this.timeline = [];
@@ -333,7 +332,7 @@ export class Timeline extends LitElement {
                 break;
             case "media":
                 console.log("media timeline")
-                const timelineDataMedia = await getPaginatedHomeTimeline("home", cache);
+                const timelineDataMedia = await getPaginatedHomeTimeline("home");
 
                 // filter out tweets that don't have media
                 (timelineDataMedia as Array<Post>).filter((tweet: Post) => tweet.media_attachments.length > 0);
@@ -405,7 +404,7 @@ export class Timeline extends LitElement {
         await dialog.show();
     }
 
-    async changeTimelineType(type: "home" | "public" | "media") {
+    async changeTimelineType(type: "home" | "public" | "media" | "home and some trending") {
         this.timelineType = type;
 
         await this.refreshTimeline();
@@ -470,12 +469,13 @@ export class Timeline extends LitElement {
         </sl-dialog>
 
         <div id="timeline-header">
-            <fluent-combobox .value="${this.timelineType}" @change="${($event: any) => this.changeTimelineType($event.target.value)}" placeholder="Home">
+            <fluent-combobox .value="${this.timelineType}" @change="${($event: any) => this.changeTimelineType($event.target.value)}" placeholder="home and some trending">
+                <fluent-option value="home and some trending">home and some trending</fluent-option>
                 <fluent-option value="home">home</fluent-option>
                 <fluent-option value="public">public</fluent-option>
             </fluent-combobox>
 
-            <sl-button size="small" @click="${() => this.refreshTimeline(true)}">
+            <sl-button size="small" @click="${() => this.refreshTimeline()}">
                 <sl-icon src="/assets/refresh-circle-outline.svg"></fluent-icon>
             </sl-button>
         </div>
