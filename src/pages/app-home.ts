@@ -409,7 +409,6 @@ export class AppHome extends LitElement {
 
         content-visibility: auto;
         contain: strict;
-
       }
 
       sl-dialog {
@@ -1066,7 +1065,7 @@ export class AppHome extends LitElement {
 
 
           <sl-tab-panel name="general">
-            <app-timeline @handle-summary="${($event: any) => this.showSummary($event)}" class="homeTimeline" .timelineType="Home"
+            <app-timeline @handle-summary="${($event: any) => this.showSummary($event)}" class="homeTimeline" .timelineType="home and some trending"
               @replies="${($event: any) => this.handleReplies($event.detail.data, $event.detail.id)}"></app-timeline>
           </sl-tab-panel>
           <sl-tab-panel name="media">

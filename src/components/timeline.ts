@@ -1,6 +1,9 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js'
-import { getPaginatedHomeTimeline } from '../services/timeline';
+import { getPaginatedHomeTimeline, mixTimeline } from '../services/timeline';
+
+// @ts-ignore
+import TimelineWorker from '../utils/timeline-worker?worker';
 
 import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 
@@ -29,7 +32,7 @@ export class Timeline extends LitElement {
     @state() imageDesc: string | undefined = undefined;
     @state() analyzeTweet: Post | null = null;
 
-    @property({ type: String }) timelineType: "home" | "public" | "media" = "home";
+    @property({ type: String }) timelineType: "home" | "public" | "media" | "home and some trending" = "home and some trending";
 
     static styles = [
         css`
@@ -263,8 +266,9 @@ export class Timeline extends LitElement {
         }
 
         this.loadingData = true;
-        await this.refreshTimeline(true);
+        await this.refreshTimeline();
         this.loadingData = false;
+
 
         window.requestIdleCallback(async () => {
             // setup intersection observer
@@ -282,19 +286,30 @@ export class Timeline extends LitElement {
                     }
                 });
             }
-            , { threshold: 0.5 });
+                , { threshold: 0.5 });
 
             observer.observe(loadMore);
 
-        }, { timeout: 3000});
+        }, { timeout: 3000 });
 
     }
 
-    public async refreshTimeline(cache: boolean = false) {
+    public async refreshTimeline() {
         console.log("refreshing timeline", this.timelineType)
         switch (this.timelineType) {
+            case "home and some trending":
+                const timelineDataMix = await mixTimeline("home");
+                console.log("timelineData", timelineDataMix);
+
+                this.timeline = [];
+                await this.hasUpdated;
+
+                this.timeline = timelineDataMix;
+
+                this.requestUpdate();
+                break;
             case "home":
-                const timelineData = await getPaginatedHomeTimeline("home", cache);
+                const timelineData = await getPaginatedHomeTimeline("home");
                 console.log("timelineData", timelineData);
 
                 this.timeline = [];
@@ -305,7 +320,7 @@ export class Timeline extends LitElement {
                 this.requestUpdate();
                 break;
             case "public":
-                const timelineDataPub = await getPaginatedHomeTimeline("public", cache);
+                const timelineDataPub = await getPaginatedHomeTimeline("public");
                 console.log(timelineDataPub);
 
                 this.timeline = [];
@@ -317,9 +332,9 @@ export class Timeline extends LitElement {
                 break;
             case "media":
                 console.log("media timeline")
-               const timelineDataMedia = await getPaginatedHomeTimeline("home", cache);
+                const timelineDataMedia = await getPaginatedHomeTimeline("home");
 
-               // filter out tweets that don't have media
+                // filter out tweets that don't have media
                 (timelineDataMedia as Array<Post>).filter((tweet: Post) => tweet.media_attachments.length > 0);
                 console.log(timelineData);
 
@@ -389,7 +404,7 @@ export class Timeline extends LitElement {
         await dialog.show();
     }
 
-    async changeTimelineType(type: "home" | "public" | "media") {
+    async changeTimelineType(type: "home" | "public" | "media" | "home and some trending") {
         this.timelineType = type;
 
         await this.refreshTimeline();
@@ -420,9 +435,8 @@ export class Timeline extends LitElement {
                 <h2 id="learn-more-header">Learn More</h2>
                 <p>Learn more about the subjects mentioned in this status</p>
 
-                ${
-                    this.analyzeData && this.analyzeData.length > 0 ?
-                    html`
+                ${this.analyzeData && this.analyzeData.length > 0 ?
+                html`
                         <ul>
                             ${this.analyzeData!.map((entity: any) => html`
                                 <li>
@@ -435,10 +449,9 @@ export class Timeline extends LitElement {
                             `)}
                         </ul>
                     ` : null
-                }
+            }
 
-                ${
-                    this.imageDesc ? html`
+                ${this.imageDesc ? html`
                       <h2>Image Analysis</h2>
                       <p>Learn more about the image in this status</p>
 
@@ -447,21 +460,22 @@ export class Timeline extends LitElement {
 
 
                     ` : null
-                }
+            }
                 </div>
         </sl-dialog>
 
         <sl-dialog id="img-preview">
-            ${ this.imgPreview ? html`<img .src="${this.imgPreview}">` : null}
+            ${this.imgPreview ? html`<img .src="${this.imgPreview}">` : null}
         </sl-dialog>
 
         <div id="timeline-header">
-            <fluent-combobox .value="${this.timelineType}" @change="${($event: any) => this.changeTimelineType($event.target.value)}" placeholder="Home">
+            <fluent-combobox .value="${this.timelineType}" @change="${($event: any) => this.changeTimelineType($event.target.value)}" placeholder="home and some trending">
+                <fluent-option value="home and some trending">home and some trending</fluent-option>
                 <fluent-option value="home">home</fluent-option>
                 <fluent-option value="public">public</fluent-option>
             </fluent-combobox>
 
-            <sl-button size="small" @click="${() => this.refreshTimeline(true)}">
+            <sl-button size="small" @click="${() => this.refreshTimeline()}">
                 <sl-icon src="/assets/refresh-circle-outline.svg"></fluent-icon>
             </sl-button>
         </div>

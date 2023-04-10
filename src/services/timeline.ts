@@ -1,8 +1,34 @@
-import { get } from "idb-keyval";
-
 let token = localStorage.getItem('token') || '';
 let accessToken = localStorage.getItem('accessToken') || '';
 let server = localStorage.getItem('server') || '';
+
+// when the app unloads, call savePlace
+window.addEventListener('beforeunload', async () => {
+    await savePlace(lastPageID);
+});
+
+setInterval(async () => {
+    if (lastPageID && lastPageID.length > 0) {
+        await savePlace(lastPageID);
+    }
+}, 30000)
+
+export const savePlace = async (id: string) => {
+    const formData = new FormData();
+    formData.append("home[last_read_id]", id);
+
+    const response = await fetch(`https://${server}/api/v1/markers`, {
+        method: 'POST',
+        headers: new Headers({
+            "Authorization": `Bearer ${accessToken}`
+        }),
+        body: formData
+    });
+
+    const data = await response.json();
+
+    lastPageID = data[data.length - 1].id;
+}
 
 export const getHomeTimeline = async () => {
     const response = await fetch(`https://mammoth-backend.azurewebsites.net/timeline?code=${token}&server=${server}`);
@@ -12,26 +38,16 @@ export const getHomeTimeline = async () => {
 
 let lastPageID = "";
 
-export const getPaginatedHomeTimeline = async (type = "home", cache = false) => {
-    if (cache) {
-        lastPageID = "";
+export const mixTimeline = async (type = "home") => {
+    const home = await getPaginatedHomeTimeline(type);
+    const trending = await getTrendingStatuses();
 
-        const registration: ServiceWorkerRegistration = await navigator.serviceWorker.ready;
-        if ('periodicSync' in registration) {
-            const tags = await (registration.periodicSync as any).getTags();
+    let timeline = home.concat(trending);
 
-            console.log("cachedData tags", tags);
+    return timeline;
+}
 
-            const cachedData = await get("timeline-cache");
-
-            if (tags.includes('timeline-sync') && cachedData && cachedData.length > 0 && type === "home") {
-
-                lastPageID = cachedData[cachedData.length - 1].id;
-
-                return cachedData;
-            }
-        }
-    }
+export const getPaginatedHomeTimeline = async (type = "home") => {
 
     const registration: ServiceWorkerRegistration = await navigator.serviceWorker.ready;
     if ('periodicSync' in registration) {
@@ -52,7 +68,11 @@ export const getPaginatedHomeTimeline = async (type = "home", cache = false) => 
     if (lastPageID && lastPageID.length > 0) {
         let accessToken = localStorage.getItem('accessToken') || '';
 
-        const response = await fetch(`https://${server}/api/v1/timelines/${type}?limit=5&max_id=${lastPageID}`, {
+        if (type === "home and some trending") {
+            type = "home";
+        }
+
+        const response = await fetch(`https://${server}/api/v1/timelines/${type}?limit=10&max_id=${lastPageID}`, {
             method: 'GET',
             headers: new Headers({
                 "Authorization": `Bearer ${accessToken}`

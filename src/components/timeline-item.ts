@@ -1,4 +1,4 @@
-import { LitElement, html, css, PropertyValueMap } from 'lit';
+import { LitElement, html, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js'
 import { classMap } from 'lit/directives/class-map.js';
 
@@ -47,6 +47,10 @@ export class TimelineItem extends LitElement {
                 width: 100%;
 
                 margin-bottom: 10px;
+            }
+
+            sl-card {
+                content-visibility: auto;
             }
 
             @media(prefers-color-scheme: dark) {
@@ -199,6 +203,8 @@ export class TimelineItem extends LitElement {
                 color: white;
 
                 overflow-x: hidden;
+
+                content-visibility: auto;
             }
 
             sl-card a {
@@ -378,23 +384,6 @@ export class TimelineItem extends LitElement {
                 enableVibrate(this.shadowRoot);
             }
         })
-    }
-
-    async attributeChangedCallback(name: string, _old: string | null, value: string | null) {
-        super.attributeChangedCallback(name, _old, value);
-
-        console.log('attribute changed', name, value)
-
-        if (name === 'showreply') {
-            console.log('here');
-            this.showreply = value === 'true';
-        }
-    }
-
-    protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
-        super.updated(_changedProperties);
-
-        console.log("updated", _changedProperties, _changedProperties.get("showreply"));
     }
 
     async favorite(id: string) {
