@@ -1,13 +1,13 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js'
-import { getPaginatedHomeTimeline, mixTimeline } from '../services/timeline';
+import { getPaginatedHomeTimeline, getPreviewTimeline, mixTimeline } from '../services/timeline';
 
 // @ts-ignore
 import TimelineWorker from '../utils/timeline-worker?worker';
 
 import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 
-// import '@lit-labs/virtualizer';
+import '@lit-labs/virtualizer';
 
 import '../components/timeline-item';
 import '../components/search';
@@ -320,7 +320,7 @@ export class Timeline extends LitElement {
                 this.requestUpdate();
                 break;
             case "public":
-                const timelineDataPub = await getPaginatedHomeTimeline("public");
+                const timelineDataPub = await getPreviewTimeline();
                 console.log(timelineDataPub);
 
                 this.timeline = [];

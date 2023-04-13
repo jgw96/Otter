@@ -1,17 +1,11 @@
 let token = localStorage.getItem('token') || '';
 let accessToken = localStorage.getItem('accessToken') || '';
-let server = localStorage.getItem('server') || '';
+let server = localStorage.getItem('server') || 'mastodon.social';
 
 // when the app unloads, call savePlace
 window.addEventListener('beforeunload', async () => {
     await savePlace(lastPageID);
 });
-
-setInterval(async () => {
-    if (lastPageID && lastPageID.length > 0) {
-        await savePlace(lastPageID);
-    }
-}, 30000)
 
 export const savePlace = async (id: string) => {
     const formData = new FormData();
@@ -47,23 +41,20 @@ export const mixTimeline = async (type = "home") => {
     return timeline;
 }
 
+export const getPreviewTimeline = async () => {
+    const response = await fetch('https://mastodon.social/api/v1/timelines/public');
+    const data = await response.json();
+
+    return data;
+}
+
 export const getPaginatedHomeTimeline = async (type = "home") => {
 
-    const registration: ServiceWorkerRegistration = await navigator.serviceWorker.ready;
-    if ('periodicSync' in registration) {
-        try {
-            const tags = await (registration.periodicSync as any).getTags();
+    await handlePeriodic();
 
-            if (tags.includes('timeline-sync') === false) {
-                await (registration.periodicSync as any).register('timeline-sync', {
-                    // An interval of one day.
-                    minInterval: 24 * 60 * 60 * 1000,
-                });
-            }
-        } catch (error) {
-            // Periodic background sync cannot be used.
-        }
-    }
+    const headers = new Headers({
+        "Authorization": `Bearer ${accessToken}`
+    });
 
     if (lastPageID && lastPageID.length > 0) {
         let accessToken = localStorage.getItem('accessToken') || '';
@@ -74,9 +65,7 @@ export const getPaginatedHomeTimeline = async (type = "home") => {
 
         const response = await fetch(`https://${server}/api/v1/timelines/${type}?limit=10&max_id=${lastPageID}`, {
             method: 'GET',
-            headers: new Headers({
-                "Authorization": `Bearer ${accessToken}`
-            })
+            headers: accessToken.length > 0 ? headers : new Headers({})
         });
 
         const data = await response.json();
@@ -90,9 +79,7 @@ export const getPaginatedHomeTimeline = async (type = "home") => {
 
         const response = await fetch(`https://${server}/api/v1/timelines/${type}?limit=10`, {
             method: 'GET',
-            headers: new Headers({
-                "Authorization": `Bearer ${accessToken}`
-            })
+            headers: accessToken.length > 0 ? headers : new Headers({})
         });
 
         const data = await response.json();
@@ -211,4 +198,22 @@ export const getTrendingStatuses = async () => {
     const data = await response.json();
 
     return data;
+}
+
+async function handlePeriodic() {
+    const registration: ServiceWorkerRegistration = await navigator.serviceWorker.ready;
+    if ('periodicSync' in registration) {
+        try {
+            const tags = await (registration.periodicSync as any).getTags();
+
+            if (tags.includes('timeline-sync') === false) {
+                await (registration.periodicSync as any).register('timeline-sync', {
+                    // An interval of one day.
+                    minInterval: 24 * 60 * 60 * 1000,
+                });
+            }
+        } catch (error) {
+            // Periodic background sync cannot be used.
+        }
+    }
 }
