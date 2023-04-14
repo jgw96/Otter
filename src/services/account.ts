@@ -197,3 +197,22 @@ export const authToClient = async (code: string) => {
         await initAuth(server);
     }
 }
+
+export const registerAccount = async (username: string, email: string, password: string, agreement: boolean, locale: string) => {
+    const response = await fetch(`https://${server}/api/v1/accounts`, {
+        method: 'POST',
+        headers: new Headers({
+            'Content-Type': 'application/json',
+        }),
+        body: JSON.stringify({
+            username,
+            email,
+            password,
+            agreement,
+            locale
+        })
+    })
+
+    const data = await response.json();
+    return data;
+}

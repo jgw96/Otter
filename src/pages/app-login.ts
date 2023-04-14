@@ -264,6 +264,10 @@ export class AppLogin extends LitElement {
         window.open("https://joinmastodon.org/servers", "_blank");
     }
 
+    explore() {
+        router.navigate("/explore");
+    }
+
     render() {
         return html`
         ${
@@ -348,6 +352,7 @@ export class AppLogin extends LitElement {
             </div>
 
             <fluent-button @click="${() => this.openIntro()}" appearance="lightweight">Intro To Mastodon</fluent-button>
+            <fluent-button @click="${() => this.explore()}" appearance="lightweight">Explore without an account</fluent-button>
 
             <p>Welcome To Mammoth, your Mastodon Client</p>
         </main>

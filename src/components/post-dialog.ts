@@ -55,6 +55,13 @@ export class PostDialog extends LitElement {
                 font-size: 11px;
             }
 
+            sl-dialog::part(footer) {
+                gap: 5px;
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+            }
+
             #post-copilot {
                 background: rgb(0 0 0 / 6%);
                 border-radius: 6px;
@@ -447,9 +454,13 @@ export class PostDialog extends LitElement {
                 <fluent-text-field @change="${() => this.generateStatus()}" placeholder="I got promoted!"></fluent-text-field>
             </div>
 
-            <div id="post-ai-actions">
-              ${this.showPrompt === false ? html`<fluent-button size="small" pill @click="${() => this.openAIPrompt()}">AI: Generate Image</fluent-button>` : null}
-            </div>
+            <fluent-button slot="footer" @click="${() => this.markAsSensitive()}">
+                <sl-icon src="/assets/eye-outline.svg"></sl-icon>
+            </fluent-button>
+
+            <!--<div id="post-ai-actions">-->
+              ${this.showPrompt === false ? html`<fluent-button slot="footer" size="small" pill @click="${() => this.openAIPrompt()}">AI: Generate Image</fluent-button>` : null}
+            <!--</div>-->
 
             ${
                 this.attaching === false ? html`
@@ -486,11 +497,8 @@ export class PostDialog extends LitElement {
                 }
             </div>` : null}
 
-            <fluent-button slot="footer" @click="${() => this.markAsSensitive()}">
-                <sl-icon src="/assets/eye-outline.svg"></sl-icon>
-            </fluent-button>
-
             <fluent-button pill slot="footer" @click="${() => this.attachFile()}">
+                Attach Media
                 <sl-icon src="/assets/attach-outline.svg"></sl-icon>
             </fluent-button>
             <fluent-button ?disabled="${this.hasStatus === false}" pill @click="${() => this.publish()}" slot="footer" appearance="accent">Publish</fluent-button>

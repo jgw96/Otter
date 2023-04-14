@@ -112,6 +112,14 @@ export const router = new Router({
           lazy(() => import('../pages/edit-page.js')),
         ],
         render: () => html`<edit-page></edit-page>`
+      },
+      {
+        path: "/explore",
+        title: "explore",
+        plugins: [
+          lazy(() => import('../pages/app-explore.js')),
+        ],
+        render: () => html`<app-explore></app-explore>`
       }
     ]
   });

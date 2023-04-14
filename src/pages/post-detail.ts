@@ -141,6 +141,7 @@ export class PostDetail extends LitElement {
         const query = window.location.search.substring(1);
 
         const decoded = JSON.parse(decodeURIComponent(query));
+        console.log("decoded", decoded)
         // remove + and - from decoded.content
         if (decoded.reblog) {
             decoded.reblog.content = decoded.reblog.content.replace(/\+/g, ' ').replace(/\-/g, '');

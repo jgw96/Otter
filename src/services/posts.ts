@@ -135,7 +135,7 @@ export async function uploadImageFromBlob(blob: Blob) {
 export async function uploadImageAsFormData(): Promise<Array<any>> {
     return new Promise(async (resolve) => {
         const files = await fileOpen({
-            mimeTypes: ['image/*'],
+            mimeTypes: ['image/*', 'video/*'],
             multiple: true,
         });
 ``
