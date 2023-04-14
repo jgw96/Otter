@@ -24,6 +24,10 @@ export class AppExplore extends LitElement {
             display: none;
         }
 
+        p {
+            color: rgb(169, 169, 169);
+        }
+
         main {
             padding-top: 60px;
             display: grid;
@@ -72,6 +76,16 @@ export class AppExplore extends LitElement {
             }
         }
 
+        @media(prefers-color-scheme: light) {
+            fluent-button {
+                color: black;
+            }
+
+            #sign-up-block {
+                background: #f3f3f3;
+            }
+        }
+
         `
     ];
 
@@ -104,8 +118,8 @@ export class AppExplore extends LitElement {
         }
     }
 
-    async doRegister() {
-
+    signup() {
+        window.open("https://joinmastodon.org/servers", "_blank");
     }
 
     render() {
@@ -114,15 +128,26 @@ export class AppExplore extends LitElement {
 
         <main>
           <div>
-            <h2>Explore</h2>
             <preview-timeline></preview-timeline>
           </div>
 
-          <div id="sign-up-block">
-            <p>Already have an account? Log in to your server. Otherwise, sign up for a account to follow people, like posts, and more!</p>
-            <fluent-text-field id="server-input" placeholder="https://tech.lgbt"></fluent-text-field>
-            <fluent-button id="login-button" appearance="accent" @click="${this.login}">Login</fluent-button>
-            <fluent-button appearance="outline">Sign up</fluent-button>
+          <div>
+            <div id="sign-up-block">
+                <p>Already have an account? Log in to your server. Otherwise, sign up for a account to follow people, like posts, and more!</p>
+                <fluent-text-field id="server-input" placeholder="https://tech.lgbt"></fluent-text-field>
+                <fluent-button id="login-button" appearance="accent" @click="${this.login}">Login</fluent-button>
+                <fluent-button appearance="outline" @click="${this.signup}">Sign up</fluent-button>
+            </div>
+
+            <div>
+
+                    <strong>What is this?</strong>
+                    <p>
+                        Mammoth is a <a href="https://joinmastodon.org">Mastodon</a> client that is built with web technologies. It is a <a href="https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps">progressive web app</a>, which means you can install it on your phone or desktop.
+                        It is also open source, and can be found on <a href="https://github.com/jgw96/mammoth-app">GitHub</a>.
+                    </p>
+            </div>
+           </div>
         </main>
         `;
     }

@@ -31,6 +31,7 @@ export const getHomeTimeline = async () => {
 }
 
 let lastPageID = "";
+let lastPreviewPageID = "";
 
 export const mixTimeline = async (type = "home") => {
     const home = await getPaginatedHomeTimeline(type);
@@ -42,8 +43,19 @@ export const mixTimeline = async (type = "home") => {
 }
 
 export const getPreviewTimeline = async () => {
+    if (lastPreviewPageID && lastPreviewPageID.length > 0) {
+        const response = await fetch(`https://mastodon.social/api/v1/timelines/public?limit=10&max_id=${lastPreviewPageID}`);
+        const data = await response.json();
+
+        lastPreviewPageID = data[data.length - 1].id;
+
+        return data;
+    }
+
     const response = await fetch('https://mastodon.social/api/v1/timelines/public');
     const data = await response.json();
+
+    lastPreviewPageID = data[data.length - 1].id;
 
     return data;
 }
