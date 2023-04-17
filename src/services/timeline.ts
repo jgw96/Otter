@@ -34,8 +34,11 @@ let lastPageID = "";
 let lastPreviewPageID = "";
 
 export const mixTimeline = async (type = "home") => {
-    const home = await getPaginatedHomeTimeline(type);
-    const trending = await getTrendingStatuses();
+    // const home = await getPaginatedHomeTimeline(type);
+    // const trending = await getTrendingStatuses();
+
+    // run getPaginatedHomeTimeline and getTrendingStatuses in parallel
+    const [home, trending] = await Promise.all([getPaginatedHomeTimeline(type), getTrendingStatuses()]);
 
     let timeline = home.concat(trending);
 

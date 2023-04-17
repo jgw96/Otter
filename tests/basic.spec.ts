@@ -60,3 +60,11 @@ test('ensure that you can switch tabs, such as to the notifications tab', async 
     // expect the notifications tab to be visible
     await expect(page.locator('#sl-tab-panel-7 app-notifications')).toBeVisible();
 });
+
+test('ensure service worker is registered', async ({ page }) => {
+    test.slow();
+    // expect the service worker to be registered
+    await expect(await page.evaluate(async () => await navigator.serviceWorker.getRegistration())).toBeTruthy();
+});
+
+

@@ -156,6 +156,18 @@
           "type": "image/png"
         }
       ]
+    },
+    {
+      "name": "New Post",
+      "url": "/?newPost=true",
+      "description": "Start making a new post",
+      "icons": [
+        {
+          "src": "assets/shortcuts/add-outline.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
     }
   ],
   "widgets": [
