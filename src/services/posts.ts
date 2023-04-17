@@ -1,4 +1,5 @@
 import { fileOpen } from "browser-fs-access";
+import { addMedia } from "./media";
 
 let server = localStorage.getItem('server') || '';
 let accessToken = localStorage.getItem('accessToken') || '';
@@ -158,6 +159,8 @@ export async function uploadImageAsFormData(): Promise<Array<any>> {
             const data = await response.json();
 
             uploaded = [...uploaded, data];
+
+            await addMedia(files[i])
 
             console.log("uploaded", uploaded)
         }

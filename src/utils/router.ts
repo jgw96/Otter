@@ -120,6 +120,14 @@ export const router = new Router({
           lazy(() => import('../pages/app-explore.js')),
         ],
         render: () => html`<app-explore></app-explore>`
+      },
+      {
+        path: "/media",
+        title: "media",
+        plugins: [
+          lazy(() => import('../pages/app-media.js')),
+        ],
+        render: () => html`<app-media></app-media>`
       }
     ]
   });

@@ -632,7 +632,17 @@ export class AppHome extends LitElement {
       if (this.shadowRoot) {
           enableVibrate(this.shadowRoot);
       }
-  })
+    });
+
+    window.requestIdleCallback(() => {
+      if (this.shadowRoot) {
+        const newPost = urlParams.get("newPost");
+
+        if (newPost) {
+          this.openNewDialog();
+        }
+      }
+    })
 
   }
 

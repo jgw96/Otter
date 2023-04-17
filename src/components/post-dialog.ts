@@ -420,6 +420,9 @@ export class PostDialog extends LitElement {
         const data = await createAPost(prompt);
 
         if (data && data.choices[0]) {
+            const generated = data.choices[0].message.content.trim();
+            /// remove quotes from generated text
+            publishText.value = generated.replace(/"/g, "");
             publishText.value = data.choices[0].message.content.trim();
         }
         else {
