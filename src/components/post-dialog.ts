@@ -1,10 +1,13 @@
-import { LitElement, html, css } from 'lit';
+import { LitElement, html, css, PropertyValueMap } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 import { publishPost, uploadImageAsFormData, uploadImageFromBlob } from '../services/posts';
 import { createAPost, createImage } from '../services/ai';
+
+// @ts-ignore
+import { createGesture } from 'https://cdn.jsdelivr.net/npm/@ionic/core@latest/dist/esm/index.mjs';
 
 // @ts-ignore
 import MarkdownWorker from '../utils/markdown-worker?worker';
@@ -224,6 +227,44 @@ export class PostDialog extends LitElement {
         `
     ];
 
+    protected async firstUpdated() {
+        setTimeout(() => {
+            const dialog: any = this.shadowRoot?.querySelector('sl-dialog');
+            console.log("dialog", dialog.panel)
+            const gesture = createGesture({
+                el: dialog.panel,
+                threshold: 15,
+                direction: 'y',
+                gestureName: 'my-gesture',
+                onMove: (ev: any) => this.onMoveHandler(ev, dialog)
+            });
+
+            gesture.enable();
+        }, 1000)
+    }
+
+    onMoveHandler(ev: any, dialog: any) {
+        // animate dialog to new position
+        dialog!.panel!.style.transform = `translateY(${ev.deltaY}px)`;
+
+        if (ev.deltaY < -200) {
+            dialog.hide();
+
+            setTimeout(() => {
+                dialog.panel.style.transform = `translateY(0px)`;
+            }, 500);
+        }
+        else if (ev.deltaY > 200) {
+            dialog.hide();
+
+            setTimeout(() => {
+                dialog.panel.style.transform = `translateY(0px)`;
+            }
+                , 500);
+        }
+
+    }
+
     public async openNewDialog() {
         const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
         dialog.show();
@@ -231,11 +272,11 @@ export class PostDialog extends LitElement {
         const urlParams = new URLSearchParams(window.location.search);
 
         if (urlParams.has("name")) {
-          const name = urlParams.get("name");
+            const name = urlParams.get("name");
 
-          if (name) {
-            await this.shareTarget(name);
-          }
+            if (name) {
+                await this.shareTarget(name);
+            }
         }
     }
 
@@ -244,32 +285,32 @@ export class PostDialog extends LitElement {
         const result = [];
 
         for (const request of await cache.keys()) {
-          // If the request URL matches, add the response to the result
-          if (
-            (request.url.endsWith(".png") && request.url.includes(name)) ||
-            request.url.endsWith(".jpg") && request.url.includes(name)) {
-            result.push(await cache.match(name));
-          }
+            // If the request URL matches, add the response to the result
+            if (
+                (request.url.endsWith(".png") && request.url.includes(name)) ||
+                request.url.endsWith(".jpg") && request.url.includes(name)) {
+                result.push(await cache.match(name));
+            }
         }
 
         console.log("share target result", result);
 
         if (result.length > 0) {
-          const blob = await result[0]!.blob();
+            const blob = await result[0]!.blob();
 
-          // await this.openNewDialog();
+            // await this.openNewDialog();
 
-          this.attaching = true;
+            this.attaching = true;
 
-          const { uploadImageFromBlob } = await import("../services/posts");
-          const data = await uploadImageFromBlob(blob);
+            const { uploadImageFromBlob } = await import("../services/posts");
+            const data = await uploadImageFromBlob(blob);
 
-          this.attaching = false;
+            this.attaching = false;
 
-          this.attachmentID = data.id;
-          this.attachmentPreview = data.preview_url;
+            this.attachmentID = data.id;
+            this.attachmentPreview = data.preview_url;
         }
-      }
+    }
 
     async attachFile() {
         this.attaching = true;
@@ -349,8 +390,8 @@ export class PostDialog extends LitElement {
                     this.aiBlob = undefined;
 
                     (this.shadowRoot?.querySelector("fluent-text-area") as any)!.value = "";
-                 }
-                 else {
+                }
+                else {
                     if (this.sensitive === true) {
                         const sensitiveInput = this.shadowRoot?.getElementById('sensitive-input') as any;
                         spoilerText = sensitiveInput.value;
@@ -364,10 +405,10 @@ export class PostDialog extends LitElement {
                     this.aiBlob = undefined;
 
                     (this.shadowRoot?.querySelector("fluent-text-area") as any)!.value = "";
-                 }
+                }
 
-                 const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
-                 dialog.hide();
+                const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
+                dialog.hide();
 
                 worker.terminate();
 
@@ -465,11 +506,10 @@ export class PostDialog extends LitElement {
               ${this.showPrompt === false ? html`<fluent-button slot="footer" size="small" pill @click="${() => this.openAIPrompt()}">AI: Generate Image</fluent-button>` : null}
             <!--</div>-->
 
-            ${
-                this.attaching === false ? html`
+            ${this.attaching === false ? html`
                   <ul>
                   ${this.attachmentPreviews.map((preview) => {
-                    return html`
+            return html`
                     <div class="img-preview">
                         <fluent-button circle size="small" @click="${() => this.removeImage(preview)}">
                             <sl-icon src="/assets/close-outline.svg"></sl-icon>
@@ -477,20 +517,18 @@ export class PostDialog extends LitElement {
                         <img src="${preview}" />
                     </div>
                     `
-                })}
+        })}
                   </ul>
-                ` : html`<div id="attachment-loading"><sl-skeleton effect="sheen"></sl-skeleton></div>` }
+                ` : html`<div id="attachment-loading"><sl-skeleton effect="sheen"></sl-skeleton></div>`}
 
 
 
             ${this.showPrompt ? html`<div id="ai-image">
-                ${
-                    this.showPrompt && this.generatedImage ? html`
+                ${this.showPrompt && this.generatedImage ? html`
                     <img src="${this.generatedImage}">
                     ` : this.showPrompt && this.generatingImage === false ? html`<div id="ai-preview-block"><p>Enter a prompt to generate an image with AI!</p></div>` : html`<div id="ai-preview-block"><sl-skeleton effect="sheen"></sl-skeleton></div>`
                 }
-                ${
-                    this.showPrompt ? html`
+                ${this.showPrompt ? html`
                     <div id="ai-input-block">
                       <sl-input placeholder="A picture of an orange cat" @sl-change="${(e: any) => this.doAIImage(e.target.value)}"></sl-input>
 

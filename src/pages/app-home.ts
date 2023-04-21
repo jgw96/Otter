@@ -32,6 +32,9 @@ import './search-page';
 
 import '@khmyznikov/pwa-install';
 
+// @ts-ignore
+import { createGesture } from 'https://cdn.jsdelivr.net/npm/@ionic/core@latest/dist/esm/index.mjs';
+
 import { styles } from '../styles/shared-styles';
 import { getCurrentUser, getInstanceInfo } from '../services/account';
 import { router } from '../utils/router';
@@ -630,7 +633,7 @@ export class AppHome extends LitElement {
 
     window.requestIdleCallback(() => {
       if (this.shadowRoot) {
-          enableVibrate(this.shadowRoot);
+        enableVibrate(this.shadowRoot);
       }
     });
 
@@ -643,6 +646,12 @@ export class AppHome extends LitElement {
         }
       }
     })
+
+    window.requestIdleCallback(() => {
+      if (this.shadowRoot) {
+        this.handleSettingsDrawerGesture();
+      }
+    });
 
   }
 
@@ -847,6 +856,43 @@ export class AppHome extends LitElement {
 
   }
 
+  async handleSettingsDrawerGesture() {
+    setTimeout(() => {
+      const dialog: any = this.shadowRoot?.querySelector('#settings-drawer');
+      console.log("drawer", dialog.panel)
+      const gesture = createGesture({
+        el: dialog.panel,
+        threshold: 15,
+        direction: 'x',
+        gestureName: 'settings-drawer-gesture',
+        onMove: (ev: any) => this.onMoveHandler(ev, dialog)
+      });
+
+      gesture.enable();
+
+      const dialogTwo: any = this.shadowRoot?.querySelector('#theming-drawer');
+      const gestureTwo = createGesture({
+        el: dialogTwo.panel,
+        threshold: 15,
+        direction: 'x',
+        gestureName: 'theming-drawer-gesture',
+        onMove: (ev: any) => this.onMoveHandler(ev, dialogTwo)
+      });
+
+      gestureTwo.enable();
+    }, 1000)
+  }
+
+  onMoveHandler(ev: any, dialog: any) {
+    console.log("ev", ev)
+
+    dialog.style.transform = `translateX(${ev.deltaX}px)`;
+
+    if (ev.deltaX > 100) {
+      dialog.hide();
+    }
+  }
+
   render() {
     return html`
 
@@ -930,10 +976,10 @@ export class AppHome extends LitElement {
             <p id="user-url">${this.user ? this.user.url : "Loading..."}</p>
 
             <fluent-badge appearance="accent" @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count :
-              "0"} followers
+        "0"} followers
             </fluent-badge>
             <fluent-badge appearance="accent" @click="${() => this.goToFollowing()}">${this.user ? this.user.following_count :
-              "0"} following
+        "0"} following
             </fluent-badge>
 
           </div>
@@ -1041,7 +1087,7 @@ export class AppHome extends LitElement {
 
       <main>
 
-        <sl-tab-group .placement="${window.matchMedia(" (max-width: 600px)").matches ? "bottom" : "start" }">
+        <sl-tab-group .placement="${window.matchMedia(" (max-width: 600px)").matches ? "bottom" : "start"}">
           <sl-tab slot="nav" panel="general">
             <sl-icon src="/assets/home-outline.svg"></sl-icon>
 
@@ -1109,7 +1155,7 @@ export class AppHome extends LitElement {
 
         <div id="profile">
           <div id="profile-top">
-            ${this.user &&  this.user.avatar ? html`<img src="${this.user.avatar}" />` : html`<img src="https://via.placeholder.com/150" />`}
+            ${this.user && this.user.avatar ? html`<img src="${this.user.avatar}" />` : html`<img src="https://via.placeholder.com/150" />`}
             <div id="username-block">
               <h3>${this.user ? this.user.display_name : "Loading..."}</h3>
 
@@ -1136,10 +1182,10 @@ export class AppHome extends LitElement {
             <p id="user-url">${this.user ? this.user.url : "Loading..."}</p>
 
             <fluent-badge appearance="accent" @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count :
-              "0"} followers
+        "0"} followers
             </fluent-badge>
             <fluent-badge appearance="accent" @click="${() => this.goToFollowing()}">${this.user ? this.user.following_count :
-              "0"} following
+        "0"} following
             </fluent-badge>
 
           </div>
