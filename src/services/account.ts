@@ -216,3 +216,16 @@ export const registerAccount = async (username: string, email: string, password:
     const data = await response.json();
     return data;
 }
+
+export const isFollowingMe = async (id: string) => {
+       // check if you are following a user
+       const response = await fetch("https://" + server + `/api/v1/accounts/relationships?id=${id}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }
+    });
+
+    const data = await response.json();
+    return data;
+}

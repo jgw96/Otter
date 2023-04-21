@@ -206,7 +206,6 @@ export class SearchPage extends LitElement {
                 <fluent-tab slot="nav" panel="trending">Trending</fluent-tab>
                 <fluent-tab slot="nav" panel="news">News</fluent-tab>
                 <fluent-tab slot="nav" panel="hashtags">Hashtags</fluent-tab>
-                <fluent-tab slot="nav" panel="media">Media</fluent-tab>
 
                 <fluent-tab-panel name="accounts">
                 ${ this.searchData && this.searchData.accounts ? html`
@@ -288,9 +287,6 @@ export class SearchPage extends LitElement {
                 ` : null}
                 </fluent-tab-panel>
 
-                <fluent-tab-panel name="media">
-                  <media-timeline></media-timeline>
-                </fluent-tab-panel>
             </fluent-tabs>
 
         </main>
