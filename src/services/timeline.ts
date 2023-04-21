@@ -63,6 +63,24 @@ export const getPreviewTimeline = async () => {
     return data;
 }
 
+export const getTrendingLinks = async () => {
+        let accessToken = localStorage.getItem('accessToken') || '';
+        const headers = new Headers({
+            "Authorization": `Bearer ${accessToken}`
+        });
+
+
+        const response = await fetch(`https://${server}/api/v1/trends/links?limit=10`, {
+            method: 'GET',
+            headers: accessToken.length > 0 ? headers : new Headers({})
+        });
+
+        const data = await response.json();
+
+        return data;
+
+}
+
 export const getPaginatedHomeTimeline = async (type = "home") => {
 
     await handlePeriodic();
