@@ -10,6 +10,7 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
+    "node-fetch": "^3.3.1",
     "openai": "^3.2.1"
   },
   "devDependencies": {
