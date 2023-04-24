@@ -20,6 +20,7 @@ export class SearchPage extends LitElement {
 
     @state() searchData: any | undefined;
     @state() trending: any[] | undefined;
+    @state() trendingLinks: any[] | undefined;
 
     static styles = [
         css`
@@ -90,6 +91,10 @@ export class SearchPage extends LitElement {
                 cursor: pointer;
             }
 
+            #newsList li {
+
+            }
+
             ul::-webkit-scrollbar {
                 display: none;
             }
@@ -120,9 +125,44 @@ export class SearchPage extends LitElement {
                 }
             }
 
+            #newsList li {
+                padding: 8px;
+                background: #f3f3f3;
+                border-radius: 6px;
+            }
+
+            #newsList li img {
+                width: 100%;
+                border-radius: 4px;
+                margin-bottom: 10px;
+            }
+
+            #newsList li h3 {
+                margin-top: 0px;
+            }
+
+
+
             @media(prefers-color-scheme: dark) {
                 .account {
                     color: white;
+                }
+
+                #newsList li h3, #newsList li p {
+                    color: white;
+                }
+
+                #newsList li p {
+                        color: #9a9999;
+                }
+
+                #newsList li a {
+                    color: white;
+                }
+
+                #newsList li {
+                    background: rgb(32 32 35);
+                    border-radius: 6px;
                 }
             }
 
@@ -134,12 +174,18 @@ export class SearchPage extends LitElement {
         console.log(search);
         this.searchData = search.searchData;
 
-        const { getTrendingStatuses } = await import('../services/timeline');
+        const { getTrendingStatuses, getTrendingLinks } = await import('../services/timeline');
 
         const trendingStatuses = await getTrendingStatuses();
         console.log("trendingStatuses", trendingStatuses);
 
         this.trending = trendingStatuses;
+
+        const trendingLinks = await getTrendingLinks();
+        console.log("trendingLinks", trendingLinks);
+
+        this.trendingLinks = trendingLinks;
+
     }
 
     openAccount(id: string) {
@@ -158,8 +204,8 @@ export class SearchPage extends LitElement {
             <fluent-tabs placement="top">
                 <fluent-tab slot="nav" panel="accounts">Accounts</fluent-tab>
                 <fluent-tab slot="nav" panel="trending">Trending</fluent-tab>
+                <fluent-tab slot="nav" panel="news">News</fluent-tab>
                 <fluent-tab slot="nav" panel="hashtags">Hashtags</fluent-tab>
-                <fluent-tab slot="nav" panel="media">Media</fluent-tab>
 
                 <fluent-tab-panel name="accounts">
                 ${ this.searchData && this.searchData.accounts ? html`
@@ -208,6 +254,24 @@ export class SearchPage extends LitElement {
                     </ul>
                 </fluent-tab-panel>
 
+                <fluent-tab-panel name="news">
+                    <ul id="newsList">
+                        ${
+                            this.trendingLinks ? this.trendingLinks.map((status: any) => {
+                                return html`
+                                <li>
+                                   <img src="${status.image}" alt="${status.description}">
+
+                                    <h3>${status.title}</h3>
+                                    <a href="${status.url}" target="_blank">${status.url}</a>
+
+                                    <p>${status.description}</p>
+                                </li>`
+                            }) : null
+                        }
+                    </ul>
+                </fluent-tab-panel>
+
                 <fluent-tab-panel name="hashtags">
                 ${ this.searchData && this.searchData.hashtags ? html`
                     <ul>
@@ -223,9 +287,6 @@ export class SearchPage extends LitElement {
                 ` : null}
                 </fluent-tab-panel>
 
-                <fluent-tab-panel name="media">
-                  <media-timeline></media-timeline>
-                </fluent-tab-panel>
             </fluent-tabs>
 
         </main>

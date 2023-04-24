@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js'
 import { styleMap } from 'lit/directives/style-map.js';
-import { checkFollowing, followUser, getAccount, getUsersPosts, unfollowUser } from '../services/account';
+import { checkFollowing, followUser, getAccount, getUsersPosts, isFollowingMe, unfollowUser } from '../services/account';
 
 import '../components/timeline-item';
 
@@ -17,6 +17,7 @@ export class AppProfile extends LitElement {
     @state() user: any | undefined;
     @state() posts: any[] = [];
     @state() followed: boolean = false;
+    @state() following: boolean = false;
     @state() showMiniProfile: boolean = false;
 
     static styles = [
@@ -87,6 +88,14 @@ export class AppProfile extends LitElement {
                 gap: 4px;
                 flex-wrap: wrap;
                 margin-top: 1em;
+            }
+
+            #mutuals {
+                color: white;
+                background: var(--sl-color-primary-600);
+                border-radius: 3px;
+                padding: 6px;
+                font-size: 14px;
             }
 
             #mini-profile {
@@ -350,6 +359,10 @@ export class AppProfile extends LitElement {
             console.log('followCheck', followCheck)
             this.followed = followCheck[0].following;
 
+            const followedCheck = await isFollowingMe(id);
+            console.log('followedCheck', followedCheck)
+            this.following = followedCheck[0].followed_by;
+
             const accountData = await getAccount(id);
             console.log(accountData);
             this.user = accountData;
@@ -456,7 +469,7 @@ export class AppProfile extends LitElement {
                     </div>
 
                     <div id="profile-card-actions">
-                        ${this.followed ? html`<fluent-button id="unfollow" @click="${() => this.unfollow()}" appearance="accent" pill>Unfollow</fluent-button>` : html`<fluent-button pill appearance="accent"
+                        ${this.followed && this.following ? html`<fluent-button appearance="accent" id="unfollow" @click="${() => this.unfollow()}">Mutuals</fluent-button>` : this.followed ? html`<fluent-button id="unfollow" @click="${() => this.unfollow()}" appearance="accent" pill>Unfollow</fluent-button>` : html`<fluent-button pill appearance="accent"
                             @click="${() => this.follow()}">Follow</fluent-button>`}
                     </div>
                 </div>
