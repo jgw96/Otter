@@ -38,6 +38,10 @@ export class SponsorButton extends LitElement {
             <fluent-button appearance="lightweight" slot="trigger">Support Mammoth</fluent-button>
             <sl-menu>
                 <sl-menu-item>
+                    <a href="https://buy.stripe.com/eVa6skb447CO1G0eUU" target="_blank">Support Mammoth Directly</a>
+                </sl-menu-item>
+                <sl-divider></sl-divider>
+                <sl-menu-item>
                 <iframe src="https://github.com/sponsors/jgw96/button" title="Sponsor jgw96" height="32" width="114"
             style="border: 0; border-radius: 6px;"></iframe>
                 </sl-menu-item>
