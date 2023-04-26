@@ -77,8 +77,8 @@ export class PreviewTimeline extends LitElement {
 
     render() {
         return html`
-        <ul>
-            <lit-virtualizer scroller .items="${this.timeline}" .renderItem="${
+        <ul part="parent">
+            <lit-virtualizer part="list" scroller .items="${this.timeline}" .renderItem="${
                 (tweet: Post) => html`
                 <timeline-item ?show="${false}" .tweet="${tweet}"></timeline-item>
 

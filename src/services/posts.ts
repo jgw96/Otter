@@ -16,6 +16,21 @@ export async function whoBoostedAndFavorited(id: string) {
     return data;
 }
 
+export async function editPost(id: string, newContent: string) {
+    const formData = new FormData();
+    formData.append("status", newContent);
+    const response = await fetch(`https://${server}/api/v1/statuses/${id}`, {
+        method: 'PUT',
+        headers: new Headers({
+            "Authorization": `Bearer ${accessToken}`
+        }),
+        body: formData
+    });
+
+    const data = await response.json();
+    return data;
+}
+
 export async function deletePost(id: string) {
     const response = await fetch(`https://${server}/api/v1/statuses/${id}`, {
         method: 'DELETE',

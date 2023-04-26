@@ -9,6 +9,8 @@ import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 import '@shoelace-style/shoelace/dist/components/badge/badge.js';
 
 import { fluentBadge, provideFluentDesignSystem } from "@fluentui/web-components";
+import { Post } from '../interfaces/Post';
+import { editPost } from '../services/posts';
 provideFluentDesignSystem().register(fluentBadge());
 
 @customElement('app-profile')
@@ -19,6 +21,7 @@ export class AppProfile extends LitElement {
     @state() followed: boolean = false;
     @state() following: boolean = false;
     @state() showMiniProfile: boolean = false;
+    @state() selectedPost: Post | undefined = undefined;
 
     static styles = [
         css`
@@ -32,6 +35,16 @@ export class AppProfile extends LitElement {
             #profile {
                 view-transition-name: profile-image;
                 contain: paint;
+            }
+
+            #edit-input-block {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            #edit-input-block fluent-text-area::part(control) {
+                height: 200px;
             }
 
             h3 sl-skeleton {
@@ -422,9 +435,41 @@ export class AppProfile extends LitElement {
         this.followed = false;
     }
 
+    editPost(tweet: Post) {
+        console.log('edit post', tweet);
+        const preview = this.shadowRoot?.getElementById('preview-content') as any;
+
+        this.selectedPost = tweet;
+
+        preview.innerHTML = tweet.content;
+
+        const dialog = this.shadowRoot?.getElementById('edit') as any;
+        dialog.show();
+    }
+
+    async confirmEdit() {
+        const textArea = this.shadowRoot?.getElementById('content') as any;
+        const newContent = textArea.value;
+
+        await editPost(this.selectedPost!.id, newContent);
+
+        const dialog = this.shadowRoot?.getElementById('edit') as any;
+        dialog.hide();
+    }
+
     render() {
         return html`
         <app-header ?enableBack="${true}"></app-header>
+
+        <sl-dialog id="edit" label="Edit Post">
+            <span id="preview-content"></span>
+
+            <div id="edit-input-block">
+            <fluent-text-area id="content"></fluent-text-area>
+
+            <sl-button type="primary" @click=${() => this.confirmEdit()}>Save</sl-button>
+            </div>
+        </sl-dialog>
 
         <main>
             <div id="profile">
@@ -494,7 +539,7 @@ export class AppProfile extends LitElement {
             <ul>
                 ${this.posts.map(post => html`
                 <li>
-                    <timeline-item @delete="${() => this.reloadPosts()}" .tweet=${post}></timeline-item>
+                    <timeline-item @edit="${($event: any) => this.editPost($event.detail.tweet)}" @delete="${() => this.reloadPosts()}" .tweet=${post}></timeline-item>
                 </li>
                 ` )}
             </ul>

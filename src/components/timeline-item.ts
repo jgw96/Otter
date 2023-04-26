@@ -556,6 +556,14 @@ export class TimelineItem extends LitElement {
         }
     }
 
+    async initEditStatus() {
+        this.dispatchEvent(new CustomEvent('edit', {
+            detail: {
+                tweet: this.tweet
+            }
+        }));
+    }
+
     viewSensitive() {
         if (this.tweet) {
             this.tweet.sensitive = false;
@@ -673,6 +681,9 @@ export class TimelineItem extends LitElement {
 
                         ${this.tweet?.account.acct === this.currentUser?.acct ? html`
                             <sl-icon-button @click="${() => this.deleteStatus()}" src="/assets/trash-outline.svg">
+                            </sl-icon-button>
+
+                            <sl-icon-button @click="${() => this.initEditStatus()}" src="/assets/brush-outline.svg">
                             </sl-icon-button>
                             ` : null
                     }
