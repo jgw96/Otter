@@ -1,3 +1,5 @@
+import { getUsersPosts } from './account';
+
 let token = localStorage.getItem('token') || '';
 let accessToken = localStorage.getItem('accessToken') || '';
 let server = localStorage.getItem('server') || 'mastodon.social';
@@ -38,11 +40,53 @@ export const mixTimeline = async (type = "home") => {
     // const trending = await getTrendingStatuses();
 
     // run getPaginatedHomeTimeline and getTrendingStatuses in parallel
-    const [home, trending] = await Promise.all([getPaginatedHomeTimeline(type), getTrendingStatuses()]);
+    const [home, trending, searched] = await Promise.all([getPaginatedHomeTimeline(type), getTrendingStatuses(), addSomeInterestFinds()]);
 
     let timeline = home.concat(trending);
+    let timeline2 = timeline.concat(searched);
 
-    return timeline;
+    console.log("timeline", timeline);
+    console.log("timeline2", timeline2);
+
+    return timeline2;
+}
+
+export const addSomeInterestFinds = async () => {
+    const { get } = await import('idb-keyval');
+    const interests = await get('interests');
+
+    if (interests && interests.length > 0) {
+        const interest = interests[Math.floor(Math.random() * interests.length)];
+
+        let accessToken = localStorage.getItem('accessToken') || '';
+        const headers = new Headers({
+            "Authorization": `Bearer ${accessToken}`
+        });
+
+        const response = await fetch(`https://${server}/api/v2/search?q=${interest}&resolve=true&limit=5&type=accounts`, {
+            method: 'GET',
+            headers: accessToken.length > 0 ? headers : new Headers({})
+        });
+        const data = await response.json();
+
+        console.log("interest data", data)
+
+        if (data.accounts && data.accounts.length > 0) {
+            // get statuses from account
+            const account = data.accounts[Math.floor(Math.random() * data.accounts.length)];
+
+            // get posts from account
+            const posts = await getUsersPosts(account.id);
+
+            return posts.slice(0, 5);
+        }
+        else {
+            return [];
+        }
+    }
+    else {
+        return [];
+    }
 }
 
 export const getPreviewTimeline = async () => {
@@ -81,6 +125,13 @@ export const getTrendingLinks = async () => {
 
 }
 
+export const resetLastPageID = (): Promise<void> => {
+    return new Promise((resolve) => {
+        lastPageID = "";
+        resolve();
+    })
+}
+
 export const getPaginatedHomeTimeline = async (type = "home") => {
 
     await handlePeriodic();
@@ -92,7 +143,7 @@ export const getPaginatedHomeTimeline = async (type = "home") => {
     if (lastPageID && lastPageID.length > 0) {
         let accessToken = localStorage.getItem('accessToken') || '';
 
-        if (type === "home and some trending") {
+        if (type === "for you") {
             type = "home";
         }
 
