@@ -128,6 +128,14 @@ export const router = new Router({
           lazy(() => import('../pages/app-media.js')),
         ],
         render: () => html`<app-media></app-media>`
+      },
+      {
+        path: "/createaccount",
+        title: "create account",
+        plugins: [
+          lazy(() => import('../pages/create-account.js')),
+        ],
+        render: () => html`<create-account></create-account>`
       }
     ]
   });

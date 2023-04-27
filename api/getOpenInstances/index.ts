@@ -10,6 +10,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         }
     });
     const data = await response.json();
+    
 
     context.res = {
         // status: 200, /* Defaults to 200 */

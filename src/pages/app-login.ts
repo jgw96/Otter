@@ -261,7 +261,7 @@ export class AppLogin extends LitElement {
 
     joinMastodon() {
         // open https://joinmastodon.org/servers in new tab
-        window.open("https://joinmastodon.org/servers", "_blank");
+        router.navigate("/createaccount")
     }
 
     explore() {
@@ -337,7 +337,7 @@ export class AppLogin extends LitElement {
         <main>
 
             <div id="login-block">
-                <fluent-combobox @change="${($event: any) => this.handleServerInput($event.target.value)}">
+                <fluent-combobox placeholder="mastodon.social" @change="${($event: any) => this.handleServerInput($event.target.value)}">
                     ${
                         this.instances.map((instance: any) => {
                             return html`
@@ -355,6 +355,8 @@ export class AppLogin extends LitElement {
             <fluent-button @click="${() => this.explore()}" appearance="lightweight">Explore without an account</fluent-button>
 
             <p>Welcome To Mammoth, your Mastodon Client</p>
+
+            <a href="https://github.com/jgw96/mammoth-app#readme" target="_blank">Learn More</a>
         </main>
         `;
     }

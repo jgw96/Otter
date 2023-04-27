@@ -198,8 +198,8 @@ export const authToClient = async (code: string) => {
     }
 }
 
-export const registerAccount = async (username: string, email: string, password: string, agreement: boolean, locale: string) => {
-    const response = await fetch(`https://${server}/api/v1/accounts`, {
+export const registerAccount = async (username: string, email: string, password: string, agreement: boolean, locale: string, chosenServer: string) => {
+    const response = await fetch(`https://${chosenServer}/api/v1/accounts`, {
         method: 'POST',
         headers: new Headers({
             'Content-Type': 'application/json',
@@ -214,6 +214,13 @@ export const registerAccount = async (username: string, email: string, password:
     })
 
     const data = await response.json();
+    return data;
+}
+
+export const getServers = async () => {
+    const response = await fetch('https://mammoth-api-v3.azurewebsites.net/api/getOpenInstances');
+    const data = await response.json();
+
     return data;
 }
 
