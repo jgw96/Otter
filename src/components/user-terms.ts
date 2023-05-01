@@ -68,6 +68,9 @@ export class UserTerms extends LitElement {
 
         console.log("interests", this._interests);
 
+        // dedupe this._interests
+        this._interests = [...new Set(this._interests)];
+
         const { set } = await import('idb-keyval');
         await set('interests', this._interests);
     }
