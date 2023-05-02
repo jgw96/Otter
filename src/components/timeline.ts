@@ -32,7 +32,7 @@ export class Timeline extends LitElement {
     @state() imageDesc: string | undefined = undefined;
     @state() analyzeTweet: Post | null = null;
 
-    @property({ type: String }) timelineType: "home" | "public" | "media" | "home and some trending" = "home and some trending";
+    @property({ type: String }) timelineType: "home" | "public" | "media" | "for you" | "home and some trending" = "for you";
 
     static styles = [
         css`
@@ -297,7 +297,7 @@ export class Timeline extends LitElement {
     public async refreshTimeline() {
         console.log("refreshing timeline", this.timelineType)
         switch (this.timelineType) {
-            case "home and some trending":
+            case "for you":
                 const timelineDataMix = await mixTimeline("home");
                 console.log("timelineData", timelineDataMix);
 
@@ -305,6 +305,17 @@ export class Timeline extends LitElement {
                 await this.hasUpdated;
 
                 this.timeline = timelineDataMix;
+
+                this.requestUpdate();
+                break;
+            case "home and some trending":
+                const timelineDataMix2 = await mixTimeline("home");
+                console.log("timelineData", timelineDataMix2);
+
+                this.timeline = [];
+                await this.hasUpdated;
+
+                this.timeline = timelineDataMix2;
 
                 this.requestUpdate();
                 break;
@@ -404,7 +415,7 @@ export class Timeline extends LitElement {
         await dialog.show();
     }
 
-    async changeTimelineType(type: "home" | "public" | "media" | "home and some trending") {
+    async changeTimelineType(type: "home" | "public" | "media" | "for you" | "home and some trending") {
         this.timelineType = type;
 
         await this.refreshTimeline();
@@ -469,7 +480,8 @@ export class Timeline extends LitElement {
         </sl-dialog>
 
         <div id="timeline-header">
-            <fluent-combobox .value="${this.timelineType}" @change="${($event: any) => this.changeTimelineType($event.target.value)}" placeholder="home and some trending">
+            <fluent-combobox .value="${this.timelineType}" @change="${($event: any) => this.changeTimelineType($event.target.value)}" placeholder="for you">
+                <fluent-option value="for you">for you</fluent-option>
                 <fluent-option value="home and some trending">home and some trending</fluent-option>
                 <fluent-option value="home">home</fluent-option>
                 <fluent-option value="public">public</fluent-option>

@@ -26,6 +26,7 @@ import '../components/app-theme';
 import '../components/right-click';
 import '../components/mammoth-bot';
 import '../components/sponsor-button';
+import '../components/user-terms';
 
 import './app-messages';
 import './search-page';
@@ -40,6 +41,7 @@ import { getCurrentUser, getInstanceInfo } from '../services/account';
 import { router } from '../utils/router';
 import { init } from '../utils/key-shortcuts';
 import { enableVibrate } from '../utils/handle-vibrate';
+import { resetLastPageID } from '../services/timeline';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -581,10 +583,6 @@ export class AppHome extends LitElement {
 
   constructor() {
     super();
-
-    getCurrentUser().then((user) => {
-      this.user = user;
-    });
   }
 
   async firstUpdated() {
@@ -601,6 +599,8 @@ export class AppHome extends LitElement {
     window.requestIdleCallback(() => {
       init();
     });
+
+    await resetLastPageID();
 
     window.requestIdleCallback(async () => {
       const { getSettings } = await import("../services/settings");
@@ -653,6 +653,11 @@ export class AppHome extends LitElement {
       }
     });
 
+    setTimeout(() => {
+      getCurrentUser().then((user) => {
+        this.user = user;
+      });
+    }, 1200)
   }
 
   async shareTarget(name: string) {
@@ -986,6 +991,10 @@ export class AppHome extends LitElement {
         </div>
 
         <div class="setting">
+          <user-terms></user-terms>
+        </div>
+
+        <div class="setting">
           <div>
             <h4>Wellness Mode</h4>
 
@@ -1121,7 +1130,7 @@ export class AppHome extends LitElement {
 
 
           <sl-tab-panel name="general">
-            <app-timeline @handle-summary="${($event: any) => this.showSummary($event)}" class="homeTimeline" .timelineType="home and some trending"
+            <app-timeline @handle-summary="${($event: any) => this.showSummary($event)}" class="homeTimeline" .timelineType="for you"
               @replies="${($event: any) => this.handleReplies($event.detail.data, $event.detail.id)}"></app-timeline>
           </sl-tab-panel>
           <sl-tab-panel name="media">
