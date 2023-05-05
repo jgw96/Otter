@@ -1,8 +1,19 @@
+
 const VERSION = 1;
 
-importScripts(
-    'https://storage.googleapis.com/workbox-cdn/releases/6.5.4/workbox-sw.js'
-);
+// import * as navigationPreload from 'workbox-navigation-preload';
+import { NetworkFirst, NetworkOnly, CacheFirst, StaleWhileRevalidate } from 'workbox-strategies';
+import { ExpirationPlugin } from 'workbox-expiration';
+import { registerRoute } from 'workbox-routing';
+import { precacheAndRoute } from 'workbox-precaching';
+import { BackgroundSyncPlugin } from 'workbox-background-sync';
+
+// importScripts(
+//     'https://storage.googleapis.com/workbox-cdn/releases/6.5.4/workbox-sw.js'
+// );
+
+// Enable navigation preload for supporting browsers
+// navigationPreload.enable();
 
 importScripts(
     // idb-keyval
@@ -11,12 +22,13 @@ importScripts(
 
 addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SKIP_WAITING') {
+        // @ts-ignore
         self.skipWaiting();
     }
 });
 
 // Listen to the widgetinstall event.
-self.addEventListener("widgetinstall", event => {
+self.addEventListener("widgetinstall", (event) => {
     // The widget just got installed, render it using renderWidget.
     // Pass the event.widget object to the function.
     event.waitUntil(renderWidget(event.widget));
@@ -37,8 +49,7 @@ const renderWidget = async (widget) => {
 
 // This is your Service Worker, you can put any of your custom Service Worker
 // code in this file, above the `precacheAndRoute` line.
-
-const bgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin('retryqueue', {
+const bgSyncPlugin = new BackgroundSyncPlugin('retryqueue', {
     maxRetentionTime: 48 * 60,
 });
 
@@ -258,52 +269,52 @@ async function shareTargetHandler({ event }) {
     })
 }
 
-workbox.routing.registerRoute(
+registerRoute(
     '/?share',
     shareTargetHandler,
     'POST'
 );
 
 // background sync
-workbox.routing.registerRoute(
+registerRoute(
     ({ request }) => request.url.includes('/boost?id'),
-    new workbox.strategies.NetworkOnly({
+    new NetworkOnly({
         plugins: [bgSyncPlugin],
     }),
     'POST'
 );
 
-workbox.routing.registerRoute(
+registerRoute(
     ({ request }) => request.url.includes('/reblog?id'),
-    new workbox.strategies.NetworkOnly({
+    new NetworkOnly({
         plugins: [bgSyncPlugin],
     }),
     'POST'
 );
 
-workbox.routing.registerRoute(
+registerRoute(
     ({ request }) => request.url.includes('/bookmark?id'),
-    new workbox.strategies.NetworkOnly({
+    new NetworkOnly({
         plugins: [bgSyncPlugin],
     }),
     'POST'
 );
 
-workbox.routing.registerRoute(
+registerRoute(
     ({ request }) => request.url.includes('/status?status'),
-    new workbox.strategies.NetworkOnly({
+    new NetworkOnly({
         plugins: [bgSyncPlugin],
     }),
     'POST'
 );
 
 // runtime caching
-workbox.routing.registerRoute(
+registerRoute(
     ({ request }) => request.url.includes('/timelines/home'),
-    new workbox.strategies.NetworkFirst({
+    new NetworkFirst({
         cacheName: 'timeline',
         plugins: [
-            new workbox.expiration.ExpirationPlugin({
+            new ExpirationPlugin({
                 maxEntries: 100,
                 // maxAgeSeconds for 30 minutes
                 maxAgeSeconds: 60 * 30,
@@ -312,12 +323,12 @@ workbox.routing.registerRoute(
     })
 );
 
-workbox.routing.registerRoute(
+registerRoute(
     ({ request }) => request.url.includes('/bookmarks'),
-    new workbox.strategies.StaleWhileRevalidate({
+    new StaleWhileRevalidate({
         cacheName: 'bookmarks',
         plugins: [
-            new workbox.expiration.ExpirationPlugin({
+            new ExpirationPlugin({
                 maxEntries: 50,
                 maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
             })
@@ -325,12 +336,12 @@ workbox.routing.registerRoute(
     })
 );
 
-workbox.routing.registerRoute(
+registerRoute(
     ({ request }) => request.url.includes('/favorites'),
-    new workbox.strategies.StaleWhileRevalidate({
+    new StaleWhileRevalidate({
         cacheName: 'favorites',
         plugins: [
-            new workbox.expiration.ExpirationPlugin({
+            new ExpirationPlugin({
                 maxEntries: 50,
                 maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
             })
@@ -338,19 +349,19 @@ workbox.routing.registerRoute(
     })
 );
 
-workbox.routing.registerRoute(
+registerRoute(
     ({ request }) => request.url.includes('/notifications'),
     () => {
         // self.setAppBadge()
     }
 )
 
-workbox.routing.registerRoute(
+registerRoute(
     ({ request }) => request.url.includes('/notifications'),
-    new workbox.strategies.StaleWhileRevalidate({
+    new StaleWhileRevalidate({
         cacheName: 'notifications',
         plugins: [
-            new workbox.expiration.ExpirationPlugin({
+            new ExpirationPlugin({
                 maxEntries: 50,
                 maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
             })
@@ -358,12 +369,12 @@ workbox.routing.registerRoute(
     })
 );
 
-workbox.routing.registerRoute(
+registerRoute(
     ({ request }) => request.url.includes('/search'),
-    new workbox.strategies.StaleWhileRevalidate({
+    new StaleWhileRevalidate({
         cacheName: 'search',
         plugins: [
-            new workbox.expiration.ExpirationPlugin({
+            new ExpirationPlugin({
                 maxEntries: 50,
                 maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
             }),
@@ -372,12 +383,12 @@ workbox.routing.registerRoute(
 );
 
 // avatar photos
-workbox.routing.registerRoute(
+registerRoute(
     ({ request }) => request.url.includes('/accounts/avatars'),
-    new workbox.strategies.CacheFirst({
+    new CacheFirst({
         cacheName: 'avatar',
         plugins: [
-            new workbox.expiration.ExpirationPlugin({
+            new ExpirationPlugin({
                 maxEntries: 50,
                 maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
             }),
@@ -385,12 +396,12 @@ workbox.routing.registerRoute(
     })
 );
 
-workbox.routing.registerRoute(
+registerRoute(
     ({ request }) => request.url.includes('/user?code'),
-    new workbox.strategies.CacheFirst({
+    new CacheFirst({
         cacheName: 'user',
         plugins: [
-            new workbox.expiration.ExpirationPlugin({
+            new ExpirationPlugin({
                 maxEntries: 50,
                 maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
             }),
@@ -398,12 +409,12 @@ workbox.routing.registerRoute(
     })
 );
 
-workbox.routing.registerRoute(
+registerRoute(
     ({ request }) => request.url.includes('/isfollowing'),
-    new workbox.strategies.StaleWhileRevalidate({
+    new StaleWhileRevalidate({
         cacheName: 'user',
         plugins: [
-            new workbox.expiration.ExpirationPlugin({
+            new ExpirationPlugin({
                 maxEntries: 50,
                 maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
             }),
@@ -411,4 +422,4 @@ workbox.routing.registerRoute(
     })
 )
 
-workbox.precaching.precacheAndRoute(self.__WB_MANIFEST || []);
+precacheAndRoute(self.__WB_MANIFEST || []);
