@@ -588,13 +588,19 @@ export class AppHome extends LitElement {
   async firstUpdated() {
     const urlParams = new URLSearchParams(window.location.search);
 
-    if (urlParams.has("name")) {
-      const name = urlParams.get("name");
-
-      if (name) {
-        await this.shareTarget(name);
-      }
+    if ((navigator as any).virtualKeyboard) {
+      (navigator as any).virtualKeyboard.overlaysContent = true;
     }
+
+    setTimeout(async () => {
+      if (urlParams.has("name")) {
+        const name = urlParams.get("name");
+
+        if (name) {
+          await this.shareTarget(name);
+        }
+      }
+    }, 1000);
 
     window.requestIdleCallback(() => {
       init();
@@ -623,13 +629,14 @@ export class AppHome extends LitElement {
       }
     });
 
-    window.requestIdleCallback(async () => {
-      const tabData = urlParams.get("tab");
+    const tabData = urlParams.get("tab");
+    console.log("tabData", tabData)
 
-      if (tabData) {
+    if (tabData) {
+      setTimeout(() => {
         this.openATab(tabData);
-      }
-    });
+      }, 1000)
+    }
 
     window.requestIdleCallback(() => {
       if (this.shadowRoot) {
@@ -815,6 +822,7 @@ export class AppHome extends LitElement {
 
   openATab(name: string) {
     const tab = this.shadowRoot?.querySelector(`sl-tab[panel=${name}]`) as any;
+    console.log("tab", tab)
     tab.click();
   }
 
@@ -908,23 +916,23 @@ export class AppHome extends LitElement {
             New Post
           </fluent-menu-item>
 
-          <fluent-menu-item @click="${() => this.openATab(" search")}">
+          <fluent-menu-item @click="${() => this.openATab("search")}">
             <sl-icon src="/assets/search-outline.svg"></sl-icon>
             Explore
           </fluent-menu-item>
-          <fluent-menu-item @click="${() => this.openATab(" notifications")}">
+          <fluent-menu-item @click="${() => this.openATab("notifications")}">
             <sl-icon src="/assets/notifications-outline.svg"></sl-icon>
             Notifications
           </fluent-menu-item>
-          <fluent-menu-item @click="${() => this.openATab(" messages")}">
+          <fluent-menu-item @click="${() => this.openATab("messages")}">
             <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
             Messages
           </fluent-menu-item>
-          <fluent-menu-item @click="${() => this.openATab(" bookmarks")}">
+          <fluent-menu-item @click="${() => this.openATab("bookmarks")}">
             <sl-icon src="/assets/bookmark-outline.svg"></sl-icon>
             Bookmarks
           </fluent-menu-item>
-          <fluent-menu-item @click="${() => this.openATab(" faves")}">
+          <fluent-menu-item @click="${() => this.openATab("faves")}">
             <sl-icon src="/assets/heart-outline.svg"></sl-icon>
             Favorites
           </fluent-menu-item>
@@ -973,6 +981,9 @@ export class AppHome extends LitElement {
                     <fluent-menu-item @click="${() => this.editMyProfile()}">
                       Edit My Profile
                     </fluent-menu-item>
+                    <!-- <fluent-menu-item>
+                      Add an existing Account
+                    </fluent-menu-item> -->
                   </fluent-menu>
                 </sl-dropdown>
               </div>
@@ -1183,6 +1194,9 @@ export class AppHome extends LitElement {
                     <fluent-menu-item @click="${() => this.editMyProfile()}">
                        Edit My Profile
                     </fluent-menu-item>
+                    <!-- <fluent-menu-item>
+                      Add an existing Account
+                    </fluent-menu-item> -->
                   </fluent-menu>
                 </sl-dropdown>
               </div>

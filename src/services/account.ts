@@ -39,7 +39,7 @@ export const getPeers = async () => {
     const data = await response.json();
 
     // return first 300
-    return data.slice(0, 500);
+    return data.slice(0, 50);
 }
 
 
