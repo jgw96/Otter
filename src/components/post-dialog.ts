@@ -63,6 +63,8 @@ export class PostDialog extends LitElement {
                 display: flex;
                 justify-content: flex-end;
                 align-items: center;
+
+                margin-bottom: env(keyboard-inset-height, 0px);
             }
 
             #post-copilot {
