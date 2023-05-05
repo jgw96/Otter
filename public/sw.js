@@ -250,27 +250,27 @@ async function shareTargetHandler({ event }) {
     const mediaFiles = formData.getAll("image");
     const cache = await caches.open("shareTarget");
 
-    event.waitUntil(async () => {
-        for (const mediaFile of mediaFiles) {
-            await cache.put(
-                // TODO: Handle scenarios in which mediaFile.name isn't set,
-                // or doesn't include a proper extension.
-                mediaFile.name,
-                new Response(mediaFile, {
-                    headers: {
-                        "content-length": mediaFile.size,
-                        "content-type": mediaFile.type,
-                    },
-                })
-            );
-        }
 
-        return Response.redirect(`/home?name=${mediaFiles[0].name}`, 303);
-    })
+    for (const mediaFile of mediaFiles) {
+        await cache.put(
+            // TODO: Handle scenarios in which mediaFile.name isn't set,
+            // or doesn't include a proper extension.
+            mediaFile.name,
+            new Response(mediaFile, {
+                headers: {
+                    "content-length": mediaFile.size,
+                    "content-type": mediaFile.type,
+                },
+            })
+        );
+    }
+
+    return Response.redirect(`/home?name=${mediaFiles[0].name}`, 303);
+
 }
 
 registerRoute(
-    '/?share',
+    '/share',
     shareTargetHandler,
     'POST'
 );
