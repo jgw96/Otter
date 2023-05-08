@@ -22,7 +22,7 @@
     "@lit-labs/virtualizer": "^2.0.0",
     "@pwabuilder/pwainstall": "^1.6.7",
     "@shoelace-style/shoelace": "^2.3.0",
-    "@thepassle/app-tools": "^0.9.0",
+    "@thepassle/app-tools": "^0.9.3",
     "@types/marked": "^4.0.8",
     "@vaadin/router": "^1.7.4",
     "blurhash-wasm": "^0.2.0",
