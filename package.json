@@ -31,7 +31,7 @@
     "hotkeys-js": "^3.10.1",
     "idb-keyval": "^6.2.0",
     "lit": "^2.7.0",
-    "marked": "^4.2.12",
+    "marked": "^5.0.2",
     "urlpattern-polyfill": "^6.0.2",
     "workbox-background-sync": "^6.5.4",
     "workbox-build": "^6.5.4",
