@@ -32,7 +32,7 @@
     "idb-keyval": "^6.2.0",
     "lit": "^2.7.0",
     "marked": "^4.2.12",
-    "urlpattern-polyfill": "^6.0.2",
+    "urlpattern-polyfill": "^9.0.0",
     "workbox-background-sync": "^6.5.4",
     "workbox-build": "^6.5.4",
     "workbox-core": "^6.5.2",
