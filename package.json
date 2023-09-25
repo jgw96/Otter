@@ -29,7 +29,7 @@
     "browser-fs-access": "^0.33.0",
     "fast-blurhash": "^1.1.2",
     "hotkeys-js": "^3.10.1",
-    "idb-keyval": "^6.2.0",
+    "idb-keyval": "^6.2.1",
     "lit": "^2.7.0",
     "marked": "^4.2.12",
     "urlpattern-polyfill": "^6.0.2",
