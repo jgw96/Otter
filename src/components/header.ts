@@ -152,7 +152,7 @@ export class AppHeader extends LitElement {
             Back
           </fluent-button>` : null}
 
-          <img src="/assets/icons/64-icon.png" alt="Otter" width="32" height="32">
+          <img src="/assets/icons/Android/64-icon.png" alt="Otter" width="32" height="32">
         </div>
 
         <div id="actions">
