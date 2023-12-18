@@ -264,7 +264,7 @@ export class Timeline extends LitElement {
         console.log("saved timeline type", savedTimelineType)
 
         if (savedTimelineType) {
-            this.timelineType = "home";
+            this.timelineType = savedTimelineType;
         }
 
         this.loadingData = true;
@@ -490,7 +490,7 @@ export class Timeline extends LitElement {
                 <fluent-option value="public">public</fluent-option>
             </fluent-combobox>
 
-            <sl-button size="small" @click="${() => this.refreshTimeline()}">
+            <sl-button @click="${() => this.refreshTimeline()}">
                 <sl-icon src="/assets/refresh-circle-outline.svg"></fluent-icon>
             </sl-button>
         </div>

@@ -19,9 +19,7 @@ export class AppHeader extends LitElement {
         align-items: center;
         background: var(--app-color-primary);
         color: white;
-        padding-left: 16px;
-        padding-right: 16px;
-        padding-top: 12px;
+        padding-right: 5px;
         position: fixed;
         left: env(titlebar-area-x, 0);
         top: env(titlebar-area-y, 0);
@@ -31,7 +29,7 @@ export class AppHeader extends LitElement {
 
         width: calc(env(titlebar-area-width, intitial) + -23px);
         padding-top: 4px;
-        padding-left: 6px;
+        padding-left: 20px;
 
         view-transition-name: full-embed;
         contain: layout;
@@ -39,7 +37,7 @@ export class AppHeader extends LitElement {
 
       #actions {
         display: flex;
-        gap: 4px;
+        gap: 0px;
       }
 
       header h1 {
@@ -152,13 +150,13 @@ export class AppHeader extends LitElement {
             Back
           </fluent-button>` : null}
 
-          <img src="/assets/icons/Android/64-icon.png" alt="Otter" width="32" height="32">
+          <img src="/assets/icons/Android/64-icon.png" alt="Otter" width="20" height="20">
         </div>
 
         <div id="actions">
-          <fluent-button @click="${() => this.openBotDrawer()}" appearance="lightweight" title=="Open MammothBot" id="mammoth-bot">
+          <!-- <fluent-button @click="${() => this.openBotDrawer()}" appearance="lightweight" title=="Open MammothBot" id="mammoth-bot">
             <sl-icon src="/assets/sparkles-outline.svg" alt="MammothBot"></sl-icon>
-          </fluent-button>
+          </fluent-button> -->
 
           <fluent-button appearance="lightweight" title="Open Theme Settings" id="open-button" circle size="small" @click="${() => this.handleTheming()}">
             <sl-icon src="/assets/color-palette-outline.svg" alt="Theme"></sl-icon>

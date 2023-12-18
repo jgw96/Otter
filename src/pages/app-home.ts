@@ -1123,11 +1123,11 @@ export class AppHome extends LitElement {
 
             <span class="tab-label">Notifications</span>
           </sl-tab>
-          <sl-tab slot="nav" panel="messages">
+          <!-- <sl-tab slot="nav" panel="messages">
                                           <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
 
                                           <span class="tab-label">Messages</span>
-                                        </sl-tab>
+                                        </sl-tab> -->
           <sl-tab id="bookmarks-tab" slot="nav" panel="bookmarks">
             <sl-icon src="/assets/bookmark-outline.svg"></sl-icon>
 
