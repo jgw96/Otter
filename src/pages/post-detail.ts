@@ -28,11 +28,11 @@ export class PostDetail extends LitElement {
                 padding-top: 60px;
 
                 display: flex;
-                padding-left: 4vw;
+                padding-left: 20px;
                 justify-content: space-between;
                 align-items: flex-start;
-                padding-right: 4vw;
-                gap: 16px;
+                padding-right: 20px;
+                gap: 0px;
 
             }
 
@@ -67,6 +67,7 @@ export class PostDetail extends LitElement {
 
             #replies h2 {
                 margin-top: 0;
+                margin-left: 15px;
             }
 
             #reply-button {

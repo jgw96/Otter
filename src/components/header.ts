@@ -29,7 +29,7 @@ export class AppHeader extends LitElement {
 
         width: calc(env(titlebar-area-width, intitial) + -23px);
         padding-top: 4px;
-        padding-left: 20px;
+        padding-left: 12px;
 
         view-transition-name: full-embed;
         contain: layout;
@@ -72,6 +72,10 @@ export class AppHeader extends LitElement {
       @media (min-width: 768px) {
         #mammoth-bot {
           display: none;
+        }
+
+        header {
+          padding-left: 20px;
         }
       }
 

@@ -260,8 +260,10 @@ export class AppHome extends LitElement {
         padding-top: 8px;
         background: white;
         margin-bottom: 6px;
+        top: 13px;
 
         padding-right: 10px;
+        position: fixed;
       }
 
       fluent-toolbar::part(positioning-region) {
@@ -275,7 +277,7 @@ export class AppHome extends LitElement {
       }
 
       main {
-        padding-top: 0;
+        padding-top: 54px;
         display: grid;
         grid-template-columns: 66vw 34vw;
       }
@@ -821,6 +823,7 @@ export class AppHome extends LitElement {
   }
 
   openATab(name: string) {
+    console.log('tab name', name);
     const tab = this.shadowRoot?.querySelector(`sl-tab[panel=${name}]`) as any;
     console.log("tab", tab)
     tab.click();

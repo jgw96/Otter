@@ -83,22 +83,26 @@
     {
       "src": "assets/screenshots/new/desktop-two.png",
       "sizes": "2732x2048",
-      "type": "image/png"
+      "type": "image/png",
+      "form_factor": "wide"
     },
     {
       "src": "assets/screenshots/new/desktop-three.png",
       "sizes": "2732x2048",
-      "type": "image/png"
+      "type": "image/png",
+      "form_factor": "wide"
     },
     {
       "src": "assets/screenshots/new/desktop-four.png",
       "sizes": "2732x2048",
-      "type": "image/png"
+      "type": "image/png",
+      "form_factor": "wide"
     },
     {
       "src": "assets/screenshots/new/desktop-five.png",
       "sizes": "2732x2048",
-      "type": "image/png"
+      "type": "image/png",
+      "form_factor": "wide"
     }
   ],
   "features": [
@@ -139,7 +143,7 @@
     },
     {
       "name": "Explore",
-      "url": "/?tab=search",
+      "url": "?tab=search",
       "description": "Head straight to the explore page",
       "icons": [
         {
@@ -151,7 +155,7 @@
     },
     {
       "name": "Notifications",
-      "url": "/?tab=notifications",
+      "url": "?tab=notifications",
       "description": "Head straight to the notifications page",
       "icons": [
         {
@@ -163,7 +167,7 @@
     },
     {
       "name": "Messages",
-      "url": "/?tab=messages",
+      "url": "?tab=messages",
       "description": "Head straight to the messages page",
       "icons": [
         {
@@ -175,7 +179,7 @@
     },
     {
       "name": "New Post",
-      "url": "/?newPost=true",
+      "url": "?newPost=true",
       "description": "Start making a new post",
       "icons": [
         {
