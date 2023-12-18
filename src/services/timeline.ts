@@ -27,7 +27,7 @@ export const savePlace = async (id: string) => {
 }
 
 export const getHomeTimeline = async () => {
-    const response = await fetch(`https://mammoth-backend.azurewebsites.net/timeline?code=${token}&server=${server}`);
+    const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/timeline?code=${token}&server=${server}`);
     const data = await response.json();
     return data;
 }
@@ -133,14 +133,22 @@ export const resetLastPageID = (): Promise<void> => {
 }
 
 export const getPaginatedHomeTimeline = async (type = "home") => {
+    console.log("getPaginatedHomeTimeline", type);
+    console.log("LOOK HERE", type)
 
-    await handlePeriodic();
+    try {
+        handlePeriodic();
+    }
+    catch(err) {
+        console.log(err);
+    }
 
     const headers = new Headers({
         "Authorization": `Bearer ${accessToken}`
     });
 
     if (lastPageID && lastPageID.length > 0) {
+        console.log("LOOK HERE", type);
         let accessToken = localStorage.getItem('accessToken') || '';
 
         if (type === "for you") {
@@ -159,6 +167,7 @@ export const getPaginatedHomeTimeline = async (type = "home") => {
         return data;
     }
     else {
+        console.log("LOOK HERE", type)
         let accessToken = localStorage.getItem('accessToken') || '';
 
         const response = await fetch(`https://${server}/api/v1/timelines/${type}?limit=10`, {
@@ -168,6 +177,8 @@ export const getPaginatedHomeTimeline = async (type = "home") => {
 
         const data = await response.json();
 
+        console.log("LOOK HERE", data);
+
         lastPageID = data[data.length - 1].id;
 
         return data;
@@ -175,13 +186,13 @@ export const getPaginatedHomeTimeline = async (type = "home") => {
 }
 
 export const getPublicTimeline = async () => {
-    const response = await fetch(`https://mammoth-backend.azurewebsites.net/public?code=${token}&server=${server}`);
+    const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/public?code=${token}&server=${server}`);
     const data = await response.json();
     return data;
 }
 
 export const boostPost = async (id: string) => {
-    // const response = await fetch(`https://mammoth-backend.azurewebsites.net/boost?id=${id}&code=${accessToken}&server=${server}`, {
+    // const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/boost?id=${id}&code=${accessToken}&server=${server}`, {
     //     method: 'POST',
     //     headers: {
     //         'Content-Type': 'application/json'
@@ -207,7 +218,7 @@ export const boostPost = async (id: string) => {
 }
 
 export const reblogPost = async (id: string) => {
-    const response = await fetch(`https://mammoth-backend.azurewebsites.net/reblog?id=${id}&code=${accessToken}&server=${server}`, {
+    const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/reblog?id=${id}&code=${accessToken}&server=${server}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -218,13 +229,13 @@ export const reblogPost = async (id: string) => {
 }
 
 export const getReplies = async (id: string) => {
-    const response = await fetch(`https://mammoth-backend.azurewebsites.net/replies?id=${id}&code=${accessToken}&server=${server}`);
+    const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/replies?id=${id}&code=${accessToken}&server=${server}`);
     const data = await response.json();
     return data;
 }
 
 export const reply = async (id: string, reply: string) => {
-    const response = await fetch(`https://mammoth-backend.azurewebsites.net/reply?id=${id}&text=${reply}&code=${accessToken}&server=${server}`, {
+    const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/reply?id=${id}&text=${reply}&code=${accessToken}&server=${server}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -235,19 +246,19 @@ export const reply = async (id: string, reply: string) => {
 }
 
 export const mediaTimeline = async () => {
-    const response = await fetch(`https://mammoth-backend.azurewebsites.net/mediaTimeline?limit=40&code=${accessToken}&server=${server}`);
+    const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/mediaTimeline?limit=40&code=${accessToken}&server=${server}`);
     const data = await response.json();
     return data;
 };
 
 export const searchTimeline = async (query: string) => {
-    const response = await fetch(`https://mammoth-backend.azurewebsites.net/search?query=${query}&code=${accessToken}&server=${server}`);
+    const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/search?query=${query}&code=${accessToken}&server=${server}`);
     const data = await response.json();
     return data;
 }
 
 export const getHashtagTimeline = async (hashtag: string) => {
-    const response = await fetch(`https://mammoth-backend.azurewebsites.net/hashtag?tag=${hashtag}&code=${accessToken}&server=${server}`);
+    const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/hashtag?tag=${hashtag}&code=${accessToken}&server=${server}`);
     const data = await response.json();
     return data;
 }
@@ -298,6 +309,7 @@ async function handlePeriodic() {
             }
         } catch (error) {
             // Periodic background sync cannot be used.
+            return error;
         }
     }
 }

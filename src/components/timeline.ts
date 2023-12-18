@@ -261,8 +261,10 @@ export class Timeline extends LitElement {
         const { get } = await import("idb-keyval");
         const savedTimelineType = await get("timelineType");
 
+        console.log("saved timeline type", savedTimelineType)
+
         if (savedTimelineType) {
-            this.timelineType = savedTimelineType;
+            this.timelineType = "home";
         }
 
         this.loadingData = true;
@@ -320,6 +322,7 @@ export class Timeline extends LitElement {
                 this.requestUpdate();
                 break;
             case "home":
+                console.log("LOOK HERE")
                 const timelineData = await getPaginatedHomeTimeline("home");
                 console.log("timelineData", timelineData);
 
@@ -495,17 +498,17 @@ export class Timeline extends LitElement {
 
 
         <ul id="mainList" part="list">
-            <!-- ${guard([this.timeline.length, this.timelineType], () => this.timeline.map((tweet: Post) => html`
+            ${guard([this.timeline.length, this.timelineType], () => this.timeline.map((tweet: Post) => html`
                 <li class="timeline-list-item">
                   <timeline-item @summarize="${($event: any) => this.handleSummary($event)}" tweetID="${tweet.id}" @delete="${() => this.refreshTimeline()}" @analyze="${($event: any) => this.showAnalyze($event.detail.data, $event.detail.imageData, $event.detail.tweet)}" @openimage="${($event: any) => this.showImage($event.detail.imageURL)}" ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item>
                 </li>
-            `))} -->
+            `))}
 
-            <lit-virtualizer
+           <!-- <lit-virtualizer
               .items=${this.timeline}
               .renderItem=${(tweet: Post) => html`<li class="timeline-list-item"><timeline-item @summarize="${($event: any) => this.handleSummary($event)}" tweetID="${tweet.id}" @delete="${() => this.refreshTimeline()}" @analyze="${($event: any) => this.showAnalyze($event.detail.data, $event.detail.imageData, $event.detail.tweet)}" @openimage="${($event: any) => this.showImage($event.detail.imageURL)}" ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item></li>`}
             >
-        </lit-virtualizer>
+        </lit-virtualizer>-->
 
             <fluent-button appearance="lightweight" ?loading="${this.loadingData}" id="load-more">Load More</fluent-button>
         </ul>

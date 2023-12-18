@@ -1,4 +1,4 @@
-// https://mammoth-backend.azurewebsites.net/
+// https://mammoth-server-node-qsqckaz7va-uc.a.run.app/
 import { set } from 'idb-keyval';
 let accessToken = localStorage.getItem('accessToken') || '';
 set('accessToken', accessToken);
@@ -45,7 +45,7 @@ export const getPeers = async () => {
 
 export const checkFollowing = async (id: string) => {
     try {
-        const response = await fetch(`https://mammoth-backend.azurewebsites.net/isfollowing?id=${id}&code=${accessToken}&server=${server}`);
+        const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/isfollowing?id=${id}&code=${accessToken}&server=${server}`);
         const data = await response.json();
 
         return data;
@@ -102,7 +102,7 @@ export const unfollowUser = async (id: string) => {
 }
 
 export const getAccount = async (id: string) => {
-    const response = await fetch(`https://mammoth-backend.azurewebsites.net/account?id=${id}&code=${accessToken}&server=${server}`);
+    const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/account?id=${id}&code=${accessToken}&server=${server}`);
     const data = await response.json();
 
     console.log("account data", data)
@@ -110,25 +110,25 @@ export const getAccount = async (id: string) => {
 };
 
 export const getUsersPosts = async (id: string) => {
-    const response = await fetch(`https://mammoth-backend.azurewebsites.net/userPosts?id=${id}&code=${accessToken}&server=${server}`);
+    const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/userPosts?id=${id}&code=${accessToken}&server=${server}`);
     const data = await response.json();
     return data;
 }
 
 export const getUsersFollowers = async (id: string) => {
-    const response = await fetch(`https://mammoth-backend.azurewebsites.net/followers?id=${id}&code=${accessToken}&server=${server}`);
+    const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/followers?id=${id}&code=${accessToken}&server=${server}`);
     const data = await response.json();
     return data;
 }
 
 export const getFollowing = async (id: string) => {
-    const response = await fetch(`https://mammoth-backend.azurewebsites.net/following?id=${id}&code=${accessToken}&server=${server}`);
+    const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/following?id=${id}&code=${accessToken}&server=${server}`);
     const data = await response.json();
     return data;
 }
 
 export const followUser = async (id: string) => {
-    const response = await fetch(`https://mammoth-backend.azurewebsites.net/follow?id=${id}&code=${accessToken}&server=${server}`, {
+    const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/follow?id=${id}&code=${accessToken}&server=${server}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -139,14 +139,14 @@ export const followUser = async (id: string) => {
 }
 
 export const getInstanceInfo = async () => {
-    const response = await fetch(`https://mammoth-backend.azurewebsites.net/instance?code=${accessToken}&server=${server}`);
+    const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/instance?code=${accessToken}&server=${server}`);
     const data = await response.json();
     return data;
 }
 
 export const initAuth = async (serverURL: string) => {
     const redirect_uri = location.origin;
-    const response = await fetch(`https://mammoth-backend.azurewebsites.net/authenticate?server=https://${serverURL}&redirect_uri=${redirect_uri}`, {
+    const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/authenticate?server=https://${serverURL}&redirect_uri=${redirect_uri}`, {
         method: 'POST'
     });
 
@@ -169,7 +169,7 @@ export const authToClient = async (code: string) => {
         localStorage.setItem('token', code);
         const redirect_uri = location.origin;
 
-        const response = await fetch(`https://mammoth-backend.azurewebsites.net/client?code=${token}&server=${server}&redirect_uri=${redirect_uri}`, {
+        const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/client?code=${token}&server=${server}&redirect_uri=${redirect_uri}`, {
             method: 'POST'
         });
 

@@ -344,27 +344,27 @@ export class TimelineItem extends LitElement {
         this.currentUser = await getCurrentUser();
 
         if (!this.settings.data_saver) {
-            // set up intersection observer
-            const options = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.1
-            };
+            // // set up intersection observer
+            // const options = {
+            //     root: null,
+            //     rootMargin: '0px',
+            //     threshold: 0.1
+            // };
 
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(async entry => {
-                    if (entry.isIntersecting) {
-                        window.requestIdleCallback(() => {
-                            localStorage.setItem(`latest-read`, this.tweet?.id || "");
-                        });
+            // const observer = new IntersectionObserver((entries, observer) => {
+            //     entries.forEach(async entry => {
+            //         if (entry.isIntersecting) {
+            //             window.requestIdleCallback(() => {
+            //                 localStorage.setItem(`latest-read`, this.tweet?.id || "");
+            //             });
 
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }
-                , options);
+            //             observer.unobserve(entry.target);
+            //         }
+            //     });
+            // }
+            //     , options);
 
-            observer.observe(this.shadowRoot?.querySelector('sl-card') as Element);
+            // observer.observe(this.shadowRoot?.querySelector('sl-card') as Element);
         }
 
         if (this.tweet && this.tweet.in_reply_to_id !== null) {

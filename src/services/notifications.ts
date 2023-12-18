@@ -2,7 +2,7 @@ let server = localStorage.getItem('server') || '';
 let accessToken = localStorage.getItem('accessToken') || '';
 
 export const getNotifications = async () => {
-    // const notifyResponse = await fetch(`https://mammoth-backend.azurewebsites.net/notifications?code=${accessToken}&server=${server}`);
+    // const notifyResponse = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/notifications?code=${accessToken}&server=${server}`);
     // const data = await notifyResponse.json();
     // return data;
 

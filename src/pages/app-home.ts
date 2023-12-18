@@ -1093,7 +1093,7 @@ export class AppHome extends LitElement {
       </sl-drawer>
 
       <sl-drawer id="bot-drawer" placement="bottom" label="Mammoth Bot">
-        <mammoth-bot></mammoth-bot>
+        <!-- <mammoth-bot></mammoth-bot> -->
       </sl-drawer>
 
       <fluent-toolbar>
@@ -1222,7 +1222,7 @@ export class AppHome extends LitElement {
                 </div> -->
         </div>
 
-        <mammoth-bot></mammoth-bot>
+        <!-- <mammoth-bot></mammoth-bot> -->
       </main>
 
       <pwa-install disable-install-description="true"></pwa-install>
