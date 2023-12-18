@@ -7,7 +7,7 @@ import { enableVibrate } from '../utils/handle-vibrate';
 provideFluentDesignSystem().register(fluentButton());
 @customElement('app-header')
 export class AppHeader extends LitElement {
-  @property({ type: String }) title = 'Mammoth';
+  @property({ type: String }) title = 'Otter';
 
   @property({ type: Boolean }) enableBack: boolean = false;
 
@@ -152,7 +152,7 @@ export class AppHeader extends LitElement {
             Back
           </fluent-button>` : null}
 
-          <img src="/assets/icons/64-icon.png" alt="Mammoth" width="32" height="32">
+          <img src="/assets/icons/64-icon.png" alt="Otter" width="32" height="32">
         </div>
 
         <div id="actions">

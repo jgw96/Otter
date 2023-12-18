@@ -1,8 +1,8 @@
-# Mammoth: Your Mastodon App
+# Otter: Your Mastodon App
 
 [![CodeFactor](https://www.codefactor.io/repository/github/jgw96/mammoth-app/badge)](https://www.codefactor.io/repository/github/jgw96/mammoth-app)
 
-<a href="https://www.producthunt.com/posts/mammoth-for-mastodon-2?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-mammoth&#0045;for&#0045;mastodon&#0045;2" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=388307&theme=light" alt="Mammoth&#0032;For&#0032;Mastodon - Mastodon&#0032;made&#0032;easy&#0032;with&#0032;AI | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+<a href="https://www.producthunt.com/posts/mammoth-for-mastodon-2?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-mammoth&#0045;for&#0045;mastodon&#0045;2" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=388307&theme=light" alt="Otter&#0032;For&#0032;Mastodon - Mastodon&#0032;made&#0032;easy&#0032;with&#0032;AI | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 
 **Not familiar with Mastodon? [Learn More](https://joinmastodon.org/)**
 
@@ -27,9 +27,9 @@
 
 ### AI Enhanced
 
-- Struggling to find that perfect image to go along with your post? Have a funny idea for an image on a post? Generate it right in Mammoth with the magic of AI
+- Struggling to find that perfect image to go along with your post? Have a funny idea for an image on a post? Generate it right in Otter with the magic of AI
 - Not understanding something in a post, or just want to learn more about a specific topic in a post? Click the search button on a post to have AI help you understand the post!
-- AI driven autocomplete and status generation: Have something to say but not sure how to say it best? Ask Mammoth to write it for you!
+- AI driven autocomplete and status generation: Have something to say but not sure how to say it best? Ask Otter to write it for you!
 
 ### Customizeable
 

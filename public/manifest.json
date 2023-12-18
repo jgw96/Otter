@@ -3,12 +3,12 @@
   "scope": "/",
   "dir": "auto",
   "lang": "en-US",
-  "name": "Mammoth",
+  "name": "Otter",
   "display": "standalone",
   "start_url": "/",
-  "short_name": "Mammoth",
+  "short_name": "Otter",
   "theme_color": "#181818",
-  "description": "Discover a simpler way to socialize online with Mammoth, the Mastodon app that prioritizes ease-of-use and clean design. Experience the open-source, decentralized social network without the clutter. Join communities, share your thoughts, and connect with like-minded individuals all with just a few taps. Say goodbye to overwhelming feeds and complicated features, Mammoth simplifies the social media experience.",
+  "description": "Discover a simpler way to socialize online with Otter, the Mastodon app that prioritizes ease-of-use and clean design. Experience the open-source, decentralized social network without the clutter. Join communities, share your thoughts, and connect with like-minded individuals all with just a few taps. Say goodbye to overwhelming feeds and complicated features, Otter simplifies the social media experience.",
   "orientation": "portrait",
   "background_color": "#181818",
   "related_applications": [],
@@ -21,24 +21,24 @@
   ],
   "icons": [
     {
-      "src": "assets/icons/maskable_icon_x512.png",
+      "src": "assets/icons/Android/maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "assets/icons/256-icon.png",
+      "src": "assets/icons/Android/256-icon.png",
       "sizes": "256x256",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "assets/icons/128-icon.png",
+      "src": "assets/icons/Android/128-icon.png",
       "sizes": "128x128",
       "type": "image/png"
     },
     {
-      "src": "assets/icons/64-icon.png",
+      "src": "assets/icons/Android/64-icon.png",
       "sizes": "96x96",
       "type": "image/png"
     }
@@ -172,10 +172,10 @@
   ],
   "widgets": [
     {
-      "name": "Mammoth",
-      "description": "Widget for Mammoth, the Mastodon app",
-      "tag": "mammoth",
-      "template": "mammoth-template",
+      "name": "Otter",
+      "description": "Widget for Otter, the Mastodon app",
+      "tag": "Otter",
+      "template": "Otter-template",
       "ms_ac_template": "widgets/widget-template.json",
       "data": "widgets/widget-data.json",
       "type": "application/json",
@@ -183,7 +183,7 @@
         {
           "src": "assets/screenshots/new/desktop-one.png",
           "sizes": "2732x2048",
-          "label": "The widget for Mammoth"
+          "label": "The widget for Otter"
         }
       ],
       "icons": [

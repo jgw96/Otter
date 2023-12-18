@@ -171,7 +171,7 @@ export class PostDetail extends LitElement {
         if (navigator.share) {
             // share the post
             await navigator.share({
-                title: 'Mammoth',
+                title: 'Otter',
                 text: this.tweet?.content,
                 url: this.tweet?.url
             });

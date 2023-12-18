@@ -90,7 +90,7 @@ export const subToPush = async () => {
     const permission = await Notification.requestPermission();
     if (permission === "granted") {
         // show notification
-        registration?.showNotification("Mammoth", {
+        registration?.showNotification("Otter", {
             body: "You have successfully subscribed to push notifications!",
             icon: "/assets/icons/128-icon.png",
             vibrate: [200, 100, 200],

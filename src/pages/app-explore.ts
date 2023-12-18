@@ -143,7 +143,7 @@ export class AppExplore extends LitElement {
 
                     <strong>What is this?</strong>
                     <p>
-                        Mammoth is a <a href="https://joinmastodon.org">Mastodon</a> client that is built with web technologies. It is a <a href="https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps">progressive web app</a>, which means you can install it on your phone or desktop.
+                        Otter is a <a href="https://joinmastodon.org">Mastodon</a> client that is built with web technologies. It is a <a href="https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps">progressive web app</a>, which means you can install it on your phone or desktop.
                         It is also open source, and can be found on <a href="https://github.com/jgw96/mammoth-app">GitHub</a>.
                     </p>
             </div>

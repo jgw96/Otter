@@ -490,7 +490,7 @@ export class TimelineItem extends LitElement {
             // share status with web share api
             if (navigator.share) {
                 await navigator.share({
-                    title: 'Mammoth',
+                    title: 'Otter',
                     text: tweet.reblog ? tweet.reblog.content : tweet.content,
                     url: `https://mastodon.social/web/statuses/${tweet.reblog ? tweet.reblog.id : tweet.id}`
                 })

@@ -35,10 +35,10 @@ export class SponsorButton extends LitElement {
     render() {
         return html`
         <sl-dropdown placement="top-start">
-            <fluent-button appearance="lightweight" slot="trigger">Support Mammoth</fluent-button>
+            <fluent-button appearance="lightweight" slot="trigger">Support Otter</fluent-button>
             <sl-menu>
                 <sl-menu-item>
-                    <a href="https://buy.stripe.com/eVa6skb447CO1G0eUU" target="_blank">Support Mammoth Directly</a>
+                    <a href="https://buy.stripe.com/eVa6skb447CO1G0eUU" target="_blank">Support Otter Directly</a>
                 </sl-menu-item>
                 <sl-divider></sl-divider>
                 <sl-menu-item>

@@ -111,7 +111,7 @@ const getNotifications = async () => {
             // build message for notification
             let message = '';
             let actions = [];
-            let title = 'Mammoth';
+            let title = 'Otter';
             // if data[0].type === 'mention' || 'reblog' || 'favourite'
             switch (data[0].type) {
                 case 'mention':
@@ -145,7 +145,7 @@ const getNotifications = async () => {
 
 
             // show notification
-            const notify = self.registration.showNotification('Mammoth', {
+            const notify = self.registration.showNotification('Otter', {
                 body: message,
                 icon: '/assets/icons/512-icon.png',
                 tag: 'mammoth',
@@ -184,7 +184,7 @@ self.addEventListener('push', async (event) => {
     // build message for notification
     let message = '';
     let actions = [];
-    let title = 'Mammoth';
+    let title = 'Otter';
     // if data[0].type === 'mention' || 'reblog' || 'favourite'
     switch (data[0].type) {
         case 'mention':
@@ -217,7 +217,7 @@ self.addEventListener('push', async (event) => {
     }
 
     // show notification
-    self.registration.showNotification('Mammoth', {
+    self.registration.showNotification('Otter', {
         body: message,
         icon: '/assets/icons/512-icon.png',
         tag: 'mammoth',

@@ -1027,7 +1027,7 @@ export class AppHome extends LitElement {
           </div>
 
           <p>
-            Data Saver Mode reduces the amount of data used by Mammoth.
+            Data Saver Mode reduces the amount of data used by Otter.
           </p>
         </div>
 
@@ -1048,7 +1048,7 @@ export class AppHome extends LitElement {
         </div>
 
         <div class="sponsor">
-          Thanks for using Mammoth! If you are enjoying the app and want to help me spend more time on it, please consider
+          Thanks for using Otter! If you are enjoying the app and want to help me spend more time on it, please consider
           sponsoring me on GitHub!
           <iframe src="https://github.com/sponsors/jgw96/button" title="Sponsor jgw96" height="32" width="114"
             style="border: 0; border-radius: 6px;"></iframe>
@@ -1092,7 +1092,7 @@ export class AppHome extends LitElement {
         </div>
       </sl-drawer>
 
-      <sl-drawer id="bot-drawer" placement="bottom" label="Mammoth Bot">
+      <sl-drawer id="bot-drawer" placement="bottom" label="Otter Bot">
         <!-- <mammoth-bot></mammoth-bot> -->
       </sl-drawer>
 

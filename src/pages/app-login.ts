@@ -276,11 +276,11 @@ export class AppLogin extends LitElement {
                         <div id="intro-carousel">
 
             <div class="scroll-item">
-            <h2>What is Mammoth?</h2>
+            <h2>What is Otter?</h2>
             <p>
-                Mammoth is the app your using 😊. It is an open source, cross-platform Mastodon client. Mammoth
+                Otter is the app your using 😊. It is an open source, cross-platform Mastodon client. Otter
                 brings the best of Mastodon to any device, with a fast and intuitive interface,
-                no matter your device or internet connection. To use Mammoth, you need a Mastodon account. Once you have a Mastodon account
+                no matter your device or internet connection. To use Otter, you need a Mastodon account. Once you have a Mastodon account
                 you will need to enter the URL of the Mastodon instance you signed up at.
             </p>
 
@@ -354,7 +354,7 @@ export class AppLogin extends LitElement {
             <fluent-button @click="${() => this.openIntro()}" appearance="lightweight">Intro To Mastodon</fluent-button>
             <fluent-button @click="${() => this.explore()}" appearance="lightweight">Explore without an account</fluent-button>
 
-            <p>Welcome To Mammoth, your Mastodon Client</p>
+            <p>Welcome To Otter, your Mastodon Client</p>
 
             <a href="https://github.com/jgw96/mammoth-app#readme" target="_blank">Learn More</a>
         </main>
