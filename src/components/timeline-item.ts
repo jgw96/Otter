@@ -51,6 +51,7 @@ export class TimelineItem extends LitElement {
 
             sl-card {
                 content-visibility: auto;
+                cursor: pointer;
             }
 
             @media(prefers-color-scheme: dark) {
