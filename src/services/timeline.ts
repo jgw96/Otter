@@ -1,3 +1,4 @@
+import { get, set } from 'idb-keyval';
 import { getUsersPosts } from './account';
 
 let token = localStorage.getItem('token') || '';
@@ -39,14 +40,18 @@ export const mixTimeline = async (type = "home") => {
     // const home = await getPaginatedHomeTimeline(type);
     // const trending = await getTrendingStatuses();
 
+    const potentialCached = await get("latest-mixed-timeline");
+    if (potentialCached && potentialCached.length > 0) {
+        return potentialCached;
+    }
+
     // run getPaginatedHomeTimeline and getTrendingStatuses in parallel
     const [home, trending, searched] = await Promise.all([getPaginatedHomeTimeline(type), getTrendingStatuses(), addSomeInterestFinds()]);
 
     let timeline = home.concat(trending);
     let timeline2 = timeline.concat(searched);
 
-    console.log("timeline", timeline);
-    console.log("timeline2", timeline2);
+    set("latest-mixed-timeline", timeline2);
 
     return timeline2;
 }
@@ -169,6 +174,10 @@ export const getPaginatedHomeTimeline = async (type = "home") => {
     else {
         console.log("LOOK HERE", type)
         let accessToken = localStorage.getItem('accessToken') || '';
+
+        if (type === "for you") {
+            type = "home";
+        }
 
         const response = await fetch(`https://${server}/api/v1/timelines/${type}?limit=10`, {
             method: 'GET',

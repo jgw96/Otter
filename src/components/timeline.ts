@@ -283,20 +283,12 @@ export class Timeline extends LitElement {
         const latestReadID = sessionStorage.getItem("latest-read");
         const index = this.timeline.findIndex((tweet: Post) => tweet.id === latestReadID);
 
-        await this.updateComplete;
+        // if (latestReadID && this.timelineType === "for you" && index > 0) {
+        //     const virtualizer: any = this.shadowRoot?.querySelector('lit-virtualizer');
 
-        if (latestReadID && this.timelineType === "for you" && index !== 0) {
-            const virtualizer: any = this.shadowRoot?.querySelector('lit-virtualizer');
-
-            console.log("check this", virtualizer?.element(index), index, latestReadID);
-            // virtualizer.scrollToIndex(index);
-
-            // Then use the `element()` method to get a proxy and call `scrollIntoView()`
-            virtualizer?.element(index).scrollIntoView({
-              block: 'center',
-              behavior: 'smooth',
-            });
-        }
+        //     console.log("check this", virtualizer?.element(index), index, latestReadID);
+        //     virtualizer.scrollToIndex(index);
+        // }
 
         window.requestIdleCallback(async () => {
             // setup intersection observer
@@ -332,7 +324,17 @@ export class Timeline extends LitElement {
                 this.timeline = [];
                 await this.hasUpdated;
 
-                this.timeline = timelineDataMix;
+                const latestReadID = sessionStorage.getItem("latest-read");
+                const index = timelineDataMix.findIndex((tweet: Post) => tweet.id === latestReadID);
+
+                // start new array from index
+                if (index && index > 0) {
+                    console.log("starting new array from index", index)
+                    this.timeline = timelineDataMix.slice(index);
+                }
+                else {
+                    this.timeline = timelineDataMix;
+                }
 
                 this.requestUpdate();
                 break;

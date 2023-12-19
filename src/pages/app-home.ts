@@ -81,7 +81,7 @@ export class AppHome extends LitElement {
                 z-index: 99999;
             }
 
-      #user-actions fluent-menu-item {
+      fluent-menu-item {
         --neutral-fill-stealth-hover: #181818;
       }
 
