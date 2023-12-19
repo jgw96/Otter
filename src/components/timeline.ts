@@ -40,6 +40,10 @@ export class Timeline extends LitElement {
                 display: block;
             }
 
+            sl-dialog::part(base) {
+                z-index: 99999;
+            }
+
             #mainList li {
                 width: 100%;
             }
@@ -134,6 +138,11 @@ export class Timeline extends LitElement {
 
             sl-card {
                 --padding: 10px;
+            }
+
+            li {
+                animation-name: fadein;
+                animation-duration: 0.3s;
             }
 
             .header-block {
@@ -271,6 +280,23 @@ export class Timeline extends LitElement {
         await this.refreshTimeline();
         this.loadingData = false;
 
+        const latestReadID = sessionStorage.getItem("latest-read");
+        const index = this.timeline.findIndex((tweet: Post) => tweet.id === latestReadID);
+
+        await this.updateComplete;
+
+        if (latestReadID && this.timelineType === "for you" && index !== 0) {
+            const virtualizer: any = this.shadowRoot?.querySelector('lit-virtualizer');
+
+            console.log("check this", virtualizer?.element(index), index, latestReadID);
+            // virtualizer.scrollToIndex(index);
+
+            // Then use the `element()` method to get a proxy and call `scrollIntoView()`
+            virtualizer?.element(index).scrollIntoView({
+              block: 'center',
+              behavior: 'smooth',
+            });
+        }
 
         window.requestIdleCallback(async () => {
             // setup intersection observer
@@ -490,7 +516,7 @@ export class Timeline extends LitElement {
                 <fluent-option value="public">public</fluent-option>
             </fluent-combobox>
 
-            <sl-button @click="${() => this.refreshTimeline()}">
+            <sl-button circle @click="${() => this.refreshTimeline()}">
                 <sl-icon src="/assets/refresh-circle-outline.svg"></fluent-icon>
             </sl-button>
         </div>

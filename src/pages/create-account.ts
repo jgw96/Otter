@@ -25,6 +25,10 @@ export class CreateAccount extends LitElement {
                 display: block;
             }
 
+            sl-dialog::part(base) {
+                z-index: 99999;
+            }
+
             main {
                 padding: 10px;
                 padding-top: 60px;

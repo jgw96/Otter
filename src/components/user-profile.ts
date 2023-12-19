@@ -11,6 +11,7 @@ export class UserProfile extends LitElement {
     @property() account: any | undefined = undefined;
 
     @property({ type: Boolean }) small: boolean = false;
+    @property({ type: Boolean }) boosted: boolean = false;
 
     static styles = [
         css`
@@ -30,7 +31,7 @@ export class UserProfile extends LitElement {
             .headerBlock {
                 display: flex;
                 align-items: center;
-                gap: 14px;
+                gap: 10px;
             }
 
             .headerBlock img {
@@ -73,6 +74,14 @@ export class UserProfile extends LitElement {
                 margin-bottom: 0;
             }
 
+            .boosted h4 {
+                font-size: 12px;
+            }
+
+            .boosted img#avatar {
+                width: 20px;
+                height: 20px;
+            }
 
         `
     ];
@@ -139,7 +148,7 @@ router.navigate(`/account?id=${this.account?.id}`);
 
     render() {
         return html`
-        <div @click="${() => this.openUser()}" class=${classMap({ small: this.small === true, headerBlock: true })} slot="header">
+        <div @click="${() => this.openUser()}" class=${classMap({ small: this.small === true, headerBlock: true, boosted: this.boosted })} slot="header">
             <img id="avatar" src="/assets/icons/64-icon.png" data-src="${this.account.avatar_static}">
             <div>
                 <h4>${this.account?.display_name || "Loading..."}</h4>

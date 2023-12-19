@@ -32,6 +32,10 @@ export class AppProfile extends LitElement {
                 height: 100vh;
             }
 
+            sl-dialog::part(base) {
+                z-index: 99999;
+            }
+
             #profile {
                 view-transition-name: profile-image;
                 contain: paint;

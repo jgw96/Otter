@@ -17,7 +17,7 @@ export class AppHeader extends LitElement {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: var(--app-color-primary);
+        background: transparent;
         color: white;
         padding-right: 5px;
         position: fixed;
@@ -33,6 +33,8 @@ export class AppHeader extends LitElement {
 
         view-transition-name: full-embed;
         contain: layout;
+
+        z-index: 99999;
       }
 
       #actions {
@@ -82,7 +84,6 @@ export class AppHeader extends LitElement {
       @media(prefers-color-scheme: light) {
         header {
           color: black;
-          background: white;
         }
 
         nav a {

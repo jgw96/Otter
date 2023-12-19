@@ -54,6 +54,17 @@ export class TimelineItem extends LitElement {
                 cursor: pointer;
             }
 
+            .boosted-by {
+                flex: 2;
+            }
+
+            .boosted-by span {
+                font-size: 12px;
+
+                margin-bottom: 6px;
+                display: block;
+            }
+
             @media(prefers-color-scheme: dark) {
                 fluent-button::part(control) {
                     --neutral-fill-stealth-active: #1b1d26;
@@ -125,7 +136,7 @@ export class TimelineItem extends LitElement {
 
             @media(prefers-color-scheme: light) {
                 sl-card {
-                    --sl-panel-background-color: #f3f3f3;
+                    --sl-panel-background-color: white;
                 }
             }
 
@@ -322,7 +333,7 @@ export class TimelineItem extends LitElement {
 
             @media(prefers-color-scheme: light) {
                 sl-card {
-                    --sl-panel-background-color: #f3f3f3;
+                    --sl-panel-background-color: white;
                 }
             }
 
@@ -345,27 +356,27 @@ export class TimelineItem extends LitElement {
         this.currentUser = await getCurrentUser();
 
         if (!this.settings.data_saver) {
-            // // set up intersection observer
-            // const options = {
-            //     root: null,
-            //     rootMargin: '0px',
-            //     threshold: 0.1
-            // };
+            // set up intersection observer
+            const options = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
 
-            // const observer = new IntersectionObserver((entries, observer) => {
-            //     entries.forEach(async entry => {
-            //         if (entry.isIntersecting) {
-            //             window.requestIdleCallback(() => {
-            //                 localStorage.setItem(`latest-read`, this.tweet?.id || "");
-            //             });
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(async entry => {
+                    if (entry.isIntersecting) {
+                        window.requestIdleCallback(() => {
+                            sessionStorage.setItem(`latest-read`, this.tweet?.id || "");
+                        });
 
-            //             observer.unobserve(entry.target);
-            //         }
-            //     });
-            // }
-            //     , options);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }
+                , options);
 
-            // observer.observe(this.shadowRoot?.querySelector('sl-card') as Element);
+            observer.observe(this.shadowRoot?.querySelector('sl-card') as Element);
         }
 
         if (this.tweet && this.tweet.in_reply_to_id !== null) {
@@ -731,13 +742,13 @@ export class TimelineItem extends LitElement {
                         ` : html``
                     }
 
-                        <div class="header-block" slot="header">
-
-                            <user-profile ?small="${true}" .account="${this.tweet?.account}"></user-profile>
-                              <span>boosted</span>
+                        <div class="header-block reblog-header" slot="header">
                             <user-profile ?small="${true}"  .account="${this.tweet?.reblog.account}"></user-profile>
 
-
+                            <div class="boosted-by">
+                                <span>Boosted by</span>
+                                <user-profile boosted class="smaller-profile" ?small="${true}" .account="${this.tweet?.account}"></user-profile>
+                            </div>
                             <sl-icon-button @click="${() => this.shareStatus(this.tweet || null)}" src="/assets/share-social-outline.svg">
                             </sl-icon-button>
 

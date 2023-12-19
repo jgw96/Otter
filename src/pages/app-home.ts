@@ -77,6 +77,14 @@ export class AppHome extends LitElement {
         flex-direction: column;
       }
 
+      sl-dialog::part(base) {
+                z-index: 99999;
+            }
+
+      #user-actions fluent-menu-item {
+        --neutral-fill-stealth-hover: #181818;
+      }
+
       mammoth-bot {
         position: fixed;
         bottom: 12px;
@@ -258,7 +266,7 @@ export class AppHome extends LitElement {
         width: 100%;
         margin-top: 33px;
         padding-top: 8px;
-        background: white;
+        background: transparent;
         margin-bottom: 6px;
         top: 13px;
 
@@ -407,6 +415,10 @@ export class AppHome extends LitElement {
       sl-color-picker::part(base) {
         right: 91px;
         position: fixed;
+      }
+
+      sl-drawer::part(base) {
+        z-index: 99999;
       }
 
       sl-drawer::part(panel) {
@@ -907,6 +919,10 @@ export class AppHome extends LitElement {
     if (ev.deltaX > 100) {
       dialog.hide();
     }
+  }
+
+  disconnectedCallback() {
+    console.log("home disconnected");
   }
 
   render() {

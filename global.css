@@ -61,7 +61,7 @@ body {
 @media (prefers-color-scheme: light) {
 
   body {
-    background-color: rgba(255, 255, 255, 0.877);
+    background-color: rgb(243 243 243);
     color: black;
   }
 

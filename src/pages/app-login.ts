@@ -28,6 +28,10 @@ export class AppLogin extends LitElement {
                 display: block;
             }
 
+            sl-dialog::part(base) {
+                z-index: 99999;
+            }
+
             main {
                 display: flex;
                 flex-direction: column;

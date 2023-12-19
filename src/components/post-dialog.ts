@@ -58,6 +58,10 @@ export class PostDialog extends LitElement {
                 font-size: 11px;
             }
 
+            sl-dialog::part(base) {
+                z-index: 99999;
+            }
+
             sl-dialog::part(footer) {
                 gap: 5px;
                 display: flex;
