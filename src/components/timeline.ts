@@ -280,9 +280,6 @@ export class Timeline extends LitElement {
         await this.refreshTimeline();
         this.loadingData = false;
 
-        const latestReadID = sessionStorage.getItem("latest-read");
-        const index = this.timeline.findIndex((tweet: Post) => tweet.id === latestReadID);
-
         // if (latestReadID && this.timelineType === "for you" && index > 0) {
         //     const virtualizer: any = this.shadowRoot?.querySelector('lit-virtualizer');
 
