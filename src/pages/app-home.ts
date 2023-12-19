@@ -42,6 +42,7 @@ import { router } from '../utils/router';
 import { init } from '../utils/key-shortcuts';
 import { enableVibrate } from '../utils/handle-vibrate';
 import { resetLastPageID } from '../services/timeline';
+import { Post } from '../interfaces/Post';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -66,6 +67,8 @@ export class AppHome extends LitElement {
 
   @state() summary: string = '';
 
+  @state() openTweet: Post | null = null;
+
   static get styles() {
     return [
       styles,
@@ -83,6 +86,17 @@ export class AppHome extends LitElement {
 
       fluent-menu-item {
         --neutral-fill-stealth-hover: #181818;
+      }
+
+      #open-tweet-dialog::part(panel) {
+        height: 92vh;
+        max-height: 100vh;
+        max-width: 100vw;
+        width: 92vw;
+      }
+
+      #open-tweet-dialog::part(body) {
+        padding-top: 0;
       }
 
       mammoth-bot {
@@ -498,6 +512,13 @@ export class AppHome extends LitElement {
     @media(max-width: 600px) {
       #profile {
         display: none;
+      }
+
+      #open-tweet-dialog::part(panel) {
+        height: 100vh;
+        max-height: 100vh;
+        max-width: 100vw;
+        width: 100vw;
       }
 
       mammoth-bot {
@@ -921,6 +942,21 @@ export class AppHome extends LitElement {
     }
   }
 
+  async handleOpenTweet(tweet: Post) {
+    await import("../pages/post-detail");
+
+    this.openTweet = null;
+
+    this.requestUpdate();
+
+    await this.updated;
+
+    this.openTweet = tweet;
+
+    const dialog = this.shadowRoot?.getElementById('open-tweet-dialog') as any;
+    await dialog.show();
+  }
+
   disconnectedCallback() {
     console.log("home disconnected");
   }
@@ -973,6 +1009,10 @@ export class AppHome extends LitElement {
 
       <sl-dialog id="summary-dialog" label="">
         ${this.summary}
+      </sl-dialog>
+
+      <sl-dialog id="open-tweet-dialog">
+        ${this.openTweet ? html`<post-detail .passed_tweet="${this.openTweet}"></post-detail>` : null}
       </sl-dialog>
 
       <post-dialog @published="${() => this.handleReload()}"></post-dialog>
@@ -1160,7 +1200,7 @@ export class AppHome extends LitElement {
 
 
           <sl-tab-panel name="general">
-            <app-timeline @handle-summary="${($event: any) => this.showSummary($event)}" class="homeTimeline" .timelineType="for you"
+            <app-timeline @open="${($event: CustomEvent) => this.handleOpenTweet($event.detail.tweet)}" @handle-summary="${($event: any) => this.showSummary($event)}" class="homeTimeline" .timelineType="for you"
               @replies="${($event: any) => this.handleReplies($event.detail.data, $event.detail.id)}"></app-timeline>
           </sl-tab-panel>
           <sl-tab-panel name="media">

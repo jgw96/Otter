@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 
 import '../components/header';
 import '../components/timeline-item';
@@ -8,6 +8,7 @@ import { getReplies } from '../services/timeline';
 
 import { fluentButton, fluentTextArea, provideFluentDesignSystem } from "@fluentui/web-components";
 import { replyToPost } from '../services/posts';
+import { classMap } from 'lit/directives/class-map.js';
 provideFluentDesignSystem().register(fluentButton(), fluentTextArea());
 
 @customElement('post-detail')
@@ -15,13 +16,14 @@ export class PostDetail extends LitElement {
     @state() tweet: Post | null = null;
     @state() replies: any[] = [];
 
+    @property() passed_tweet: Post | null = null;
+
     static styles = [
         css`
             :host {
                 display: block;
 
                 overflow-y: scroll;
-                height: 100vh;
             }
 
             main {
@@ -33,6 +35,9 @@ export class PostDetail extends LitElement {
                 align-items: flex-start;
                 padding-right: 20px;
                 gap: 0px;
+
+                display: grid;
+                grid-template-columns: 35% 65%;
 
             }
 
@@ -80,6 +85,15 @@ export class PostDetail extends LitElement {
                 view-transition-name: card;
             }
 
+            .standalone {
+                padding: 0;
+
+            }
+
+            .standalone #main-block {
+                top: 0;
+            }
+
             @media(prefers-color-scheme: dark) {
                 fluent-text-area::part(control), fluent-button[appearance="neutral"]::part(control), fluent-text-field::part(control), fluent-text-field::part(root) {
                     background: #1e1e1e;
@@ -101,6 +115,7 @@ export class PostDetail extends LitElement {
             @media(max-width: 768px) {
                 main {
                     flex-direction: column;
+                    display: flex;
                 }
 
                 #post-actions {
@@ -137,6 +152,11 @@ export class PostDetail extends LitElement {
 
     async connectedCallback() {
         super.connectedCallback();
+
+        if (this.passed_tweet) {
+            this.tweet = this.passed_tweet;
+            return;
+        }
 
         // remove ? from beginning of window.location.search
         const query = window.location.search.substring(1);
@@ -200,9 +220,9 @@ export class PostDetail extends LitElement {
 
     render() {
         return html`
-        <app-header ?enableBack="${true}"></app-header>
+        ${!this.passed_tweet ? html`<app-header ?enableBack="${true}"></app-header>` : null}
 
-        <main>
+        <main class=${classMap({ standalone: this.passed_tweet !== null})}>
             <div id="main-block">
                 <timeline-item id="main" .tweet="${this.tweet}"></timeline-item>
                 <div id="post-actions">

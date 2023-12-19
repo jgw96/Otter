@@ -516,43 +516,50 @@ export class TimelineItem extends LitElement {
 
     async openPost() {
         // @ts-ignore
-        if ("startViewTransition" in document) {
-            // @ts-ignore
-            this.style.viewTransitionName = 'card';
+        // if ("startViewTransition" in document) {
+        //     // @ts-ignore
+        //     this.style.viewTransitionName = 'card';
 
-            // @ts-ignore
-            // document.startViewTransition(async () => {
-            //     if (this.tweet) {
-            //         const serialized = new URLSearchParams(JSON.stringify(this.tweet)).toString();
+        //     // @ts-ignore
+        //     // document.startViewTransition(async () => {
+        //     //     if (this.tweet) {
+        //     //         const serialized = new URLSearchParams(JSON.stringify(this.tweet)).toString();
 
-            //         await router.navigate(`/home/post?${serialized}`);
+        //     //         await router.navigate(`/home/post?${serialized}`);
 
-            //         setTimeout(() => {
-            //             // @ts-ignore
-            //             this.style.viewTransitionName = '';
-            //         }, 800)
-            //     }
-            // });
-            await document.startViewTransition();
+        //     //         setTimeout(() => {
+        //     //             // @ts-ignore
+        //     //             this.style.viewTransitionName = '';
+        //     //         }, 800)
+        //     //     }
+        //     // });
+        //     await document.startViewTransition();
 
-            if (this.tweet) {
-                const serialized = new URLSearchParams(JSON.stringify(this.tweet)).toString();
+        //     if (this.tweet) {
+        //         const serialized = new URLSearchParams(JSON.stringify(this.tweet)).toString();
 
-                await router.navigate(`/home/post?${serialized}`);
+        //         await router.navigate(`/home/post?${serialized}`);
 
-                setTimeout(() => {
-                    // @ts-ignore
-                    this.style.viewTransitionName = '';
-                }, 800)
+        //         setTimeout(() => {
+        //             // @ts-ignore
+        //             this.style.viewTransitionName = '';
+        //         }, 800)
+        //     }
+
+
+        // }
+        // else {
+        //     const serialized = new URLSearchParams(JSON.stringify(this.tweet)).toString();
+
+        //     await router.navigate(`/home/post?${serialized}`);
+        // }
+
+        // emit custom event with post
+        this.dispatchEvent(new CustomEvent('open', {
+            detail: {
+                tweet: this.tweet
             }
-
-
-        }
-        else {
-            const serialized = new URLSearchParams(JSON.stringify(this.tweet)).toString();
-
-            await router.navigate(`/home/post?${serialized}`);
-        }
+        }));
     }
 
     async deleteStatus() {

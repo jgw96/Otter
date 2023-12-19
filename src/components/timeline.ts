@@ -324,17 +324,7 @@ export class Timeline extends LitElement {
                 this.timeline = [];
                 await this.hasUpdated;
 
-                const latestReadID = sessionStorage.getItem("latest-read");
-                const index = timelineDataMix.findIndex((tweet: Post) => tweet.id === latestReadID);
-
-                // start new array from index
-                if (index && index > 0) {
-                    console.log("starting new array from index", index)
-                    this.timeline = timelineDataMix.slice(index);
-                }
-                else {
-                    this.timeline = timelineDataMix;
-                }
+                this.timeline = timelineDataMix;
 
                 this.requestUpdate();
                 break;
@@ -467,6 +457,14 @@ export class Timeline extends LitElement {
         }));
     }
 
+    handleOpen(tweet: any) {
+        this.dispatchEvent(new CustomEvent('open', {
+            detail: {
+                tweet
+            }
+        }));
+    }
+
     render() {
         return html`
 
@@ -534,7 +532,7 @@ export class Timeline extends LitElement {
 
            <lit-virtualizer
               .items=${this.timeline}
-              .renderItem=${(tweet: Post) => html`<li class="timeline-list-item"><timeline-item @summarize="${($event: any) => this.handleSummary($event)}" tweetID="${tweet.id}" @delete="${() => this.refreshTimeline()}" @analyze="${($event: any) => this.showAnalyze($event.detail.data, $event.detail.imageData, $event.detail.tweet)}" @openimage="${($event: any) => this.showImage($event.detail.imageURL)}" ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item></li>`}
+              .renderItem=${(tweet: Post) => html`<li class="timeline-list-item"><timeline-item @open="${($event: CustomEvent) => this.handleOpen($event.detail.tweet)}" @summarize="${($event: any) => this.handleSummary($event)}" tweetID="${tweet.id}" @delete="${() => this.refreshTimeline()}" @analyze="${($event: any) => this.showAnalyze($event.detail.data, $event.detail.imageData, $event.detail.tweet)}" @openimage="${($event: any) => this.showImage($event.detail.imageURL)}" ?show="${true}" @replies="${($event: any) => this.handleReplies($event.detail.data)}" .tweet="${tweet}"></timeline-item></li>`}
             >
         </lit-virtualizer>
 
