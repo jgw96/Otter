@@ -92,7 +92,7 @@ export class AppHome extends LitElement {
         height: 92vh;
         max-height: 100vh;
         max-width: 100vw;
-        width: 92vw;
+        width: 60vw;
       }
 
       #open-tweet-dialog::part(body) {
@@ -246,7 +246,9 @@ export class AppHome extends LitElement {
       }
 
       @media(prefers-color-scheme: light) {
-
+        fluent-menu-item {
+                    --neutral-fill-stealth-hover: white;
+                }
       }
 
       fluent-badge {
@@ -301,7 +303,7 @@ export class AppHome extends LitElement {
       main {
         padding-top: 54px;
         display: grid;
-        grid-template-columns: 66vw 34vw;
+        grid-template-columns: 61vw 39vw;
       }
 
       main.focus {
@@ -1219,7 +1221,7 @@ export class AppHome extends LitElement {
             <app-favorites></app-favorites>
           </sl-tab-panel>
           <sl-tab-panel name="notifications">
-            <app-notifications></app-notifications>
+            <app-notifications @open="${($event: CustomEvent) => this.handleOpenTweet($event.detail.tweet)}"></app-notifications>
           </sl-tab-panel>
           <sl-tab-panel name="search">
             <search-page></search-page>

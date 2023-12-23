@@ -18,7 +18,7 @@ export class ImageCarousel extends LitElement {
                 display: block;
                 width: 100%;
 
-                max-height: 338px;
+                max-height: 508px;
                 object-fit: cover;
             }
 

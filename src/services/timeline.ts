@@ -40,11 +40,6 @@ export const mixTimeline = async (type = "home") => {
     // const home = await getPaginatedHomeTimeline(type);
     // const trending = await getTrendingStatuses();
 
-    const potentialCached = await get("latest-mixed-timeline");
-    if (potentialCached && potentialCached.length > 0) {
-        return potentialCached;
-    }
-
     // run getPaginatedHomeTimeline and getTrendingStatuses in parallel
     const [home, trending, searched] = await Promise.all([getPaginatedHomeTimeline(type), getTrendingStatuses(), addSomeInterestFinds()]);
 

@@ -52,6 +52,12 @@ export class TimelineItem extends LitElement {
             sl-card {
                 content-visibility: auto;
                 cursor: pointer;
+
+                border-radius: 8px;
+
+                animation-name: slideUp;
+                animation-duration: 0.3s;
+                animation-fill-mode: forwards;
             }
 
             .boosted-by {
@@ -231,9 +237,12 @@ export class TimelineItem extends LitElement {
                 padding-top: 0;
             }
 
-            sl-card sl-icon {
+            .actions fluent-button:disabled {
                 color: var(--sl-color-primary-600);
-                color: var(--sl-color-primary-600);
+            }
+
+            .actions fluent-button::part(control) {
+                opacity: 1 !important;
             }
 
             sl-card img {
@@ -268,12 +277,11 @@ export class TimelineItem extends LitElement {
                 background: transparent;
                 border: none;
                 font-size: 1.2em;
-                color: var(--sl-color-primary-600);
+                color: grey;
             }
 
             .actions sl-icon svg {
-                color: var(--sl-color-primary-600);
-                fill: var(--sl-color-primary-600);
+
             }
 
             img {

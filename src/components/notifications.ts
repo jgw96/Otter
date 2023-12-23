@@ -8,6 +8,7 @@ import '@shoelace-style/shoelace/dist/components/divider/divider';
 
 // import fluent tabs
 import { fluentTabs, fluentTab, fluentTabPanel, fluentButton, fluentSwitch, provideFluentDesignSystem } from '@fluentui/web-components';
+import { Post } from '../interfaces/Post';
 provideFluentDesignSystem().register(fluentTabs());
 provideFluentDesignSystem().register(fluentTab());
 provideFluentDesignSystem().register(fluentTabPanel());
@@ -19,6 +20,7 @@ provideFluentDesignSystem().register(fluentSwitch());
 export class Notifications extends LitElement {
     @state() notifications = [];
     @state() subbed: boolean = false;
+    @state() openTweet: Post | null = null;
 
     static styles = [
         css`
@@ -30,6 +32,17 @@ export class Notifications extends LitElement {
 
                 contain: paint layout style;
                 content-visibility: auto;
+            }
+
+            #open-tweet-dialog::part(panel) {
+                height: 92vh;
+                max-height: 100vh;
+                max-width: 100vw;
+                width: 60vw;
+            }
+
+            #open-tweet-dialog::part(body) {
+                padding-top: 0;
             }
 
             @media(prefers-color-scheme: dark) {
@@ -156,6 +169,13 @@ export class Notifications extends LitElement {
                     padding-left: 10px;
                     padding-right: 10px;
                 }
+
+                #open-tweet-dialog::part(panel) {
+                    height: 100vh;
+                    max-height: 100vh;
+                    max-width: 100vw;
+                    width: 100vw;
+                }
             }
         `
     ];
@@ -233,8 +253,20 @@ export class Notifications extends LitElement {
         }
     }
 
+    async handleOpen(tweet: Post) {
+        this.dispatchEvent(new CustomEvent('open', {
+            detail: {
+                tweet
+            }
+        }));
+      }
+
     render() {
         return html`
+        <sl-dialog id="open-tweet-dialog">
+            ${this.openTweet ? html`<post-detail .passed_tweet="${this.openTweet}"></post-detail>` : null}
+        </sl-dialog>
+
           <div id="notify-actions">
             <div id="notify-inner">
             <sl-switch size="small" label="Notifications" ?checked="${this.subbed}" @sl-change="${($event: any) => this.sub($event.target.checked)}">Notifications</sl-switch>
@@ -277,7 +309,7 @@ export class Notifications extends LitElement {
 
                             </div>
 
-                            <timeline-item .tweet=${notification.status}></timeline-item>
+                            <timeline-item @open="${($event: CustomEvent) => this.handleOpen($event.detail.tweet)}" .tweet=${notification.status}></timeline-item>
                           </li>
                         ` : null
                     }
@@ -291,7 +323,7 @@ export class Notifications extends LitElement {
                                 <p>liked your post</p>
                             </div>
 
-                            <timeline-item .tweet=${notification.status}></timeline-item>
+                            <timeline-item @open="${($event: CustomEvent) => this.handleOpen($event.detail.tweet)}" .tweet=${notification.status}></timeline-item>
                           </li>
                         ` : null
                     }
@@ -305,7 +337,7 @@ export class Notifications extends LitElement {
                                     <p>mentioned you</p>
                                 </div>
 
-                                <timeline-item .tweet=${notification.status}></timeline-item>
+                                <timeline-item @open="${($event: CustomEvent) => this.handleOpen($event.detail.tweet)}" .tweet=${notification.status}></timeline-item>
                         ` : null
                     }
 
@@ -318,7 +350,7 @@ export class Notifications extends LitElement {
                                     <p>edited a post</p>
                                 </div>
 
-                                <timeline-item .tweet=${notification.status}></timeline-item>
+                                <timeline-item @open="${($event: CustomEvent) => this.handleOpen($event.detail.tweet)}" .tweet=${notification.status}></timeline-item>
                         ` : null
                     }
                     `;

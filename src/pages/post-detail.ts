@@ -30,15 +30,22 @@ export class PostDetail extends LitElement {
                 padding-top: 60px;
 
                 display: flex;
+                flex-direction: column;
                 padding-left: 20px;
                 justify-content: space-between;
                 align-items: flex-start;
                 padding-right: 20px;
                 gap: 0px;
 
-                display: grid;
-                grid-template-columns: 35% 65%;
+            }
 
+            #replies ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+
+                display: flex;
+                flex-direction: column;
             }
 
             fluent-button::part(control) {
@@ -57,6 +64,8 @@ export class PostDetail extends LitElement {
                 top: 60px;
 
                 overflow-x: hidden;
+
+                width: 100%;
             }
 
             #post-actions {
@@ -67,7 +76,7 @@ export class PostDetail extends LitElement {
             }
 
             #replies {
-                flex: 2;
+                width: 100%;
             }
 
             #replies h2 {
@@ -237,9 +246,12 @@ export class PostDetail extends LitElement {
 
             <div id="replies">
                 ${this.replies.length > 0 ? html`<h2>Replies</h2>` : html`<h2>No Replies</h2>`}
+
+                <ul>
                 ${this.replies.map(reply => html`
                 <timeline-item .tweet="${reply}"></timeline-item>
                 `)}
+                </ul>
             </div>
         </main>
         `;
