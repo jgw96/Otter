@@ -1,4 +1,4 @@
-import { get, set } from 'idb-keyval';
+import { set } from 'idb-keyval';
 import { getUsersPosts } from './account';
 
 let token = localStorage.getItem('token') || '';
