@@ -69,6 +69,8 @@ export class AppHome extends LitElement {
 
   @state() openTweet: Post | null = null;
 
+  @state() homeLoad: boolean = false;
+
   static get styles() {
     return [
       styles,
@@ -959,8 +961,14 @@ export class AppHome extends LitElement {
     await dialog.show();
   }
 
-  disconnectedCallback() {
+  async disconnectedCallback() {
     console.log("home disconnected");
+    const lastPageID = sessionStorage.getItem("latest-read");
+    console.log("lastPageID", lastPageID);
+    if (lastPageID) {
+      const { savePlace } = await import("../services/timeline");
+      await savePlace(lastPageID);
+    }
   }
 
   render() {
@@ -1158,7 +1166,7 @@ export class AppHome extends LitElement {
       </sl-drawer>
 
       <fluent-toolbar>
-        <fluent-button pill size="large" appearance="accent" @click="${() => this.openNewDialog()}">
+      <fluent-button pill size="large" appearance="accent" @click="${() => this.openNewDialog()}">
           New Post
 
           <sl-icon slot="suffix" src="/assets/add-outline.svg"></sl-icon>
@@ -1202,7 +1210,7 @@ export class AppHome extends LitElement {
 
 
           <sl-tab-panel name="general">
-            <app-timeline @open="${($event: CustomEvent) => this.handleOpenTweet($event.detail.tweet)}" @handle-summary="${($event: any) => this.showSummary($event)}" class="homeTimeline" .timelineType="for you"
+            <app-timeline @open="${($event: CustomEvent) => this.handleOpenTweet($event.detail.tweet)}" @handle-summary="${($event: any) => this.showSummary($event)}" class="homeTimeline" .timelineType="home"
               @replies="${($event: any) => this.handleReplies($event.detail.data, $event.detail.id)}"></app-timeline>
           </sl-tab-panel>
           <sl-tab-panel name="media">
@@ -1229,7 +1237,7 @@ export class AppHome extends LitElement {
         </sl-tab-group>
 
         <div id="mobile-actions">
-          <sl-button size="large" pill variant="primary" @click="${() => this.openNewDialog()}">
+        <sl-button size="large" pill variant="primary" @click="${() => this.openNewDialog()}">
             <sl-icon src="/assets/add-outline.svg"></sl-icon>
           </sl-button>
         </div>

@@ -39,6 +39,8 @@ export class TimelineItem extends LitElement {
 
     worker: Worker | undefined;
 
+    device: "mobile" | "desktop" = "mobile";
+
     static styles = [
         css`
             :host {
@@ -363,6 +365,8 @@ export class TimelineItem extends LitElement {
 
         this.currentUser = await getCurrentUser();
 
+        this.device = window.innerWidth <= 600 ? "mobile" : "desktop";
+
         if (!this.settings.data_saver) {
             // set up intersection observer
             const options = {
@@ -374,8 +378,11 @@ export class TimelineItem extends LitElement {
             const observer = new IntersectionObserver((entries, observer) => {
                 entries.forEach(async entry => {
                     if (entry.isIntersecting) {
+                        console.log("intersected");
                         window.requestIdleCallback(() => {
+                            console.log("intersected 2", this.tweet)
                             sessionStorage.setItem(`latest-read`, this.tweet?.id || "");
+                            // savePlace(this.tweet?.id || "");
                         });
 
                         observer.unobserve(entry.target);
@@ -523,51 +530,54 @@ export class TimelineItem extends LitElement {
     }
 
     async openPost() {
-        // @ts-ignore
-        // if ("startViewTransition" in document) {
-        //     // @ts-ignore
-        //     this.style.viewTransitionName = 'card';
+        if (this.device === "mobile") {
+            // @ts-ignore
+            if ("startViewTransition" in document) {
+                // @ts-ignore
+                this.style.viewTransitionName = 'card';
 
-        //     // @ts-ignore
-        //     // document.startViewTransition(async () => {
-        //     //     if (this.tweet) {
-        //     //         const serialized = new URLSearchParams(JSON.stringify(this.tweet)).toString();
+                // @ts-ignore
+                // document.startViewTransition(async () => {
+                //     if (this.tweet) {
+                //         const serialized = new URLSearchParams(JSON.stringify(this.tweet)).toString();
 
-        //     //         await router.navigate(`/home/post?${serialized}`);
+                //         await router.navigate(`/home/post?${serialized}`);
 
-        //     //         setTimeout(() => {
-        //     //             // @ts-ignore
-        //     //             this.style.viewTransitionName = '';
-        //     //         }, 800)
-        //     //     }
-        //     // });
-        //     await document.startViewTransition();
+                //         setTimeout(() => {
+                //             // @ts-ignore
+                //             this.style.viewTransitionName = '';
+                //         }, 800)
+                //     }
+                // });
+                await document.startViewTransition();
 
-        //     if (this.tweet) {
-        //         const serialized = new URLSearchParams(JSON.stringify(this.tweet)).toString();
+                if (this.tweet) {
+                    const serialized = new URLSearchParams(JSON.stringify(this.tweet)).toString();
 
-        //         await router.navigate(`/home/post?${serialized}`);
+                    await router.navigate(`/home/post?${serialized}`);
 
-        //         setTimeout(() => {
-        //             // @ts-ignore
-        //             this.style.viewTransitionName = '';
-        //         }, 800)
-        //     }
+                    setTimeout(() => {
+                        // @ts-ignore
+                        this.style.viewTransitionName = '';
+                    }, 800)
+                }
 
 
-        // }
-        // else {
-        //     const serialized = new URLSearchParams(JSON.stringify(this.tweet)).toString();
-
-        //     await router.navigate(`/home/post?${serialized}`);
-        // }
-
-        // emit custom event with post
-        this.dispatchEvent(new CustomEvent('open', {
-            detail: {
-                tweet: this.tweet
             }
-        }));
+            else {
+                const serialized = new URLSearchParams(JSON.stringify(this.tweet)).toString();
+
+                await router.navigate(`/home/post?${serialized}`);
+            }
+        }
+        else {
+            // emit custom event with post
+            this.dispatchEvent(new CustomEvent('open', {
+                detail: {
+                    tweet: this.tweet
+                }
+            }));
+        }
     }
 
     async deleteStatus() {
@@ -695,13 +705,13 @@ export class TimelineItem extends LitElement {
 
                         </sl-icon-button> -->
 
-                        <sl-dropdown>
+                        <!-- <sl-dropdown>
                             <sl-button size="small" pill slot="trigger" caret>AI</sl-button>
                             <sl-menu>
                                 <sl-menu-item @click="${() => this.summarizePost(this.tweet?.content || null)}">Summarize</sl-menu-item>
                                 <sl-menu-item @click="${() => this.translatePost(this.tweet?.content || null)}">Translate</sl-menu-item>
                             </sl-menu>
-                        </sl-dropdown>
+                        </sl-dropdown> -->
 
                         <sl-icon-button @click="${() => this.shareStatus(this.tweet || null)}" src="/assets/share-social-outline.svg">
                         </sl-icon-button>
