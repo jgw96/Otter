@@ -150,7 +150,7 @@ export class AppHeader extends LitElement {
     return html`
       <header>
 
-        <div id="back-button-block">
+      <div id="back-button-block">
           ${this.enableBack ? html`<fluent-button @click="${() => this.goBack()}" title="back" size="small" href="/home">
             Back
           </fluent-button>` : null}

@@ -10,7 +10,20 @@ window.addEventListener('beforeunload', async () => {
     await savePlace(lastPageID);
 });
 
+let savePlaceRunningFlag = true;
+
+setInterval(() => {
+    savePlaceRunningFlag = false;
+}, 3000);
+
 export const savePlace = async (id: string) => {
+    console.log("intersected 3")
+    if (savePlaceRunningFlag === true) {
+        return;
+    }
+
+    savePlaceRunningFlag = true;
+
     const formData = new FormData();
     formData.append("home[last_read_id]", id);
 
@@ -24,7 +37,10 @@ export const savePlace = async (id: string) => {
 
     const data = await response.json();
 
-    lastPageID = data[data.length - 1].id;
+    lastPageID = data[data.length - 1].home.last_read_id;
+    console.log('saving place ran', lastPageID);
+
+    console.log('saving place ran');
 }
 
 export const getHomeTimeline = async () => {
@@ -130,6 +146,24 @@ export const resetLastPageID = (): Promise<void> => {
         lastPageID = "";
         resolve();
     })
+}
+
+export const getLastPlaceTimeline = async () => {
+    const last_read_id = sessionStorage.getItem('latest-read');
+    if (last_read_id && last_read_id.length > 0) {
+        const headers = new Headers({
+            "Authorization": `Bearer ${accessToken}`
+        });
+
+        const response = await fetch(`https://${server}/api/v1/timelines/home?limit=20&max_id=${last_read_id}`, {
+            headers: accessToken.length > 0 ? headers : new Headers({})
+        });
+        const data = await response.json();
+
+        lastPageID = data[data.length - 1].id;
+
+        return data;
+    }
 }
 
 export const getPaginatedHomeTimeline = async (type = "home") => {

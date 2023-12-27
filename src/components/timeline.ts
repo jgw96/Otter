@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js'
-import { getPaginatedHomeTimeline, getPreviewTimeline, mixTimeline } from '../services/timeline';
+import { getLastPlaceTimeline, getPaginatedHomeTimeline, getPreviewTimeline, mixTimeline } from '../services/timeline';
 
 // @ts-ignore
 import TimelineWorker from '../utils/timeline-worker?worker';
@@ -32,7 +32,7 @@ export class Timeline extends LitElement {
     @state() imageDesc: string | undefined = undefined;
     @state() analyzeTweet: Post | null = null;
 
-    @property({ type: String }) timelineType: "home" | "public" | "media" | "for you" | "home and some trending" = "for you";
+    @property({ type: String }) timelineType: "home" | "public" | "media" | "for you" | "home and some trending" = "home";
 
     static styles = [
         css`
@@ -337,6 +337,19 @@ export class Timeline extends LitElement {
                 this.requestUpdate();
                 break;
             case "home":
+                const last_read_id = sessionStorage.getItem("latest-read");
+                if (last_read_id) {
+                    const timelineData = await getLastPlaceTimeline();
+
+                    this.timeline = [];
+                    await this.hasUpdated;
+
+                    this.timeline = timelineData;
+
+                    this.requestUpdate();
+                    break;
+                }
+
                 console.log("LOOK HERE")
                 const timelineData = await getPaginatedHomeTimeline("home");
                 console.log("timelineData", timelineData);
@@ -506,7 +519,7 @@ export class Timeline extends LitElement {
         </sl-dialog>
 
         <div id="timeline-header">
-            <fluent-combobox .value="${this.timelineType}" @change="${($event: any) => this.changeTimelineType($event.target.value)}" placeholder="for you">
+            <fluent-combobox .value="${this.timelineType}" @change="${($event: any) => this.changeTimelineType($event.target.value)}" placeholder="home">
                 <fluent-option value="for you">for you</fluent-option>
                 <fluent-option value="home and some trending">home and some trending</fluent-option>
                 <fluent-option value="home">home</fluent-option>

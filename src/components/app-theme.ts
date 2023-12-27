@@ -62,6 +62,50 @@ export class AppTheme extends LitElement {
                 background-color: #d7ccc8;
             }
 
+            #deep-purple {
+                background-color: #673ab7;
+            }
+
+            #indigo {
+                background-color: #3f51b5;
+            }
+
+            #light-blue {
+                background-color: #03a9f4;
+            }
+
+            #cyan {
+                background-color: #00bcd4;
+            }
+
+            #teal {
+                background-color: #009688;
+            }
+
+            #light-green {
+                background-color: #8bc34a;
+            }
+
+            #lime {
+                background-color: #cddc39;
+            }
+
+            #amber {
+                background-color: #ffc107;
+            }
+
+            #deep-orange {
+                background-color: #ff5722;
+            }
+
+            #grey {
+                background-color: #9e9e9e;
+            }
+
+            #blue-grey {
+                background-color: #607d8b;
+            }
+
             #custom {
                 background-color: #057dcd;
             }
@@ -225,6 +269,7 @@ export class AppTheme extends LitElement {
                     <div class="color" id="pink" @click="${() => this.chooseColor("#f8bbd0")}"></div>
                     <div class="color" id="brown" @click="${() => this.chooseColor("#d7ccc8")}"></div>
                     <div class="color" id="custom" @click="${() => this.chooseColor("#057dcd")}"></div>
+
 
                     ${ "EyeDropper" in window ? html`<sl-button circle @click="${() => this.customColor()}">
                       <sl-icon src="/assets/add-outline.svg"></sl-icon>

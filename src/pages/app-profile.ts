@@ -272,6 +272,8 @@ export class AppProfile extends LitElement {
 
                     overflow-x: hidden;
                     text-overflow: ellipsis;
+
+                    min-height: 587px;
               }
 
               #avatar-block {
@@ -482,7 +484,7 @@ export class AppProfile extends LitElement {
                     <div id="avatar-block" style=${styleMap({backgroundImage: `url(${this.user.header})`})}>
                         <img src="${this.user.avatar}" />
                     </div>
-                    ` : null}
+                    ` : html`<div id="avatar-block"><sl-skeleton></sl-skeleton></div>`}
                     <div id="username-block">
                         <h3>${this.user ? this.user.display_name : html`<sl-skeleton></sl-skeleton>`}</h3>
                     </div>
