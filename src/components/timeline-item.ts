@@ -713,6 +713,8 @@ export class TimelineItem extends LitElement {
                             </sl-menu>
                         </sl-dropdown> -->
 
+                        <sl-button size="small" @click="${() => this.translatePost(this.tweet?.content || null)}" pill>Translate</sl-button>
+
                         <sl-icon-button @click="${() => this.shareStatus(this.tweet || null)}" src="/assets/share-social-outline.svg">
                         </sl-icon-button>
 
