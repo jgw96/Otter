@@ -147,8 +147,8 @@ const getNotifications = async () => {
             // show notification
             const notify = self.registration.showNotification('Otter', {
                 body: message,
-                icon: '/assets/icons/512-icon.png',
-                tag: 'mammoth',
+                icon: '/assets/icons/Android/256-icon.png',
+                tag: 'otter',
                 renotify: false,
                 actions: actions,
                 data: {
@@ -219,7 +219,7 @@ self.addEventListener('push', async (event) => {
     // show notification
     self.registration.showNotification('Otter', {
         body: message,
-        icon: '/assets/icons/512-icon.png',
+        icon: '/assets/icons/Android/256-icon.png',
         tag: 'mammoth',
         renotify: false,
         actions: actions,
