@@ -305,7 +305,7 @@ export class AppHome extends LitElement {
       main {
         padding-top: 54px;
         display: grid;
-        grid-template-columns: 61vw 39vw;
+        grid-template-columns: 56vw 44vw;
       }
 
       main.focus {

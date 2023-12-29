@@ -17,9 +17,6 @@ export class ImageCarousel extends LitElement {
             img {
                 display: block;
                 width: 100%;
-
-                max-height: 508px;
-                object-fit: cover;
             }
 
             video {

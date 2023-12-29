@@ -164,8 +164,8 @@ export class AppProfile extends LitElement {
                 display: grid;
                 gap: 14px;
                 grid-template-columns: auto;
-                padding-left: 14vw;
-                padding-right: 14vw;
+                padding-left: 20vw;
+                padding-right: 20vw;
             }
 
             #profile-card-actions {
