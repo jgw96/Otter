@@ -1191,10 +1191,6 @@ export class AppHome extends LitElement {
             <sl-icon src="/assets/notifications-outline.svg"></sl-icon>
 
             <span class="tab-label">Notifications</span>
-
-            <div id="notification-count">
-              2
-            </div>
           </sl-tab>
           <!-- <sl-tab slot="nav" panel="messages">
                                           <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
