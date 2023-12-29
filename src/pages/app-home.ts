@@ -112,10 +112,6 @@ export class AppHome extends LitElement {
         position: unset;
       }
 
-      .tab-label {
-        display: none;
-      }
-
       fluent-menu {
         background: #ffffff14;
         backdrop-filter: blur(48px);
@@ -305,7 +301,7 @@ export class AppHome extends LitElement {
       main {
         padding-top: 54px;
         display: grid;
-        grid-template-columns: 56vw 44vw;
+        grid-template-columns: 64vw 36vw;
       }
 
       main.focus {
@@ -518,6 +514,11 @@ export class AppHome extends LitElement {
         display: none;
       }
 
+      .tab-label {
+        display: none;
+      }
+
+
       #open-tweet-dialog::part(panel) {
         height: 100vh;
         max-height: 100vh;
@@ -559,10 +560,6 @@ export class AppHome extends LitElement {
         vertical-align: text-bottom;
       }
 
-      .tab-label {
-        display: none;
-      }
-
       main {
         display: block;
         padding-top: 30px;
@@ -581,10 +578,6 @@ export class AppHome extends LitElement {
       sl-tab-group::part(tabs) {
         justify-content: space-between;
       }
-    }
-
-    sl-tab-group::part(tabs) {
-      width: 8vw;
     }
 
     #focusModeButton {

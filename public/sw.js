@@ -308,80 +308,6 @@ registerRoute(
     'POST'
 );
 
-// runtime caching
-registerRoute(
-    ({ request }) => request.url.includes('/timelines/home'),
-    new NetworkFirst({
-        cacheName: 'timeline',
-        plugins: [
-            new ExpirationPlugin({
-                maxEntries: 100,
-                // maxAgeSeconds for 30 minutes
-                maxAgeSeconds: 60 * 30,
-            }),
-        ],
-    })
-);
-
-registerRoute(
-    ({ request }) => request.url.includes('/bookmarks'),
-    new StaleWhileRevalidate({
-        cacheName: 'bookmarks',
-        plugins: [
-            new ExpirationPlugin({
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
-            })
-        ],
-    })
-);
-
-registerRoute(
-    ({ request }) => request.url.includes('/favorites'),
-    new StaleWhileRevalidate({
-        cacheName: 'favorites',
-        plugins: [
-            new ExpirationPlugin({
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
-            })
-        ],
-    })
-);
-
-registerRoute(
-    ({ request }) => request.url.includes('/notifications'),
-    () => {
-        // self.setAppBadge()
-    }
-)
-
-registerRoute(
-    ({ request }) => request.url.includes('/notifications'),
-    new StaleWhileRevalidate({
-        cacheName: 'notifications',
-        plugins: [
-            new ExpirationPlugin({
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
-            })
-        ],
-    })
-);
-
-registerRoute(
-    ({ request }) => request.url.includes('/search'),
-    new StaleWhileRevalidate({
-        cacheName: 'search',
-        plugins: [
-            new ExpirationPlugin({
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
-            }),
-        ],
-    })
-);
-
 // avatar photos
 registerRoute(
     ({ request }) => request.url.includes('/accounts/avatars'),
@@ -408,18 +334,5 @@ registerRoute(
         ],
     })
 );
-
-registerRoute(
-    ({ request }) => request.url.includes('/isfollowing'),
-    new StaleWhileRevalidate({
-        cacheName: 'user',
-        plugins: [
-            new ExpirationPlugin({
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
-            }),
-        ],
-    })
-)
 
 precacheAndRoute(self.__WB_MANIFEST || []);
