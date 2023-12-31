@@ -164,6 +164,16 @@ export class Notifications extends LitElement {
                 gap: 8px;
             }
 
+            li .content-item {
+                align-items: flex-start !important;
+                flex-direction: column;
+                font-weight: normal;
+            }
+
+            li .content-item p {
+                font-weight: normal;
+            }
+
             @media(max-width: 600px) {
                 sl-tab-group {
                     padding-left: 10px;
@@ -309,7 +319,8 @@ export class Notifications extends LitElement {
 
                             </div>
 
-                            <timeline-item @open="${($event: CustomEvent) => this.handleOpen($event.detail.tweet)}" .tweet=${notification.status}></timeline-item>
+                            <!-- <timeline-item @open="${($event: CustomEvent) => this.handleOpen($event.detail.tweet)}" .tweet=${notification.status}></timeline-item> -->
+                            <div class="content-item" .innerHTML="${notification.status.content}"></div>
                           </li>
                         ` : null
                     }
@@ -323,7 +334,7 @@ export class Notifications extends LitElement {
                                 <p>liked your post</p>
                             </div>
 
-                            <timeline-item @open="${($event: CustomEvent) => this.handleOpen($event.detail.tweet)}" .tweet=${notification.status}></timeline-item>
+                            <div class="content-item" .innerHTML="${notification.status.content}"></div>
                           </li>
                         ` : null
                     }
@@ -337,7 +348,7 @@ export class Notifications extends LitElement {
                                     <p>mentioned you</p>
                                 </div>
 
-                                <timeline-item @open="${($event: CustomEvent) => this.handleOpen($event.detail.tweet)}" .tweet=${notification.status}></timeline-item>
+                                <div class="content-item" .innerHTML="${notification.status.content}"></div>
                         ` : null
                     }
 
@@ -350,7 +361,7 @@ export class Notifications extends LitElement {
                                     <p>edited a post</p>
                                 </div>
 
-                                <timeline-item @open="${($event: CustomEvent) => this.handleOpen($event.detail.tweet)}" .tweet=${notification.status}></timeline-item>
+                                <div class="content-item" .innerHTML="${notification.status.content}"></div>
                         ` : null
                     }
                     `;
@@ -379,7 +390,7 @@ export class Notifications extends LitElement {
                                     <p>mentioned you</p>
                                 </div>
 
-                                <timeline-item .tweet=${notification.status}></timeline-item>
+                                <div class="content-item" .innerHTML="${notification.status.content}"></div>
                         ` : null
                     }
 

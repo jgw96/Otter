@@ -78,7 +78,7 @@ export class SearchPage extends LitElement {
                 padding: 0;
                 list-style: none;
 
-                height: 70vh;
+                height: 74vh;
                 overflow-y: scroll;
                 overflow-x: hidden;
             }

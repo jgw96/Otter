@@ -156,7 +156,12 @@ export class TimelineItem extends LitElement {
 
             .header-actions-block {
                 display: flex;
-                justify-content: flex-end;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .header-actions-block div {
+                display: flex;
                 align-items: center;
             }
 
@@ -713,6 +718,7 @@ export class TimelineItem extends LitElement {
                             </sl-menu>
                         </sl-dropdown> -->
 
+                        <div>
                         <sl-button size="small" @click="${() => this.translatePost(this.tweet?.content || null)}" pill>Translate</sl-button>
 
                         <sl-icon-button @click="${() => this.shareStatus(this.tweet || null)}" src="/assets/share-social-outline.svg">
@@ -726,6 +732,7 @@ export class TimelineItem extends LitElement {
                             </sl-icon-button>
                             ` : null
                     }
+                    </div>
 
                         <span>
                             ${new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(

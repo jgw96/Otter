@@ -964,6 +964,11 @@ export class AppHome extends LitElement {
     }
   }
 
+  reloadHome() {
+    const homeTimeline = this.shadowRoot?.querySelector(".homeTimeline") as any;
+    homeTimeline.refreshTimeline();
+  }
+
   render() {
     return html`
 
@@ -1170,7 +1175,7 @@ export class AppHome extends LitElement {
       <main>
 
         <sl-tab-group .placement="${window.matchMedia(" (max-width: 600px)").matches ? "bottom" : "start"}">
-          <sl-tab slot="nav" panel="general">
+          <sl-tab @click="${() => this.reloadHome()}" slot="nav" panel="general">
             <sl-icon src="/assets/home-outline.svg"></sl-icon>
 
             <span class="tab-label">Home</span>
