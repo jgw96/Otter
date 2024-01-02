@@ -2,7 +2,7 @@
 const VERSION = 1;
 
 // import * as navigationPreload from 'workbox-navigation-preload';
-import { NetworkFirst, NetworkOnly, CacheFirst, StaleWhileRevalidate } from 'workbox-strategies';
+import { NetworkOnly, CacheFirst } from 'workbox-strategies';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { registerRoute } from 'workbox-routing';
 import { precacheAndRoute } from 'workbox-precaching';
@@ -214,19 +214,33 @@ self.addEventListener('push', async (event) => {
         default:
             message = `You have ${data.length} new notifications`;
             break;
-    }
+    };
 
-    // show notification
-    self.registration.showNotification('Otter', {
+    const newNotification = new Notification(title, {
         body: message,
         icon: '/assets/icons/Android/256-icon.png',
-        tag: 'mammoth',
+        tag: 'otter',
         renotify: false,
         actions: actions,
         data: {
             url: data[0].account.url
         }
     });
+
+    newNotification.addEventListener('click', event => {
+        event.notification.close();
+        navigator.clearAppBadge();
+
+        // if event.action === 'follow'
+        if (event.action === 'follow') {
+            followAUser(data[0].account.id);
+        }
+
+        clients.openWindow("/home?tab=notifications");
+    });
+
+    // show notification
+    self.registration.showNotification(newNotification);
 })
 
 // periodic background sync

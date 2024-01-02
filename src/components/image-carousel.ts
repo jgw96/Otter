@@ -45,6 +45,10 @@ export class ImageCarousel extends LitElement {
         `
     ];
 
+    firstUpdated() {
+        console.log("image-carousel", this.images)
+    }
+
     async openInBox(imageURL: string) {
         console.log("show image", imageURL);
 
@@ -72,7 +76,7 @@ export class ImageCarousel extends LitElement {
             <div id="list">
                 ${this.images.map(image =>
                     image.type === "image" ? html`
-                <div @click="${() => this.openInBox(image.preview_url)}">
+                <div @click="${() => this.openInBox(image.url)}">
                   <img loading="async" src="${image.preview_url}" alt="${image.description}" />
                 </div>
                 ` : image.type === "video" ? html`

@@ -15,6 +15,7 @@ export class ImagePreview extends LitElement {
 
             img {
                 view-transition-name: image-preview;
+                border-radius: 8px;
             }
 
             main {
@@ -23,6 +24,12 @@ export class ImagePreview extends LitElement {
                 display: flex;
                 align-items: center;
                 justify-content: center;
+            }
+
+            @media(max-width: 640px) {
+                img {
+                    width: 90%;
+                }
             }
         `
     ];

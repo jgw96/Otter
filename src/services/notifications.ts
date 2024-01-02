@@ -96,10 +96,6 @@ export const subToPush = async () => {
             vibrate: [200, 100, 200],
             tag: "mammoth-subscribe"
         });
-
-        const currentUser = localStorage.getItem("currentUserID");
-        (window as any).appInsights.trackEvent({ name: "subbed_to_notify", properties: { user: currentUser } });
-
     }
 
     if (res) {
