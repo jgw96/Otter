@@ -82,6 +82,11 @@ export class AppHome extends LitElement {
         flex-direction: column;
       }
 
+      app-timeline, app-bookmarks, app-notifications, app-favorites, app-bookmarks, search-page {
+        margin-left: 40px;
+        margin-right: 40px;
+      }
+
       sl-dialog::part(base) {
                 z-index: 99999;
             }
@@ -301,7 +306,7 @@ export class AppHome extends LitElement {
       main {
         padding-top: 54px;
         display: grid;
-        grid-template-columns: 64vw 36vw;
+        grid-template-columns: 70vw 30vw;
       }
 
       main.focus {
@@ -518,6 +523,11 @@ export class AppHome extends LitElement {
         display: none;
       }
 
+      app-timeline, app-bookmarks, app-notifications, app-favorites, app-bookmarks, search-page {
+        margin-left: initial;
+        margin-right: initial;
+      }
+
 
       #open-tweet-dialog::part(panel) {
         height: 100vh;
@@ -595,6 +605,13 @@ export class AppHome extends LitElement {
     @media(max-width: 600px) {
       sl-tab-group::part(tabs) {
         width: initial;
+      }
+    }
+
+    @media(min-width: 1300px) {
+      app-timeline, app-bookmarks, app-notifications, app-favorites, app-bookmarks, search-page {
+        margin-left: 70px;
+        margin-right: 70px;
       }
     }
 
