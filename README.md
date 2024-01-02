@@ -9,13 +9,13 @@
 ## Status: Currently In Public Beta
 
 <div>
-  <img height="400px" src="/public/assets/screenshots/new/desktop-two.png" />
-  <img height="400px" src="/public/assets/screenshots/new/mobile-one.png" />
+  <img height="400px" src="/public/assets/screenshots/new-screens/desktop-one.png" />
+  <img height="400px" src="/public/assets/screenshots/new-screens/mobile-one.png" />
 </div>
 
 <div>
-  <img height="400px" src="/public/assets/screenshots/new/desktop-one.png" />
-  <img height="400px" src="/public/assets/screenshots/new/mobile-theming.png" />
+  <img height="400px" src="/public/assets/screenshots/new-screens/desktop-three.png" />
+  <img height="400px" src="/public/assets/screenshots/new-screens/mobile-two.png" />
 </div>
 
 ## Demos
@@ -43,11 +43,6 @@
 
 - Cross Platform
 - Fast
-
-### Coming Soon
-
-- Widget on Windows 11
-- Speech to Text and "Read that Post" text to speech
 
 ## Get the app
 
