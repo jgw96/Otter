@@ -49,8 +49,8 @@ export class ImageCarousel extends LitElement {
         console.log("image-carousel", this.images)
     }
 
-    async openInBox(imageURL: string) {
-        console.log("show image", imageURL);
+    async openInBox(image: any) {
+        console.log("show image", image);
 
         if ("startViewTransition" in document) {
             // @ts-ignore
@@ -58,7 +58,7 @@ export class ImageCarousel extends LitElement {
 
             //@ts-ignore
             await document.startViewTransition();
-            router.navigate(`/imagepreview?src=${imageURL}`);
+            router.navigate(`/imagepreview?src=${image.url}&desc=${image.description}`);
 
                 setTimeout(() => {
                     // @ts-ignore
@@ -66,9 +66,26 @@ export class ImageCarousel extends LitElement {
                 }, 800)
         }
         else {
-            router.navigate(`/imagepreview?src=${imageURL}`);
+            router.navigate(`/imagepreview?src=${image.url}&desc=${image.description}`);
         }
 
+    }
+
+    generateTemplateBasedOnType(image: any) {
+        switch (image.type) {
+            case "image":
+                return html`
+                <div @click="${() => this.openInBox(image)}">
+                  <img loading="lazy" src="${image.preview_url}" alt="${image.description}" />
+                </div>
+                `;
+            case "video":
+                return html`<video controls src="${image.url}"></video>`;
+            case "gifv":
+                return html`<video autoplay loop src="${image.url}"></video>`;
+            default:
+                return null;
+        }
     }
 
     render() {
@@ -76,7 +93,7 @@ export class ImageCarousel extends LitElement {
             <div id="list">
                 ${this.images.map(image =>
                     image.type === "image" ? html`
-                <div @click="${() => this.openInBox(image.url)}">
+                <div @click="${() => this.openInBox(image)}">
                   <img loading="async" src="${image.preview_url}" alt="${image.description}" />
                 </div>
                 ` : image.type === "video" ? html`

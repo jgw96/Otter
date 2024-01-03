@@ -6,6 +6,7 @@ import '../components/header';
 @customElement('image-preview')
 export class ImagePreview extends LitElement {
     @state() src: string = '';
+    @state() desc: string = '';
 
     static styles = [
         css`
@@ -16,6 +17,11 @@ export class ImagePreview extends LitElement {
             img {
                 view-transition-name: image-preview;
                 border-radius: 8px;
+                width: 85vw;
+                height: 85vh;
+                object-fit: contain;
+                max-width: 100%;
+                max-height: 100%;
             }
 
             main {
@@ -24,11 +30,19 @@ export class ImagePreview extends LitElement {
                 display: flex;
                 align-items: center;
                 justify-content: center;
+
+                flex-direction: column;
+            }
+
+            p {
+                max-width: 60vw;
+                text-align: center;
             }
 
             @media(max-width: 640px) {
                 img {
                     width: 90%;
+                    height: 70vh;
                 }
             }
         `
@@ -38,6 +52,7 @@ export class ImagePreview extends LitElement {
         super.connectedCallback();
         const params = new URLSearchParams(window.location.search);
         this.src = params.get('src') || '';
+        this.desc = params.get('desc') || '';
     }
 
     render() {
@@ -46,6 +61,8 @@ export class ImagePreview extends LitElement {
 
             <main>
               <img src=${this.src} />
+
+              ${this.desc && this.desc.length > 0 && this.desc !== "null" ? html`<p>${this.desc}</p>` : ''}
             </main>
         `;
     }

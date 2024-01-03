@@ -125,6 +125,8 @@ export class PostDetail extends LitElement {
                 main {
                     flex-direction: column;
                     display: flex;
+                    height: 79vh;
+                    overflow-y: auto;
                 }
 
                 #post-actions {
@@ -143,8 +145,7 @@ export class PostDetail extends LitElement {
                     display: initial;
                     position: initial;
                     width: 100%;
-
-                    overflow-x: hidden;
+                    overflow-x: initial;
                 }
 
                 #main {

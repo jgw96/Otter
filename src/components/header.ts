@@ -18,6 +18,7 @@ export class AppHeader extends LitElement {
         justify-content: space-between;
         align-items: center;
         background: transparent;
+        backdrop-filter: blur(40px);
         color: white;
         padding-right: 5px;
         position: fixed;
