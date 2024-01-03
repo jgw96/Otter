@@ -1,21 +1,17 @@
 # Otter: Your Mastodon App
 
-[![CodeFactor](https://www.codefactor.io/repository/github/jgw96/mammoth-app/badge)](https://www.codefactor.io/repository/github/jgw96/mammoth-app)
-
-<a href="https://www.producthunt.com/posts/mammoth-for-mastodon-2?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-mammoth&#0045;for&#0045;mastodon&#0045;2" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=388307&theme=light" alt="Otter&#0032;For&#0032;Mastodon - Mastodon&#0032;made&#0032;easy&#0032;with&#0032;AI | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
-
 **Not familiar with Mastodon? [Learn More](https://joinmastodon.org/)**
 
 ## Status: Currently In Public Beta
 
 <div>
-  <img height="400px" src="/public/assets/screenshots/new/desktop-two.png" />
-  <img height="400px" src="/public/assets/screenshots/new/mobile-one.png" />
+  <img height="400px" src="/public/assets/screenshots/new-screens/desktop-one.png" />
+  <img height="400px" src="/public/assets/screenshots/new-screens/mobile-one.png" />
 </div>
 
 <div>
-  <img height="400px" src="/public/assets/screenshots/new/desktop-one.png" />
-  <img height="400px" src="/public/assets/screenshots/new/mobile-theming.png" />
+  <img height="400px" src="/public/assets/screenshots/new-screens/desktop-three.png" />
+  <img height="400px" src="/public/assets/screenshots/new-screens/mobile-two.png" />
 </div>
 
 ## Demos
@@ -43,11 +39,6 @@
 
 - Cross Platform
 - Fast
-
-### Coming Soon
-
-- Widget on Windows 11
-- Speech to Text and "Read that Post" text to speech
 
 ## Get the app
 
