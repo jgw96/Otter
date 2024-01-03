@@ -2,7 +2,7 @@
 const VERSION = 1;
 
 // import * as navigationPreload from 'workbox-navigation-preload';
-import { NetworkOnly, CacheFirst } from 'workbox-strategies';
+import { NetworkOnly, CacheFirst, NetworkFirst } from 'workbox-strategies';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { registerRoute } from 'workbox-routing';
 import { precacheAndRoute } from 'workbox-precaching';
@@ -347,6 +347,38 @@ registerRoute(
             }),
         ],
     })
+);
+
+// Network first for timeline
+registerRoute(
+    ({ request }) => request.url.includes('/api/v1/timelines'),
+    new NetworkFirst({
+        cacheName: 'timeline',
+        plugins: [
+            new ExpirationPlugin({
+                maxEntries: 50,
+                // max age is 5 minutes
+                maxAgeSeconds: 60 * 5,
+            }),
+        ],
+    }),
+    'GET'
+);
+
+// Network first for notifications
+registerRoute(
+    ({ request }) => request.url.includes('/api/v1/notifications'),
+    new NetworkFirst({
+        cacheName: 'notifications',
+        plugins: [
+            new ExpirationPlugin({
+                maxEntries: 50,
+                // max age is 5 minutes
+                maxAgeSeconds: 60 * 5,
+            }),
+        ],
+    }),
+    'GET'
 );
 
 precacheAndRoute(self.__WB_MANIFEST || []);
