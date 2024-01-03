@@ -180,7 +180,9 @@ export class AppLogin extends LitElement {
             }
         })
 
-        this.getInstances();
+        window.requestIdleCallback(() => {
+            this.getInstances();
+        });
 
     }
 
