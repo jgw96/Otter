@@ -24,7 +24,7 @@ export default defineConfig({
         globDirectory: 'dist',
         globPatterns: [
           // glob pattern for index-*.js files
-          '**/*.{html,json,svg,css,js,png}',
+          '**/*.{json,svg,css,js}',
         ],
       },
       injectRegister: false,

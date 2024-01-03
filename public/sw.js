@@ -4,16 +4,23 @@ const VERSION = 1;
 // import * as navigationPreload from 'workbox-navigation-preload';
 import { NetworkOnly, CacheFirst, NetworkFirst } from 'workbox-strategies';
 import { ExpirationPlugin } from 'workbox-expiration';
-import { registerRoute } from 'workbox-routing';
+import { registerRoute, NavigationRoute } from 'workbox-routing';
 import { precacheAndRoute } from 'workbox-precaching';
 import { BackgroundSyncPlugin } from 'workbox-background-sync';
+import * as navigationPreload from 'workbox-navigation-preload';
 
 // importScripts(
 //     'https://storage.googleapis.com/workbox-cdn/releases/6.5.4/workbox-sw.js'
 // );
 
 // Enable navigation preload for supporting browsers
-// navigationPreload.enable();
+navigationPreload.enable();
+
+const navigationRoute = new NavigationRoute(new NetworkFirst({
+    cacheName: 'navigations'
+}));
+
+registerRoute(navigationRoute);
 
 importScripts(
     // idb-keyval
@@ -289,6 +296,22 @@ registerRoute(
     'POST'
 );
 
+// register a route for /
+registerRoute(
+    'index.html',
+    new NetworkFirst({
+        cacheName: 'root',
+        plugins: [
+            new ExpirationPlugin({
+                maxEntries: 50,
+                // max age is 5 days
+                maxAgeSeconds: 60 * 60 * 24 * 5,
+            }),
+        ],
+    }),
+    'GET'
+);
+
 // background sync
 registerRoute(
     ({ request }) => request.url.includes('/boost?id'),
@@ -375,6 +398,22 @@ registerRoute(
                 maxEntries: 50,
                 // max age is 5 minutes
                 maxAgeSeconds: 60 * 5,
+            }),
+        ],
+    }),
+    'GET'
+);
+
+// cache first for local assets
+registerRoute(
+    ({ request }) => request.destination === 'image' && request.url.includes('/assets/icons/'),
+    new CacheFirst({
+        cacheName: 'images',
+        plugins: [
+            new ExpirationPlugin({
+                maxEntries: 50,
+                // max age is 5 days
+                maxAgeSeconds: 60 * 60 * 24 * 5,
             }),
         ],
     }),
