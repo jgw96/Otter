@@ -9,7 +9,7 @@ import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 
 import '../components/image-carousel';
 
-import { getSettings, Settings } from '../services/settings';
+// import { getSettings, Settings } from '../services/settings';
 
 // import * as blurhash from "blurhash-wasm";
 
@@ -20,8 +20,7 @@ provideFluentDesignSystem().register(fluentButton());
 import ImgWorker from '../utils/img-worker?worker';
 import { router } from '../utils/router';
 import { Post } from '../interfaces/Post';
-import { getCurrentUser } from '../services/account';
-import { enableVibrate } from '../utils/handle-vibrate';
+// import { enableVibrate } from '../utils/handle-vibrate';
 
 @customElement('timeline-item')
 export class TimelineItem extends LitElement {
@@ -33,7 +32,7 @@ export class TimelineItem extends LitElement {
     @state() isReblogged = false;
     @state() isBookmarked = false;
 
-    @state() settings: Settings | undefined;
+    @state() settings: any | undefined;
 
     @state() currentUser: any;
 
@@ -366,8 +365,10 @@ export class TimelineItem extends LitElement {
     ];
 
     async firstUpdated() {
+        const { getSettings } = await import('../services/settings');
         this.settings = await getSettings();
 
+        const { getCurrentUser } = await import("../services/account")
         this.currentUser = await getCurrentUser();
 
         this.device = window.innerWidth <= 600 ? "mobile" : "desktop";
@@ -411,8 +412,9 @@ export class TimelineItem extends LitElement {
             console.log("reply status", replyStatus);
         }
 
-        window.requestIdleCallback(() => {
+        window.requestIdleCallback(async () => {
             if (this.shadowRoot) {
+                const { enableVibrate } = await import('../utils/handle-vibrate');
                 enableVibrate(this.shadowRoot);
             }
         })

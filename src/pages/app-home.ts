@@ -24,24 +24,17 @@ import '../components/favorites';
 import '../components/notifications';
 import '../components/app-theme';
 import '../components/right-click';
-import '../components/mammoth-bot';
 import '../components/sponsor-button';
 import '../components/user-terms';
+import '../components/offline-notify';
 
-import './app-messages';
 import './search-page';
 
 import '@khmyznikov/pwa-install';
 
-// @ts-ignore
-import { createGesture } from 'https://cdn.jsdelivr.net/npm/@ionic/core@latest/dist/esm/index.mjs';
-
 import { styles } from '../styles/shared-styles';
-import { getCurrentUser, getInstanceInfo } from '../services/account';
 import { router } from '../utils/router';
-import { init } from '../utils/key-shortcuts';
-import { enableVibrate } from '../utils/handle-vibrate';
-import { resetLastPageID } from '../services/timeline';
+// import { resetLastPageID } from '../services/timeline';
 import { Post } from '../interfaces/Post';
 
 @customElement('app-home')
@@ -651,10 +644,12 @@ export class AppHome extends LitElement {
       }
     }, 1000);
 
-    window.requestIdleCallback(() => {
+    window.requestIdleCallback(async () => {
+      const { init } = await import("../utils/key-shortcuts");
       init();
     });
 
+    const { resetLastPageID } = await import("../services/timeline");
     await resetLastPageID();
 
     window.requestIdleCallback(async () => {
@@ -687,8 +682,9 @@ export class AppHome extends LitElement {
       }, 1000)
     }
 
-    window.requestIdleCallback(() => {
+    window.requestIdleCallback(async () => {
       if (this.shadowRoot) {
+        const { enableVibrate } = await import("../utils/handle-vibrate");
         enableVibrate(this.shadowRoot);
       }
     });
@@ -703,13 +699,8 @@ export class AppHome extends LitElement {
       }
     })
 
-    window.requestIdleCallback(() => {
-      if (this.shadowRoot) {
-        this.handleSettingsDrawerGesture();
-      }
-    });
-
-    setTimeout(() => {
+    setTimeout(async () => {
+      const { getCurrentUser } = await import("../services/account");
       getCurrentUser().then((user) => {
         this.user = user;
       });
@@ -798,6 +789,8 @@ export class AppHome extends LitElement {
   async openSettingsDrawer() {
     const drawer = this.shadowRoot?.getElementById('settings-drawer') as any;
     await drawer.show();
+
+    const { getInstanceInfo } = await import("../services/account");
 
     this.instanceInfo = await getInstanceInfo();
     console.log("instanceInfo", this.instanceInfo)
@@ -919,33 +912,6 @@ export class AppHome extends LitElement {
 
   }
 
-  async handleSettingsDrawerGesture() {
-    setTimeout(() => {
-      const dialog: any = this.shadowRoot?.querySelector('#settings-drawer');
-      console.log("drawer", dialog.panel)
-      const gesture = createGesture({
-        el: dialog.panel,
-        threshold: 15,
-        direction: 'x',
-        gestureName: 'settings-drawer-gesture',
-        onMove: (ev: any) => this.onMoveHandler(ev, dialog)
-      });
-
-      gesture.enable();
-
-      const dialogTwo: any = this.shadowRoot?.querySelector('#theming-drawer');
-      const gestureTwo = createGesture({
-        el: dialogTwo.panel,
-        threshold: 15,
-        direction: 'x',
-        gestureName: 'theming-drawer-gesture',
-        onMove: (ev: any) => this.onMoveHandler(ev, dialogTwo)
-      });
-
-      gestureTwo.enable();
-    }, 1000)
-  }
-
   onMoveHandler(ev: any, dialog: any) {
     console.log("ev", ev)
 
@@ -988,6 +954,8 @@ export class AppHome extends LitElement {
 
   render() {
     return html`
+
+      <offline-notify></offline-notify>
 
       <right-click>
         <fluent-menu>
@@ -1225,17 +1193,17 @@ export class AppHome extends LitElement {
 
 
           <sl-tab-panel name="general">
-            <app-timeline @open="${($event: CustomEvent) => this.handleOpenTweet($event.detail.tweet)}" @handle-summary="${($event: any) => this.showSummary($event)}" class="homeTimeline" .timelineType="home"
+            <app-timeline @open="${($event: CustomEvent) => this.handleOpenTweet($event.detail.tweet)}" @handle-summary="${($event: any) => this.showSummary($event)}" class="homeTimeline" timelineType="home"
               @replies="${($event: any) => this.handleReplies($event.detail.data, $event.detail.id)}"></app-timeline>
           </sl-tab-panel>
           <sl-tab-panel name="media">
-            <app-timeline .timelineType="Media"></app-timeline>
+            <app-timeline timelineType="media"></app-timeline>
           </sl-tab-panel>
           <sl-tab-panel name="messages">
             <app-messages></app-messages>
           </sl-tab-panel>
           <sl-tab-panel name="custom">
-            <app-timeline .timelineType="Public"></app-timeline>
+            <app-timeline timelineType="public"></app-timeline>
           </sl-tab-panel>
           <sl-tab-panel name="bookmarks">
             <app-bookmarks></app-bookmarks>
