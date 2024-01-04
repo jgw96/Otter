@@ -5,7 +5,6 @@ import { fluentButton, fluentTextField, fluentCombobox, fluentOption, provideFlu
 
 import { router } from '../utils/router';
 import { enableVibrate } from '../utils/handle-vibrate';
-import { getPeers } from '../services/account';
 
 provideFluentDesignSystem().register(fluentButton());
 provideFluentDesignSystem().register(fluentTextField());
@@ -179,11 +178,6 @@ export class AppLogin extends LitElement {
                 enableVibrate(this.shadowRoot);
             }
         })
-
-        // window.requestIdleCallback(() => {
-        //     this.getInstances();
-        // });
-
     }
 
     async login() {
@@ -240,12 +234,6 @@ export class AppLogin extends LitElement {
 
         scrollWidth = 0;
       }
-
-    async getInstances() {
-        const instances = await getPeers();
-
-        this.instances = instances;
-    }
 
     handleServerInput(server: string) {
         console.log(server)
