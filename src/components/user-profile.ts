@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 import { classMap } from 'lit/directives/class-map.js';
-import { enableVibrate } from '../utils/handle-vibrate';
+// import { enableVibrate } from '../utils/handle-vibrate';
 import { router } from '../utils/router';
 
 @customElement('user-profile')
@@ -107,8 +107,9 @@ export class UserProfile extends LitElement {
 
         observer.observe(this.shadowRoot?.querySelector('div') as Element);
 
-        window.requestIdleCallback(() => {
+        window.requestIdleCallback(async () => {
             if (this.shadowRoot) {
+                const { enableVibrate } = await import('../utils/handle-vibrate')
                 enableVibrate(this.shadowRoot);
             }
         })

@@ -12,6 +12,7 @@ export default defineConfig({
     sourcemap: false,
     assetsDir: "code",
     cssCodeSplit: true,
+    minify: "terser",
     target: ['esnext', 'edge100', 'firefox100', 'chrome100', 'safari18']
   },
   plugins: [
