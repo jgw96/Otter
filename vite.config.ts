@@ -1,4 +1,4 @@
-import { defineConfig, splitVendorChunkPlugin } from 'vite';
+import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import copy from 'rollup-plugin-copy';
 import wasm from "vite-plugin-wasm";
@@ -16,7 +16,6 @@ export default defineConfig({
     target: ['esnext', 'edge100', 'firefox100', 'chrome100', 'safari18']
   },
   plugins: [
-    splitVendorChunkPlugin(),
     VitePWA({
       strategies: "injectManifest",
       injectManifest: {
