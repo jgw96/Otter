@@ -423,12 +423,12 @@ export class TimelineItem extends LitElement {
     async favorite(id: string) {
         console.log("favorite", id);
 
-        const { boostPost } = await import('../services/timeline');
-        await boostPost(id);
-
         this.isBoosted = true;
 
         this.tweet && this.tweet.reblog ? this.tweet.reblog.favourites_count++ : this.tweet ? this.tweet.favourites_count++ : null;
+
+        const { boostPost } = await import('../services/timeline');
+        await boostPost(id);
 
         // fire custom event
         this.dispatchEvent(new CustomEvent('favorite', {
@@ -441,12 +441,12 @@ export class TimelineItem extends LitElement {
     async reblog(id: string) {
         console.log("reblog", id);
 
-        const { reblogPost } = await import('../services/timeline');
-        await reblogPost(id);
-
         this.isReblogged = true;
 
         this.tweet && this.tweet.reblog ? this.tweet.reblog.reblogs_count++ : this.tweet ? this.tweet.reblogs_count++ : null;
+
+        const { reblogPost } = await import('../services/timeline');
+        await reblogPost(id);
 
         // fire custom event
         this.dispatchEvent(new CustomEvent('reblog', {

@@ -218,6 +218,7 @@ export class PostDialog extends LitElement {
                 height: 8em;
                 border-radius: 6px;
                 margin-top: 4px;
+                object-fit: cover;
             }
 
             sl-skeleton {
@@ -505,6 +506,7 @@ export class PostDialog extends LitElement {
             </div>
 
             <fluent-button slot="footer" @click="${() => this.markAsSensitive()}">
+                Set Visibility
                 <sl-icon src="/assets/eye-outline.svg"></sl-icon>
             </fluent-button>
 
@@ -548,7 +550,7 @@ export class PostDialog extends LitElement {
                 Attach Media
                 <sl-icon src="/assets/attach-outline.svg"></sl-icon>
             </fluent-button>
-            <fluent-button ?disabled="${this.hasStatus === false}" pill @click="${() => this.publish()}" slot="footer" appearance="accent">Publish</fluent-button>
+            <fluent-button ?disabled="${this.hasStatus === false || this.attaching === true}" pill @click="${() => this.publish()}" slot="footer" appearance="accent">Publish</fluent-button>
         </sl-dialog>
         `;
     }

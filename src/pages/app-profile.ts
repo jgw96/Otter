@@ -117,7 +117,7 @@ export class AppProfile extends LitElement {
 
             #mini-profile {
                 position: fixed;
-                top: 10px;
+                top: 44px;
                 background: rgb(98 99 105 / 19%);
                 left: 15vw;
                 right: 15vw;
