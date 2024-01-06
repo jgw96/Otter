@@ -44,7 +44,7 @@ test('ensure timeline loads on home page', async ({ page }) => {
     await expect(page.locator('#sl-tab-panel-1 app-timeline')).toBeVisible();
 });
 
-test('ensure that you can switch tabs, such as to the notifications tab', async ({ page }) => {
+test('ensure that the notifications tab loads', async ({ page }) => {
     await page.evaluate(() => {
         localStorage.setItem("server", "https://tech.lgbt");
         localStorage.setItem("accessToken", "84oZCLxHFOUEP_rLET5r1FcRvNhGYfWoahtSSq4ZQ6I");
@@ -59,6 +59,40 @@ test('ensure that you can switch tabs, such as to the notifications tab', async 
 
     // expect the notifications tab to be visible
     await expect(page.locator('#sl-tab-panel-7 app-notifications')).toBeVisible();
+});
+
+test('ensure that the bookmarks tab loads', async ({ page }) => {
+    await page.evaluate(() => {
+        localStorage.setItem("server", "https://tech.lgbt");
+        localStorage.setItem("accessToken", "84oZCLxHFOUEP_rLET5r1FcRvNhGYfWoahtSSq4ZQ6I");
+    });
+
+    await page.reload();
+
+    await page.waitForLoadState('networkidle');
+
+    // click the notifications tab
+    await page.click('sl-tab[panel="bookmarks"]');
+
+    // expect the notifications tab to be visible
+    await expect(page.locator('#sl-tab-panel-5 app-bookmarks')).toBeVisible();
+});
+
+test('ensure that the search tab loads', async ({ page }) => {
+    await page.evaluate(() => {
+        localStorage.setItem("server", "https://tech.lgbt");
+        localStorage.setItem("accessToken", "84oZCLxHFOUEP_rLET5r1FcRvNhGYfWoahtSSq4ZQ6I");
+    });
+
+    await page.reload();
+
+    await page.waitForLoadState('networkidle');
+
+    // click the notifications tab
+    await page.click('sl-tab[panel="search"]');
+
+    // expect the notifications tab to be visible
+    await expect(page.locator('#sl-tab-panel-8 app-search')).toBeVisible();
 });
 
 test('ensure service worker is registered', async ({ page }) => {

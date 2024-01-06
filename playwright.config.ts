@@ -84,7 +84,7 @@ export default defineConfig({
     {
       name: 'Mobile Chrome',
       use: { ...devices['Pixel 5'] },
-    },
+    }
   ],
 
   /* Folder for test artifacts such as screenshots, videos, traces, etc. */
