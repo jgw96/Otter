@@ -42,7 +42,7 @@
     "workbox-precaching": "^6.5.4",
     "workbox-routing": "^6.5.4",
     "workbox-strategies": "^6.5.4",
-    "workbox-window": "^6.5.4"
+    "workbox-window": "^7.0.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.32.1",
