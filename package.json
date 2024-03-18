@@ -17,7 +17,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@fluentui/web-components": "^2.5.16",
+    "@fluentui/web-components": "^2.5.17",
     "@khmyznikov/pwa-install": "^0.2.7",
     "@lit-labs/virtualizer": "^2.0.11",
     "@material/web": "^1.1.1",
