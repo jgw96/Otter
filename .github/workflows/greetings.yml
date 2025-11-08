@@ -9,7 +9,7 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-    - uses: actions/first-interaction@v1
+    - uses: actions/first-interaction@v1.3.0
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         issue-message: "Hey! Thanks for opening a new issue on Otter, I really appreciate it. Please ensure that your issue follows the template as this will help me prioritize the issue."
