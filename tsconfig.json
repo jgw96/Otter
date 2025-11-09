@@ -2,7 +2,7 @@
   "compilerOptions": {
       "module": "esnext",
       "target": "esnext",
-      "lib": ["es2017", "esnext", "dom", "dom.iterable"],
+      "lib": ["es2017", "esnext", "dom", "dom.iterable", "webworker"],
       "skipLibCheck": true,
       "declaration": true,
       "emitDeclarationOnly": true,
@@ -17,10 +17,7 @@
       "experimentalDecorators": true,
       "forceConsistentCasingInFileNames": true,
       "useDefineForClassFields": false,
-      "isolatedModules": true,
-      "types": [
-          "vite-plugin-pwa/client"
-      ]
+      "isolatedModules": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
