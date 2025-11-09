@@ -12,6 +12,143 @@ Otter is a Progressive Web App (PWA) Mastodon client built with Lit web componen
 - **UI Libraries**: Shoelace components (`@shoelace-style/shoelace`), Fluent UI (`@fluentui/web-components`)
 - **Build Tool**: Vite with PWA plugin, WASM support, and terser minification
 
+### Material Design 3 Migration & Custom Components
+Otter is migrating away from Fluent UI surface primitives toward a unified set of custom Material Design 3 (MD3) components. All NEW custom components should follow MD3 guidelines for elevation, shape, color roles, typography, and motion. When updating existing components, prefer adopting the same tokens and interaction patterns.
+
+Current MD3 component suite (`src/components/`):
+
+| Component | Tag | Purpose | Key Props | Notes |
+|-----------|-----|---------|-----------|-------|
+| Button | `md-button` | Primary & secondary actions | `variant` (`filled`\|`outlined`\|`text`), `pill`, `size` | Uses MD3 shape (8px/ pill), focus ring, hover overlay. |
+| Badge | `md-badge` | Counts / status labels | `variant` (`filled`\|`outlined`), `clickable` | Avoid for large numbers > 4 digits (truncate UI). |
+| Toolbar | `md-toolbar` | Container for top-level actions | `position` (`top`\|`bottom`\|`static`), `align` (`start`\|`center`\|`end`) | Fixed toolbars use elevation (shadow) tokens. |
+| Menu | `md-menu` | Surface for action lists | – | Paired with `md-menu-item`. Provide keyboard nav via tab/arrow in future enhancement. |
+| Menu Item | `md-menu-item` | Single actionable row | `disabled` | Emits `menu-item-click`. Includes ripple-esque press state. |
+| Dialog | `md-dialog` | Modal surfaces for focused tasks | `label`, `open`, `fullscreen` | Native `<dialog>` with MD3 header, close button, backdrop blur & escape support. |
+| Select | `md-select` | Dropdown selector | `value`, `placeholder`, `variant` (`filled`\|`outlined`), `disabled` | Emits `change` event with detail.value. Auto-manages option selection. |
+| Option | `md-option` | Single option in select | `value`, `disabled`, `selected` | Used inside `md-select`. Shows checkmark when selected.
+
+#### MD3 Styling Principles Adopted
+1. **Color**: Prefer semantic tokens (e.g. `--md-sys-color-primary`, `--md-sys-color-surface-container`, `--md-sys-color-outline`). If a token is missing, fall back to Shoelace primary (`--sl-color-primary-600`) or neutral until a full design token layer is added.
+2. **Elevation**: Use layered box-shadows approximating MD3 elevation levels. Keep them minimal: buttons typically no elevation (except FAB style), menus/dialogs use level 3-4.
+3. **Shape**: Default medium (8px) radius. Dialogs use 28px (desktop) and 20px (mobile). Pills for rounded interactive chips/buttons use full radius of height/2.
+4. **Typography**: Use system font stack plus Roboto when available; map roles: Title Large (dialogs), Label Medium (buttons), Body Medium (content). Avoid hard-coded font weights other than 400/500.
+5. **Motion**: Easing `cubic-bezier(0.2, 0, 0, 1)` for entrance; subtle scale for dialog open; no large bounce animations.
+6. **States**: Hover overlays use color-mix with ~8% alpha, active ~12%, focus visible with 2px outline in primary color.
+
+#### Authoring New Components (MD3 Checklist)
+- Base class: `LitElement` with static `styles` and `render()`.
+- Provide accessible roles/labels (e.g. `aria-label` on icon-only buttons).
+- Support dark mode via `@media(prefers-color-scheme: dark)` overrides.
+- Use slots for extensibility (`prefix`, `suffix`, `footer`, `header-actions`).
+- Emit custom events for interaction (`*-click`, `md-dialog-show`, `md-dialog-hide`).
+- Keep DOM depth shallow; avoid nested wrappers unless needed for ripple/elevation.
+- Ensure keyboard interactions (Enter/Space) trigger click for actionable elements.
+
+#### Replacing Legacy Components
+| Old | Replace With | Migration Tips |
+|-----|--------------|----------------|
+| `fluent-button` / `sl-button` | `md-button` | Map appearance to MD3 variant: filled=primary, text=secondary, outlined=outline. |
+| `fluent-badge` | `md-badge` | Consolidate accent/neutral -> `filled` or `outlined`. |
+| `fluent-toolbar` | `md-toolbar` | Remove Fluent registration; pass position via `position="top"`. |
+| `fluent-menu` | `md-menu` | Wrap items; remove Fluent registration code. |
+| `fluent-menu-item` | `md-menu-item` | Replace attribute bindings; add `slot="prefix"` for icons. |
+| `sl-dialog` | `md-dialog` | Replace `label` attribute; headers now always present with built‑in close button and backdrop click-to-close. |
+| `fluent-combobox` | `md-select` | Change `@change` handler to read `event.detail.value`. Remove Fluent registration. |
+| `fluent-option` | `md-option` | Direct replacement inside `md-select`. No changes to `value` attribute needed.
+
+#### Dialog Usage Example
+```typescript
+html`
+  <md-dialog id="settings-dialog" label="Settings" .open=${this.showSettings}>
+    <section>
+      <p>Configure your preferences.</p>
+    </section>
+    <div slot="footer">
+      <md-button variant="text" @click=${() => this.closeSettings()}>Cancel</md-button>
+      <md-button variant="filled" @click=${() => this.saveSettings()}>Save</md-button>
+    </div>
+  </md-dialog>
+`
+```
+
+Programmatic control:
+```typescript
+const dialog = this.shadowRoot?.getElementById('settings-dialog') as any;
+dialog.show(); // opens
+dialog.hide(); // closes
+```
+
+Backdrop click and escape key automatically close the dialog and emit `md-dialog-hide`.
+
+#### Menu Usage Example
+```typescript
+html`
+  <md-menu>
+    <md-menu-item @menu-item-click=${this.createPost}>
+      <sl-icon slot="prefix" src="/assets/add-outline.svg"></sl-icon>
+      New Post
+    </md-menu-item>
+    <md-menu-item @menu-item-click=${this.openExplore}>
+      <sl-icon slot="prefix" src="/assets/search-outline.svg"></sl-icon>
+      Explore
+    </md-menu-item>
+  </md-menu>
+`
+```
+
+#### Button Variants
+```html
+<md-button variant="filled">Primary</md-button>
+<md-button variant="outlined">Outlined</md-button>
+<md-button variant="text" pill size="small">Text Pill</md-button>
+```
+
+#### Select Usage Example
+```typescript
+html`
+  <md-select
+    .value=${this.selectedValue}
+    placeholder="Choose an option"
+    @change=${(e: any) => this.handleChange(e.detail.value)}
+  >
+    <md-option value="option1">Option 1</md-option>
+    <md-option value="option2">Option 2</md-option>
+    <md-option value="option3" disabled>Option 3 (Disabled)</md-option>
+  </md-select>
+`
+
+// Handler method
+private handleChange(value: string) {
+  this.selectedValue = value;
+  console.log('Selected:', value);
+}
+```
+
+Outlined variant:
+```html
+<md-select variant="outlined" placeholder="Select server">
+  <md-option value="mastodon.social">mastodon.social</md-option>
+  <md-option value="fosstodon.org">fosstodon.org</md-option>
+</md-select>
+```
+
+#### Adding New MD3 Components
+1. Create file in `src/components/` (e.g. `md-chip.ts`).
+2. Follow structure of existing MD3 components (slot design, style overrides, dark mode, events).
+3. Export any public events or props in a matching `.d.ts` under `types/components/`.
+4. Update this guide under the MD3 component suite table.
+5. Replace legacy usages across pages progressively.
+
+#### Future Enhancements
+- Centralize MD3 design tokens (create `src/styles/md-tokens.css`).
+- Add focus trap utility for `md-dialog` and keyboard navigation for `md-menu`.
+- Provide ripple effect utility for consistent press states.
+- Improve accessibility audits (role attributes, aria-expanded for menus, inert background while dialog open).
+
+> NOTE: When adding ANY new custom UI, prefer MD3 styling before introducing third-party libraries unless functionality is non-trivial (e.g. virtualization, complex date picking).
+
+
 ### Component Structure
 All components follow this pattern:
 ```typescript

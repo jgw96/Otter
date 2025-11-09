@@ -5,21 +5,20 @@ import { getLastPlaceTimeline, getPaginatedHomeTimeline, getPreviewTimeline, mix
 // @ts-ignore
 import TimelineWorker from '../utils/timeline-worker?worker';
 
-import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
+
+import '../components/md-dialog';
 
 import '@lit-labs/virtualizer';
 
 import '../components/timeline-item';
 import '../components/search';
+import '../components/md-select';
+import '../components/md-option';
 import { Post } from '../interfaces/Post';
 
 import { guard } from 'lit/directives/guard.js';
 
-import { fluentCombobox, fluentOption, provideFluentDesignSystem } from '@fluentui/web-components';
 import { router } from '../utils/router';
-
-provideFluentDesignSystem().register(fluentCombobox());
-provideFluentDesignSystem().register(fluentOption());
 
 @customElement('app-timeline')
 export class Timeline extends LitElement {
@@ -69,6 +68,12 @@ export class Timeline extends LitElement {
                 justify-content: space-between;
                 align-items: center;
                 margin-bottom: 12px;
+                gap: 12px;
+            }
+
+            #timeline-header md-select {
+                flex: 1;
+                max-width: 300px;
             }
 
             @media(prefers-color-scheme: dark) {
@@ -77,21 +82,6 @@ export class Timeline extends LitElement {
                     --netural-fill-stealth-active: #242428;
                     color: white;
                     border: none;
-                }
-
-                fluent-combobox::part(control) {
-                    background: #242428;
-                    color: white;
-                }
-
-                fluent-option {
-                    background: #242428;
-                    color: white;
-                }
-
-                fluent-combobox::part(listbox) {
-                    background: #242428;
-                    color: white;
                 }
             }
 
@@ -222,8 +212,8 @@ export class Timeline extends LitElement {
                     padding-right: 12px;
                 }
 
-                fluent-combobox {
-                    height: 2.5em;
+                #timeline-header md-select {
+                    max-width: none;
                 }
 
                 #analyze ul {
@@ -478,57 +468,21 @@ export class Timeline extends LitElement {
     render() {
         return html`
 
-        <sl-dialog label="Analyze" id="analyze">
-                <timeline-item .tweet="${this.analyzeTweet}"></timeline-item>
-
-                <div>
-                <h2 id="learn-more-header">Learn More</h2>
-                <p>Learn more about the subjects mentioned in this status</p>
-
-                ${this.analyzeData && this.analyzeData.length > 0 ?
-                html`
-                        <ul>
-                            ${this.analyzeData!.map((entity: any) => html`
-                                <li>
-                                    <strong>${entity.name}</strong>
-
-                                    <fluent-button .href="${entity.url}" target="_blank">
-                                      Open in ${entity.dataSource}
-                                    </fluent-button>
-                                </li>
-                            `)}
-                        </ul>
-                    ` : null
-            }
-
-                ${this.imageDesc ? html`
-                      <h2>Image Analysis</h2>
-                      <p>Learn more about the image in this status</p>
-
-                      <strong>Image Description</strong>
-                      <p>${this.imageDesc}</p>
-
-
-                    ` : null
-            }
-                </div>
-        </sl-dialog>
-
-        <sl-dialog id="img-preview">
-            ${this.imgPreview ? html`<img .src="${this.imgPreview}">` : null}
-        </sl-dialog>
+        <md-dialog id="img-preview" .open=${!!this.imgPreview} label="Image Preview">
+            ${this.imgPreview ? html`<img src="${this.imgPreview}" style="width:100%;border-radius:6px;">` : null}
+        </md-dialog>
 
         <div id="timeline-header">
-            <fluent-combobox .value="${this.timelineType}" @change="${($event: any) => this.changeTimelineType($event.target.value)}" placeholder="home">
-                <fluent-option value="for you">for you</fluent-option>
-                <fluent-option value="home and some trending">home and some trending</fluent-option>
-                <fluent-option value="home">home</fluent-option>
-                <fluent-option value="public">public</fluent-option>
-            </fluent-combobox>
+            <md-select .value="${this.timelineType}" @change="${($event: any) => this.changeTimelineType($event.detail.value)}" placeholder="home">
+                <md-option value="for you">for you</md-option>
+                <md-option value="home and some trending">home and some trending</md-option>
+                <md-option value="home">home</md-option>
+                <md-option value="public">public</md-option>
+            </md-select>
 
-            <sl-button circle @click="${() => this.refreshTimeline()}">
-                <sl-icon src="/assets/refresh-circle-outline.svg"></fluent-icon>
-            </sl-button>
+            <md-button circle @click="${() => this.refreshTimeline()}">
+                <sl-icon src="/assets/refresh-circle-outline.svg"></sl-icon>
+            </md-button>
         </div>
 
 
@@ -546,7 +500,9 @@ export class Timeline extends LitElement {
             >
         </lit-virtualizer>
 
-            <fluent-button appearance="lightweight" ?loading="${this.loadingData}" id="load-more">Load More</fluent-button>
+            <md-button variant="text" ?disabled="${this.loadingData}" id="load-more">
+                Load More
+            </md-button>
         </ul>
         `;
     }

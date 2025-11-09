@@ -1,21 +1,9 @@
 import { LitElement, css, html } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
 
-import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/tab-group/tab-group.js';
 import '@shoelace-style/shoelace/dist/components/tab/tab.js';
 import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js';
-import '@shoelace-style/shoelace/dist/components/drawer/drawer.js';
-import '@shoelace-style/shoelace/dist/components/switch/switch.js';
-import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
-import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
-
-import { fluentButton, fluentBadge, fluentToolbar, fluentMenu, fluentMenuItem, provideFluentDesignSystem } from '@fluentui/web-components';
-provideFluentDesignSystem().register(fluentButton());
-provideFluentDesignSystem().register(fluentBadge());
-provideFluentDesignSystem().register(fluentToolbar());
-provideFluentDesignSystem().register(fluentMenu());
-provideFluentDesignSystem().register(fluentMenuItem());
 
 import '../components/timeline';
 import '../components/timeline-item';
@@ -27,9 +15,17 @@ import '../components/right-click';
 import '../components/user-terms';
 import '../components/offline-notify';
 
-import './search-page';
+import '../components/otter-drawer';
+import '../components/md-button';
+import '../components/md-badge';
+import '../components/md-toolbar';
+import '../components/md-menu';
+import '../components/md-menu-item';
+import '../components/md-dialog';
+import '../components/md-switch';
+import '../components/md-dropdown';
 
-import '@khmyznikov/pwa-install';
+import './search-page';
 
 import { styles } from '../styles/shared-styles';
 import { router } from '../utils/router';
@@ -79,23 +75,22 @@ export class AppHome extends LitElement {
         margin-right: 40px;
       }
 
-      sl-dialog::part(base) {
+      md-dialog::part(base) {
                 z-index: 99999;
             }
 
-      fluent-menu-item {
+      md-menu-item {
         --neutral-fill-stealth-hover: #181818;
       }
 
-      #open-tweet-dialog::part(panel) {
-        height: 92vh;
-        max-height: 100vh;
-        max-width: 100vw;
-        width: 60vw;
+      #open-tweet-dialog {
+        --md-dialog-max-width: 60vw;
+        --md-dialog-height: 92vh;
       }
 
-      #open-tweet-dialog::part(body) {
-        padding-top: 0;
+      #open-tweet-dialog::part(dialog) {
+        width: 55vw;
+        max-width: 55vw;
       }
 
       mammoth-bot {
@@ -109,23 +104,23 @@ export class AppHome extends LitElement {
         position: unset;
       }
 
-      fluent-menu {
+      md-menu {
         background: #ffffff14;
         backdrop-filter: blur(48px);
         color: white;
         z-index: 99;
       }
 
-      fluent-menu-item {
+      md-menu-item {
         color: white;
       }
 
       @media(prefers-color-scheme: light) {
-        fluent-menu-item {
+        md-menu-item {
           color: black;
         }
 
-        fluent-menu {
+        md-menu {
           background: rgb(235 235 235);
           backdrop-filter: none;
         }
@@ -181,10 +176,6 @@ export class AppHome extends LitElement {
         margin-top: 6px;
     }
 
-      .setting sl-switch {
-        --sl-toggle-size-medium: 16px;
-      }
-
       #context-menu {
         z-index: 10000;
         width: 150px;
@@ -225,12 +216,12 @@ export class AppHome extends LitElement {
       }
 
       @media(prefers-color-scheme: light) {
-        fluent-menu-item {
+        md-menu-item {
                     --neutral-fill-stealth-hover: white;
                 }
       }
 
-      fluent-badge {
+      md-badge {
         cursor: pointer;
       }
 
@@ -257,24 +248,19 @@ export class AppHome extends LitElement {
         width: 160px;
       }
 
-      fluent-toolbar {
+      md-toolbar {
         width: 100%;
         margin-top: 33px;
         padding-top: 8px;
         background: transparent;
         margin-bottom: 6px;
         top: 13px;
-
         padding-right: 10px;
         position: fixed;
       }
 
-      fluent-toolbar::part(positioning-region) {
-        justify-content: flex-end;
-      }
-
       @media(prefers-color-scheme: dark) {
-        fluent-toolbar {
+        md-toolbar {
           background: transparent;
         }
       }
@@ -361,7 +347,7 @@ export class AppHome extends LitElement {
         width: 20%;
       }
 
-      #profile-card-actions fluent-button {
+      #profile-card-actions md-button {
         width: 80%;
       }
 
@@ -383,12 +369,7 @@ export class AppHome extends LitElement {
         font-size: 14px;
       }
 
-      sl-dialog::part(header-actions) {
-        display: flex;
-        align-items: center;
-      }
-
-      sl-dialog img {
+      md-dialog img {
         height: 160px;
         margin-top: 16px;
         background: #0e0e0e45;
@@ -412,31 +393,17 @@ export class AppHome extends LitElement {
         position: fixed;
       }
 
-      sl-drawer::part(base) {
+      otter-drawer::part(base) {
         z-index: 99999;
       }
 
-      sl-drawer::part(panel) {
+      otter-drawer::part(body) {
         overflow-x: hidden;
 
         backdrop-filter: blur(40px);
 
         content-visibility: auto;
         contain: strict;
-      }
-
-      sl-dialog {
-        --width: 38em;
-      }
-
-      sl-dialog sl-textarea::part(textarea) {
-        height: 14em;
-      }
-
-      sl-dialog::part(panel) {
-        backdrop-filter: blur(40px);
-
-        content-visibility: auto;
       }
 
       sl-card::part(footer) {
@@ -478,7 +445,7 @@ export class AppHome extends LitElement {
     }
 
     @media(max-width: 1030px) {
-      #profile-card-actions fluent-button {
+      #profile-card-actions md-button {
         width: 100%;
       }
     }
@@ -516,7 +483,7 @@ export class AppHome extends LitElement {
         display: none;
       }
 
-      fluent-toolbar {
+      md-toolbar {
         display: none;
       }
 
@@ -528,19 +495,11 @@ export class AppHome extends LitElement {
         display: flex;
       }
 
-      #mobile-actions sl-button::part(base) {
-        border-radius: 16px;
-        height: 56px;
-        width: 56px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding-top: 4px;
-
+      #mobile-actions md-button {
         box-shadow: #0000008a 0px 1px 13px 0px;
       }
 
-      #mobile-actions sl-button sl-icon {
+      #mobile-actions md-button sl-icon {
         height: 30px;
         width: 30px;
         vertical-align: text-bottom;
@@ -935,33 +894,33 @@ export class AppHome extends LitElement {
       <offline-notify></offline-notify>
 
       <right-click>
-        <fluent-menu>
-          <fluent-menu-item @click="${() => this.openNewDialog()}">
+        <md-menu>
+          <md-menu-item @click="${() => this.openNewDialog()}">
             <sl-icon slot="prefix" src="/assets/add-outline.svg"></sl-icon>
             New Post
-          </fluent-menu-item>
+          </md-menu-item>
 
-          <fluent-menu-item @click="${() => this.openATab("search")}">
-            <sl-icon src="/assets/search-outline.svg"></sl-icon>
+          <md-menu-item @click="${() => this.openATab("search")}">
+            <sl-icon slot="prefix" src="/assets/search-outline.svg"></sl-icon>
             Explore
-          </fluent-menu-item>
-          <fluent-menu-item @click="${() => this.openATab("notifications")}">
-            <sl-icon src="/assets/notifications-outline.svg"></sl-icon>
+          </md-menu-item>
+          <md-menu-item @click="${() => this.openATab("notifications")}">
+            <sl-icon slot="prefix" src="/assets/notifications-outline.svg"></sl-icon>
             Notifications
-          </fluent-menu-item>
-          <fluent-menu-item @click="${() => this.openATab("messages")}">
-            <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
+          </md-menu-item>
+          <md-menu-item @click="${() => this.openATab("messages")}">
+            <sl-icon slot="prefix" src="/assets/chatbox-outline.svg"></sl-icon>
             Messages
-          </fluent-menu-item>
-          <fluent-menu-item @click="${() => this.openATab("bookmarks")}">
-            <sl-icon src="/assets/bookmark-outline.svg"></sl-icon>
+          </md-menu-item>
+          <md-menu-item @click="${() => this.openATab("bookmarks")}">
+            <sl-icon slot="prefix" src="/assets/bookmark-outline.svg"></sl-icon>
             Bookmarks
-          </fluent-menu-item>
-          <fluent-menu-item @click="${() => this.openATab("faves")}">
-            <sl-icon src="/assets/heart-outline.svg"></sl-icon>
+          </md-menu-item>
+          <md-menu-item @click="${() => this.openATab("faves")}">
+            <sl-icon slot="prefix" src="/assets/heart-outline.svg"></sl-icon>
             Favorites
-          </fluent-menu-item>
-        </fluent-menu>
+          </md-menu-item>
+        </md-menu>
       </right-click>
 
       <app-header @open-bot-drawer="${() => this.openBotDrawer()}" @open-settings="${() => this.openSettingsDrawer()}" @open-theming="${() => this.openThemingDrawer()}">
@@ -971,21 +930,21 @@ export class AppHome extends LitElement {
         <sl-icon src="/assets/eye-outline.svg"></sl-icon>
       </fluent-button> -->
 
-      <sl-drawer label="Theming" id="theming-drawer">
+      <otter-drawer label="Theming" id="theming-drawer">
         <app-theme @color-chosen="${($event: any) => this.handlePrimaryColor($event.detail.color)}"></app-theme>
-      </sl-drawer>
+      </otter-drawer>
 
-      <sl-dialog id="summary-dialog" label="">
+  <md-dialog id="summary-dialog" label="">
         ${this.summary}
-      </sl-dialog>
+  </md-dialog>
 
-      <sl-dialog id="open-tweet-dialog">
+  <md-dialog id="open-tweet-dialog">
         ${this.openTweet ? html`<post-detail .passed_tweet="${this.openTweet}"></post-detail>` : null}
-      </sl-dialog>
+  </md-dialog>
 
       <post-dialog @published="${() => this.handleReload()}"></post-dialog>
 
-      <sl-drawer id="settings-drawer" placement="end" label="Settings">
+      <otter-drawer id="settings-drawer" placement="end" label="Settings">
 
         <div>
           <div id="settings-profile-inner">
@@ -994,36 +953,36 @@ export class AppHome extends LitElement {
               <h3>${this.user ? this.user.display_name : "Loading..."}</h3>
 
               <div id="user-actions">
-                <sl-dropdown>
+                <md-dropdown>
                   <sl-icon-button slot="trigger" src="/assets/settings-outline.svg"></sl-icon-button>
-                  <fluent-menu>
-                    <fluent-menu-item @click="${() => this.viewMyProfile()}">
+                  <md-menu>
+                    <md-menu-item @click="${() => this.viewMyProfile()}">
                       <sl-icon slot="prefix" src="/assets/eye-outline.svg"></sl-icon>
                       View My Profile
-                    </fluent-menu-item>
-                    <fluent-menu-item @click="${() => this.shareMyProfile()}">
+                    </md-menu-item>
+                    <md-menu-item @click="${() => this.shareMyProfile()}">
                       <sl-icon slot="prefix" src="/assets/share-social-outline.svg"></sl-icon>
                       Share My Profile
-                    </fluent-menu-item>
-                    <fluent-menu-item @click="${() => this.editMyProfile()}">
+                    </md-menu-item>
+                    <md-menu-item @click="${() => this.editMyProfile()}">
                       Edit My Profile
-                    </fluent-menu-item>
-                    <!-- <fluent-menu-item>
+                    </md-menu-item>
+                    <!-- <md-menu-item>
                       Add an existing Account
-                    </fluent-menu-item> -->
-                  </fluent-menu>
-                </sl-dropdown>
+                    </md-menu-item> -->
+                  </md-menu>
+                </md-dropdown>
               </div>
             </div>
 
             <p id="user-url">${this.user ? this.user.url : "Loading..."}</p>
 
-            <fluent-badge appearance="accent" @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count :
+            <md-badge variant="filled" clickable @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count :
         "0"} followers
-            </fluent-badge>
-            <fluent-badge appearance="accent" @click="${() => this.goToFollowing()}">${this.user ? this.user.following_count :
+            </md-badge>
+            <md-badge variant="filled" clickable @click="${() => this.goToFollowing()}">${this.user ? this.user.following_count :
         "0"} following
-            </fluent-badge>
+            </md-badge>
 
           </div>
         </div>
@@ -1036,8 +995,8 @@ export class AppHome extends LitElement {
           <div>
             <h4>Wellness Mode</h4>
 
-            <sl-switch @sl-change="${($event: any) => this.handleWellnessMode($event.target.checked)}"
-              ?checked="${this.wellnessMode}"></sl-switch>
+            <md-switch @sl-change="${($event: any) => this.handleWellnessMode($event.target.checked)}"
+              ?checked="${this.wellnessMode}"></md-switch>
           </div>
 
           <p>
@@ -1049,8 +1008,8 @@ export class AppHome extends LitElement {
           <div>
             <h4>Data Saver Mode</h4>
 
-            <sl-switch @sl-change="${($event: any) => this.handleDataSaverMode($event.target.checked)}"
-              ?checked="${this.dataSaverMode}"></sl-switch>
+            <md-switch @sl-change="${($event: any) => this.handleDataSaverMode($event.target.checked)}"
+              ?checked="${this.dataSaverMode}"></md-switch>
           </div>
 
           <p>
@@ -1085,9 +1044,9 @@ export class AppHome extends LitElement {
         </div>
         ` : null}
 
-      </sl-drawer>
+      </otter-drawer>
 
-      <sl-drawer id="replies-drawer" placement="end" label="Comments">
+      <otter-drawer id="replies-drawer" placement="end" label="Comments">
         ${this.replies.length > 0 ? html`<ul>
           ${this.replies.map((reply: any) => {
           return html`
@@ -1103,21 +1062,21 @@ export class AppHome extends LitElement {
 
         <div slot="footer" id="reply-post-actions">
           <sl-input placeholder="Reply"></sl-input>
-          <fluent-button appearance="accent" @click="${() => this.replyToAStatus()}">Reply</fluent-button>
+          <md-button variant="filled" @click="${() => this.replyToAStatus()}">Reply</md-button>
         </div>
-      </sl-drawer>
+      </otter-drawer>
 
-      <sl-drawer id="bot-drawer" placement="bottom" label="Otter Bot">
+      <otter-drawer id="bot-drawer" placement="bottom" label="Otter Bot">
         <!-- <mammoth-bot></mammoth-bot> -->
-      </sl-drawer>
+      </otter-drawer>
 
-      <fluent-toolbar>
-      <fluent-button pill size="large" appearance="accent" @click="${() => this.openNewDialog()}">
+      <md-toolbar align="end">
+      <md-button pill variant="filled" @click="${() => this.openNewDialog()}">
           New Post
 
           <sl-icon slot="suffix" src="/assets/add-outline.svg"></sl-icon>
-        </fluent-button>
-      </fluent-toolbar>
+        </md-button>
+      </md-toolbar>
 
 
       <main>
@@ -1183,9 +1142,9 @@ export class AppHome extends LitElement {
         </sl-tab-group>
 
         <div id="mobile-actions">
-        <sl-button size="large" pill variant="primary" @click="${() => this.openNewDialog()}">
+        <md-button size="large" pill variant="filled" @click="${() => this.openNewDialog()}">
             <sl-icon src="/assets/add-outline.svg"></sl-icon>
-          </sl-button>
+          </md-button>
         </div>
 
         <div id="profile">
@@ -1195,52 +1154,50 @@ export class AppHome extends LitElement {
               <h3>${this.user ? this.user.display_name : "Loading..."}</h3>
 
               <div id="user-actions">
-                <sl-dropdown>
+                <md-dropdown>
                   <sl-icon-button slot="trigger" src="/assets/settings-outline.svg"></sl-icon-button>
-                  <fluent-menu>
-                    <fluent-menu-item @click="${() => this.viewMyProfile()}">
+                  <md-menu>
+                    <md-menu-item @click="${() => this.viewMyProfile()}">
                       <sl-icon slot="prefix" src="/assets/eye-outline.svg"></sl-icon>
                       View My Profile
-                    </fluent-menu-item>
-                    <fluent-menu-item @click="${() => this.shareMyProfile()}">
+                    </md-menu-item>
+                    <md-menu-item @click="${() => this.shareMyProfile()}">
                       <sl-icon slot="prefix" src="/assets/share-social-outline.svg"></sl-icon>
                       Share My Profile
-                    </fluent-menu-item>
-                    <fluent-menu-item @click="${() => this.editMyProfile()}">
+                    </md-menu-item>
+                    <md-menu-item @click="${() => this.editMyProfile()}">
                        Edit My Profile
-                    </fluent-menu-item>
-                    <!-- <fluent-menu-item>
+                    </md-menu-item>
+                    <!-- <md-menu-item>
                       Add an existing Account
-                    </fluent-menu-item> -->
-                  </fluent-menu>
-                </sl-dropdown>
+                    </md-menu-item> -->
+                  </md-menu>
+                </md-dropdown>
               </div>
             </div>
 
             <p id="user-url">${this.user ? this.user.url : "Loading..."}</p>
 
-            <fluent-badge appearance="accent" @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count :
+            <md-badge variant="filled" clickable @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count :
         "0"} followers
-            </fluent-badge>
-            <fluent-badge appearance="accent" @click="${() => this.goToFollowing()}">${this.user ? this.user.following_count :
+            </md-badge>
+            <md-badge variant="filled" clickable @click="${() => this.goToFollowing()}">${this.user ? this.user.following_count :
         "0"} following
-            </fluent-badge>
+            </md-badge>
 
           </div>
 
           <!-- <div id="profile-card-actions">
-                  <fluent-button pill size="large" appearance="accent" @click="${() => this.openNewDialog()}">
+                  <md-button pill size="large" variant="filled" @click="${() => this.openNewDialog()}">
                     New Post
 
                     <sl-icon slot="suffix" src="/assets/add-outline.svg"></sl-icon>
-                  </fluent-button>
+                  </md-button>
                 </div> -->
         </div>
 
         <!-- <mammoth-bot></mammoth-bot> -->
       </main>
-
-      <pwa-install disable-install-description="true"></pwa-install>
     `;
   }
 }
