@@ -1,7 +1,10 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
-import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
+import './md-dialog.js';
+import './md-button.js';
+import './md-text-field.js';
+import './md-text-area.js';
 import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 import { publishPost, uploadImageAsFormData, uploadImageFromBlob } from '../services/posts';
 import { createAPost, createImage } from '../services/ai';
@@ -11,11 +14,6 @@ import { createGesture } from 'https://cdn.jsdelivr.net/npm/@ionic/core@latest/d
 
 // @ts-ignore
 import MarkdownWorker from '../utils/markdown-worker?worker';
-
-import { fluentButton, fluentTextArea, fluentTextField, provideFluentDesignSystem } from '@fluentui/web-components';
-provideFluentDesignSystem().register(fluentButton());
-provideFluentDesignSystem().register(fluentTextArea());
-provideFluentDesignSystem().register(fluentTextField());
 
 @customElement('post-dialog')
 export class PostDialog extends LitElement {
@@ -58,11 +56,16 @@ export class PostDialog extends LitElement {
                 font-size: 11px;
             }
 
-            sl-dialog::part(base) {
+            md-dialog::part(dialog) {
                 z-index: 99999;
+                min-width: 60vw;
+                min-height: 60vh;
+
+                content-visibility: auto;
+                contain: layout style paint;
             }
 
-            sl-dialog::part(footer) {
+            .dialog-footer-actions {
                 gap: 5px;
                 display: flex;
                 justify-content: flex-end;
@@ -89,7 +92,7 @@ export class PostDialog extends LitElement {
                 font-size: 12px;
             }
 
-            #post-copilot fluent-button {
+            #post-copilot md-button {
                 place-self: flex-end;
                 margin-top: 8px;
             }
@@ -110,20 +113,21 @@ export class PostDialog extends LitElement {
                 display: none;
             }
 
-            fluent-button::part(control) {
+            md-button {
                 border: none;
             }
 
-            fluent-text-field {
+            md-text-field {
                 width: 100%;
                 margin-top: 8px;
             }
 
+            md-text-area {
+                width: 100%;
+            }
+
             @media(prefers-color-scheme: dark) {
-                fluent-text-area::part(control), fluent-button[appearance="neutral"]::part(control), fluent-text-field::part(control), fluent-text-field::part(root) {
-                    background: #1e1e1e;
-                    color: white;
-                }
+                /* Dark mode handled by md-text-field and md-text-area components */
             }
 
             #post-ai-actions {
@@ -170,29 +174,8 @@ export class PostDialog extends LitElement {
                 width: 80%;
             }
 
-            sl-dialog::part(panel) {
-                min-width: 60vw;
-                min-height: 60vh;
-
-                content-visibility: auto;
-                contain: layout style paint;
-              }
-
-              sl-dialog fluent-text-area {
-                width: 100%;
-              }
-
-              sl-dialog fluent-text-area::part(control) {
-                height: 20vh;
-                width: 100%;
-              }
-
-            sl-dialog::part(header-actions) {
-                align-items: center;
-            }
-
             @media(max-width: 600px) {
-                sl-dialog::part(panel) {
+                md-dialog::part(dialog) {
                     height: 100vh;
                     max-height: 100vh;
                     max-width: 100vw;
@@ -236,10 +219,10 @@ export class PostDialog extends LitElement {
 
     protected async firstUpdated() {
         setTimeout(() => {
-            const dialog: any = this.shadowRoot?.querySelector('sl-dialog');
-            console.log("dialog", dialog.panel)
+            const dialog: any = this.shadowRoot?.querySelector('md-dialog');
+            console.log("dialog", dialog.dialog)
             const gesture = createGesture({
-                el: dialog.panel,
+                el: dialog.dialog,
                 threshold: 15,
                 direction: 'y',
                 gestureName: 'my-gesture',
@@ -252,20 +235,20 @@ export class PostDialog extends LitElement {
 
     onMoveHandler(ev: any, dialog: any) {
         // animate dialog to new position
-        dialog!.panel!.style.transform = `translateY(${ev.deltaY}px)`;
+        dialog!.dialog!.style.transform = `translateY(${ev.deltaY}px)`;
 
         if (ev.deltaY < -200) {
             dialog.hide();
 
             setTimeout(() => {
-                dialog.panel.style.transform = `translateY(0px)`;
+                dialog.dialog.style.transform = `translateY(0px)`;
             }, 500);
         }
         else if (ev.deltaY > 200) {
             dialog.hide();
 
             setTimeout(() => {
-                dialog.panel.style.transform = `translateY(0px)`;
+                dialog.dialog.style.transform = `translateY(0px)`;
             }
                 , 500);
         }
@@ -371,7 +354,7 @@ export class PostDialog extends LitElement {
     }
 
     async publish() {
-        const status = (this.shadowRoot?.querySelector('fluent-text-area') as any).value;
+        const status = (this.shadowRoot?.querySelector('md-text-area') as any).value;
         console.log(status);
 
         let spoilerText = "";
@@ -396,7 +379,7 @@ export class PostDialog extends LitElement {
                     this.generatedImage = undefined;
                     this.aiBlob = undefined;
 
-                    (this.shadowRoot?.querySelector("fluent-text-area") as any)!.value = "";
+                    (this.shadowRoot?.querySelector("md-text-area") as any)!.value = "";
                 }
                 else {
                     if (this.sensitive === true) {
@@ -411,7 +394,7 @@ export class PostDialog extends LitElement {
                     this.generatedImage = undefined;
                     this.aiBlob = undefined;
 
-                    (this.shadowRoot?.querySelector("fluent-text-area") as any)!.value = "";
+                    (this.shadowRoot?.querySelector("md-text-area") as any)!.value = "";
                 }
 
                 const dialog = this.shadowRoot?.getElementById('notify-dialog') as any;
@@ -456,8 +439,8 @@ export class PostDialog extends LitElement {
     }
 
     async generateStatus() {
-        const textarea = this.shadowRoot?.querySelector('fluent-text-field') as any;
-        const publishText = this.shadowRoot?.querySelector('fluent-text-area') as any;
+        const textarea = this.shadowRoot?.querySelector('md-text-field') as any;
+        const publishText = this.shadowRoot?.querySelector('md-text-area') as any;
 
         const prompt = textarea.value;
 
@@ -492,66 +475,68 @@ export class PostDialog extends LitElement {
 
     render() {
         return html`
-        <sl-dialog id="notify-dialog" label="New Post">
+        <md-dialog id="notify-dialog" label="New Post">
 
-            <fluent-text-area @change="${($event: any) => this.handleStatus($event)}" autofocus placeholder="What's on your mind?"></fluent-text-area>
+            <md-text-area @change="${($event: any) => this.handleStatus($event)}" autofocus placeholder="What's on your mind?" rows="6"></md-text-area>
 
             ${this.sensitive ? html`<div id="sensitive-warning">
-                <fluent-text-field id="sensitive-input" placeholder="Write your warning here"></fluent-text-field>
+                <md-text-field id="sensitive-input" placeholder="Write your warning here"></md-text-field>
             </div>` : null}
 
             <div id="post-copilot">
                 <span>Enter a prompt in the field below and Otter will generate a toot for you.</span>
-                <fluent-text-field @change="${() => this.generateStatus()}" placeholder="I got promoted!"></fluent-text-field>
+                <md-text-field @change="${() => this.generateStatus()}" placeholder="I got promoted!"></md-text-field>
             </div>
 
-            <fluent-button slot="footer" @click="${() => this.markAsSensitive()}">
-                Set Visibility
-                <sl-icon src="/assets/eye-outline.svg"></sl-icon>
-            </fluent-button>
+            <div slot="footer" class="dialog-footer-actions">
+                <md-button variant="text" @click="${() => this.markAsSensitive()}">
+                    Set Visibility
+                    <sl-icon src="/assets/eye-outline.svg"></sl-icon>
+                </md-button>
 
-            <!--<div id="post-ai-actions">-->
-              ${this.showPrompt === false ? html`<fluent-button slot="footer" size="small" pill @click="${() => this.openAIPrompt()}">AI: Generate Image</fluent-button>` : null}
-            <!--</div>-->
+                <!--<div id="post-ai-actions">-->
+                ${this.showPrompt === false ? html`<md-button size="small" pill @click="${() => this.openAIPrompt()}">AI: Generate Image</md-button>` : null}
+                <!--</div>-->
 
-            ${this.attaching === false ? html`
-                  <ul>
-                  ${this.attachmentPreviews.map((preview) => {
-            return html`
-                    <div class="img-preview">
-                        <fluent-button circle size="small" @click="${() => this.removeImage(preview)}">
-                            <sl-icon src="/assets/close-outline.svg"></sl-icon>
-                        </fluent-button>
-                        <img src="${preview}" />
-                    </div>
-                    `
-        })}
-                  </ul>
-                ` : html`<div id="attachment-loading"><sl-skeleton effect="sheen"></sl-skeleton></div>`}
+                ${this.attaching === false ? html`
+                    <ul>
+                    ${this.attachmentPreviews.map((preview) => {
+                        return html`
+                        <div class="img-preview">
+                            <md-button size="small" @click="${() => this.removeImage(preview)}">
+                                <sl-icon src="/assets/close-outline.svg"></sl-icon>
+                            </md-button>
+                            <img src="${preview}" />
+                        </div>
+                        `
+                    })}
+                    </ul>
+                    ` : html`<div id="attachment-loading"><sl-skeleton effect="sheen"></sl-skeleton></div>`}
 
 
 
-            ${this.showPrompt ? html`<div id="ai-image">
-                ${this.showPrompt && this.generatedImage ? html`
-                    <img src="${this.generatedImage}">
-                    ` : this.showPrompt && this.generatingImage === false ? html`<div id="ai-preview-block"><p>Enter a prompt to generate an image with AI!</p></div>` : html`<div id="ai-preview-block"><sl-skeleton effect="sheen"></sl-skeleton></div>`
-                }
-                ${this.showPrompt ? html`
-                    <div id="ai-input-block">
-                      <sl-input placeholder="A picture of an orange cat" @sl-change="${(e: any) => this.doAIImage(e.target.value)}"></sl-input>
+                ${this.showPrompt ? html`<div id="ai-image">
+                    ${this.showPrompt && this.generatedImage ? html`
+                        <img src="${this.generatedImage}">
+                        ` : this.showPrompt && this.generatingImage === false ? html`<div id="ai-preview-block"><p>Enter a prompt to generate an image with AI!</p></div>` : html`<div id="ai-preview-block"><sl-skeleton effect="sheen"></sl-skeleton></div>`
+                    }
+                    ${this.showPrompt ? html`
+                        <div id="ai-input-block">
+                        <sl-input placeholder="A picture of an orange cat" @sl-change="${(e: any) => this.doAIImage(e.target.value)}"></sl-input>
 
-                      <fluent-button ?disabled=${!this.generatedImage} pill appearance="accent" @click="${() => this.addAIImageToPost()}">Add to post</fluent-button>
-                    </div>
-                    ` : null
-                }
-            </div>` : null}
+                        <md-button ?disabled=${!this.generatedImage} pill variant="filled" @click="${() => this.addAIImageToPost()}">Add to post</md-button>
+                        </div>
+                        ` : null
+                    }
+                </div>` : null}
 
-            <fluent-button pill slot="footer" @click="${() => this.attachFile()}">
-                Attach Media
-                <sl-icon src="/assets/attach-outline.svg"></sl-icon>
-            </fluent-button>
-            <fluent-button ?disabled="${this.hasStatus === false || this.attaching === true}" pill @click="${() => this.publish()}" slot="footer" appearance="accent">Publish</fluent-button>
-        </sl-dialog>
+                <md-button pill variant="outlined" @click="${() => this.attachFile()}">
+                    Attach Media
+                    <sl-icon src="/assets/attach-outline.svg"></sl-icon>
+                </md-button>
+                <md-button ?disabled="${this.hasStatus === false || this.attaching === true}" pill variant="filled" @click="${() => this.publish()}">Publish</md-button>
+            </div>
+        </md-dialog>
         `;
     }
 }

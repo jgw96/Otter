@@ -1,11 +1,9 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
-import '@shoelace-style/shoelace/dist/components/button/button.js';
-// import '@shoelace-style/shoelace/dist/components/color-picker/color-picker.js';
-import '@shoelace-style/shoelace/dist/components/input/input.js';
-import '@shoelace-style/shoelace/dist/components/select/select.js';
-import '@shoelace-style/shoelace/dist/components/menu/menu.js';
+import "./md-button.js";
+import "./md-icon.js";
+
 import { getSettings, setSettings, Settings } from '../services/settings';
 
 @customElement('app-theme')
@@ -271,9 +269,9 @@ export class AppTheme extends LitElement {
                     <div class="color" id="custom" @click="${() => this.chooseColor("#057dcd")}"></div>
 
 
-                    ${ "EyeDropper" in window ? html`<sl-button circle @click="${() => this.customColor()}">
-                      <sl-icon src="/assets/add-outline.svg"></sl-icon>
-                    </sl-button>` : null}
+                    ${ "EyeDropper" in window ? html`<md-button circle @click="${() => this.customColor()}">
+                      <md-icon src="/assets/add-outline.svg"></md-icon>
+                    </md-button>` : null}
                 </div>
             </div>
         </div>

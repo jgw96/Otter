@@ -7,13 +7,10 @@ import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js';
 
 import '../components/timeline';
 import '../components/timeline-item';
-import '../components/bookmarks';
-import '../components/favorites';
-import '../components/notifications';
+
 import '../components/app-theme';
 import '../components/right-click';
 import '../components/user-terms';
-import '../components/offline-notify';
 
 import '../components/otter-drawer';
 import '../components/md-button';
@@ -24,8 +21,6 @@ import '../components/md-menu-item';
 import '../components/md-dialog';
 import '../components/md-switch';
 import '../components/md-dropdown';
-
-import './search-page';
 
 import { styles } from '../styles/shared-styles';
 import { router } from '../utils/router';
@@ -58,6 +53,12 @@ export class AppHome extends LitElement {
   @state() openTweet: Post | null = null;
 
   @state() homeLoad: boolean = false;
+
+  // Lazy loading states for tabs
+  @state() bookmarksLoaded: boolean = false;
+  @state() favoritesLoaded: boolean = false;
+  @state() notificationsLoaded: boolean = false;
+  @state() searchLoaded: boolean = false;
 
   static get styles() {
     return [
@@ -613,6 +614,22 @@ export class AppHome extends LitElement {
     console.log("tabData", tabData)
 
     if (tabData) {
+      // Preload the component for the requested tab
+      switch (tabData) {
+        case 'bookmarks':
+          this.loadBookmarks();
+          break;
+        case 'faves':
+          this.loadFavorites();
+          break;
+        case 'notifications':
+          this.loadNotifications();
+          break;
+        case 'search':
+          this.loadSearch();
+          break;
+      }
+
       setTimeout(() => {
         this.openATab(tabData);
       }, 1000)
@@ -888,10 +905,57 @@ export class AppHome extends LitElement {
     homeTimeline.refreshTimeline();
   }
 
+  // Lazy loading methods for tab components
+  async loadBookmarks() {
+    if (!this.bookmarksLoaded) {
+      await import('../components/bookmarks');
+      this.bookmarksLoaded = true;
+    }
+  }
+
+  async loadFavorites() {
+    if (!this.favoritesLoaded) {
+      await import('../components/favorites');
+      this.favoritesLoaded = true;
+    }
+  }
+
+  async loadNotifications() {
+    if (!this.notificationsLoaded) {
+      await import('../components/notifications');
+      this.notificationsLoaded = true;
+    }
+  }
+
+  async loadSearch() {
+    if (!this.searchLoaded) {
+      await import('./search-page');
+      this.searchLoaded = true;
+    }
+  }
+
+  async handleTabChange(event: CustomEvent) {
+    const panel = event.detail.name;
+
+    // Lazy load components based on which tab is shown
+    switch (panel) {
+      case 'bookmarks':
+        await this.loadBookmarks();
+        break;
+      case 'faves':
+        await this.loadFavorites();
+        break;
+      case 'notifications':
+        await this.loadNotifications();
+        break;
+      case 'search':
+        await this.loadSearch();
+        break;
+    }
+  }
+
   render() {
     return html`
-
-      <offline-notify></offline-notify>
 
       <right-click>
         <md-menu>
@@ -1081,7 +1145,7 @@ export class AppHome extends LitElement {
 
       <main>
 
-        <sl-tab-group .placement="${window.matchMedia(" (max-width: 600px)").matches ? "bottom" : "start"}">
+        <sl-tab-group @sl-tab-show="${(e: CustomEvent) => this.handleTabChange(e)}" .placement="${window.matchMedia(" (max-width: 600px)").matches ? "bottom" : "start"}">
           <sl-tab @click="${() => this.reloadHome()}" slot="nav" panel="general">
             <sl-icon src="/assets/home-outline.svg"></sl-icon>
 
@@ -1128,16 +1192,16 @@ export class AppHome extends LitElement {
             <app-timeline timelineType="public"></app-timeline>
           </sl-tab-panel>
           <sl-tab-panel name="bookmarks">
-            <app-bookmarks></app-bookmarks>
+            ${this.bookmarksLoaded ? html`<app-bookmarks></app-bookmarks>` : html`<p>Loading bookmarks...</p>`}
           </sl-tab-panel>
           <sl-tab-panel name="faves">
-            <app-favorites></app-favorites>
+            ${this.favoritesLoaded ? html`<app-favorites></app-favorites>` : html`<p>Loading favorites...</p>`}
           </sl-tab-panel>
           <sl-tab-panel name="notifications">
-            <app-notifications @open="${($event: CustomEvent) => this.handleOpenTweet($event.detail.tweet)}"></app-notifications>
+            ${this.notificationsLoaded ? html`<app-notifications @open="${($event: CustomEvent) => this.handleOpenTweet($event.detail.tweet)}"></app-notifications>` : html`<p>Loading notifications...</p>`}
           </sl-tab-panel>
           <sl-tab-panel name="search">
-            <search-page></search-page>
+            ${this.searchLoaded ? html`<search-page></search-page>` : html`<p>Loading search...</p>`}
           </sl-tab-panel>
         </sl-tab-group>
 
