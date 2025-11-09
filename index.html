@@ -811,16 +811,11 @@
 
   <!-- register service worker -->
   <script type="module">
-    import { Workbox } from "workbox-window";
     if ('serviceWorker' in navigator) {
-      const wb = new Workbox('/sw.js');
       let registration;
 
       const promptForUpdate = async () => {
-        // show a prompt to the user
-
         const updateToast = document.getElementById('updateToast');
-
         updateToast.style.display = 'flex';
 
         return new Promise((resolve) => {
@@ -833,29 +828,42 @@
         });
       };
 
-      const showSkipWaitingPrompt = async (event) => {
-        wb.addEventListener('controlling', () => {
-          window.location.reload();
-        });
-
+      const showSkipWaitingPrompt = async () => {
         const updateAccepted = await promptForUpdate();
 
-        if (updateAccepted) {
-          wb.messageSkipWaiting();
+        if (updateAccepted && registration && registration.waiting) {
+          // Send message to service worker to skip waiting
+          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
         }
       };
 
-      // Add an event listener to detect when the registered
-      // service worker has installed but is waiting to activate.
-      wb.addEventListener('waiting', (event) => {
-        showSkipWaitingPrompt(event);
+      // Listen for service worker updates
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        window.location.reload();
       });
 
       window.onload = async () => {
         try {
-          await wb.register();
+          registration = await navigator.serviceWorker.register('/sw.js');
+
+          // Check if there's a service worker waiting
+          if (registration.waiting) {
+            showSkipWaitingPrompt();
+          }
+
+          // Listen for new service worker installing
+          registration.addEventListener('updatefound', () => {
+            const newWorker = registration.installing;
+
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                // New service worker is waiting
+                showSkipWaitingPrompt();
+              }
+            });
+          });
         } catch (error) {
-          console.error(error);
+          console.error('Service Worker registration failed:', error);
         }
       };
     }
