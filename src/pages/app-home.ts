@@ -24,7 +24,6 @@ import '../components/favorites';
 import '../components/notifications';
 import '../components/app-theme';
 import '../components/right-click';
-import '../components/sponsor-button';
 import '../components/user-terms';
 import '../components/offline-notify';
 
@@ -147,22 +146,6 @@ export class AppHome extends LitElement {
       #settings-profile-inner h3 {
         margin-top: 0;
         margin-bottom: 0;
-      }
-
-      .sponsor {
-        background: rgba(128, 128, 128, 0.14);
-        border-radius: 6px;
-        padding: 8px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        align-items: end;
-
-        margin-top: 8px;
-      }
-
-      .sponsor a {
-        color: white;
       }
 
       #no-replies {
@@ -589,12 +572,6 @@ export class AppHome extends LitElement {
       left: 12px;
     }
 
-    @media(prefers-color-scheme: light) {
-      .sponsor a {
-        color: black;
-      }
-    }
-
     @media(max-width: 600px) {
       sl-tab-group::part(tabs) {
         width: initial;
@@ -994,8 +971,6 @@ export class AppHome extends LitElement {
         <sl-icon src="/assets/eye-outline.svg"></sl-icon>
       </fluent-button> -->
 
-      <sponsor-button id="focusModeButton"></sponsor-button>
-
       <sl-drawer label="Theming" id="theming-drawer">
         <app-theme @color-chosen="${($event: any) => this.handlePrimaryColor($event.detail.color)}"></app-theme>
       </sl-drawer>
@@ -1097,18 +1072,6 @@ export class AppHome extends LitElement {
 
             <li><kbd>g</kbd> + <kbd>f</kbd> - Open Favorites</li>
           </ul>
-        </div>
-
-        <div class="sponsor">
-          Thanks for using Otter! If you are enjoying the app and want to help me spend more time on it, please consider
-          sponsoring me on GitHub!
-          <iframe src="https://github.com/sponsors/jgw96/button" title="Sponsor jgw96" height="32" width="114"
-            style="border: 0; border-radius: 6px;"></iframe>
-        </div>
-
-        <div class="sponsor">
-          Dont have a Github? You can also support me on Patreon!
-          <a href="https://www.patreon.com/lilpwa" target="_blank">patreon.com/lilpwa</a>
         </div>
 
         ${this.instanceInfo ? html`
