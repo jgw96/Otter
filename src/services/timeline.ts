@@ -333,7 +333,7 @@ export const getTrendingStatuses = async () => {
     return data;
 }
 
-async function handlePeriodic() {
+async function handlePeriodic(): Promise<any> {
     const registration: ServiceWorkerRegistration = await navigator.serviceWorker.ready;
     if ('periodicSync' in registration) {
         try {
@@ -350,4 +350,5 @@ async function handlePeriodic() {
             return error;
         }
     }
+    return undefined;
 }

@@ -3,8 +3,6 @@ import { VitePWA } from 'vite-plugin-pwa';
 import copy from 'rollup-plugin-copy';
 import wasm from "vite-plugin-wasm";
 
-import minifyHTML from 'rollup-plugin-minify-html-literals';
-
 // https://vitejs.dev/config/
 export default defineConfig({
   base: "/",
@@ -34,7 +32,6 @@ export default defineConfig({
       },
     }),
     wasm(),
-    minifyHTML(),
     copy({
       targets: [
         { src: 'light.css', dest: 'dist/' },

@@ -93,7 +93,6 @@ export const subToPush = async () => {
         registration?.showNotification("Otter", {
             body: "You have successfully subscribed to push notifications!",
             icon: "/assets/icons/128-icon.png",
-            vibrate: [200, 100, 200],
             tag: "mammoth-subscribe"
         });
     }
