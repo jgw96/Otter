@@ -3,6 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 
 import '../components/header';
 import '../components/timeline-item';
+import '../components/md-icon';
 import { Post } from '../interfaces/Post';
 import { getReplies } from '../services/timeline';
 
@@ -240,7 +241,7 @@ export class PostDetail extends LitElement {
                     <fluent-button @click="${() => this.handleReply()}" id="reply-button" appearance="accent">
                         Reply
 
-                        <sl-icon slot="suffix" src="/assets/add-outline.svg"></sl-icon>
+                        <md-icon slot="suffix" src="/assets/add-outline.svg"></md-icon>
                     </fluent-button>
                 </div>
             </div>

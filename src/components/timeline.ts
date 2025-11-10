@@ -7,6 +7,8 @@ import TimelineWorker from '../utils/timeline-worker?worker';
 
 
 import '../components/md-dialog';
+import '../components/md-button';
+import '../components/md-icon';
 
 import '@lit-labs/virtualizer';
 
@@ -481,7 +483,7 @@ export class Timeline extends LitElement {
             </md-select>
 
             <md-button circle @click="${() => this.refreshTimeline()}">
-                <sl-icon src="/assets/refresh-circle-outline.svg"></sl-icon>
+                <md-icon src="/assets/refresh-circle-outline.svg"></md-icon>
             </md-button>
         </div>
 

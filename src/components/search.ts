@@ -1,14 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
-import '@shoelace-style/shoelace/dist/components/input/input.js';
-import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
-import '@shoelace-style/shoelace/dist/components/menu/menu.js';
-import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
-import '@shoelace-style/shoelace/dist/components/menu-label/menu-label.js';
-
-import { fluentTextField, provideFluentDesignSystem } from '@fluentui/web-components';
-provideFluentDesignSystem().register(fluentTextField());
+import './md-text-field';
 
 import { router } from '../utils/router';
 
@@ -37,21 +30,12 @@ export class Search extends LitElement {
             }
 
             @media(max-width: 768px) {
-                fluent-text-field {
+                md-text-field {
                     width: 100%;
-                }
-
-                fluent-text-field::part(root) {
-                    height: 3em;
                 }
             }
 
             @media(prefers-color-scheme: dark) {
-                fluent-text-field, fluent-text-field::part(control), fluent-text-field::part(root) {
-                    background: #1e1e1e;
-                    color: white;
-                }
-
                 .account {
                     color: white;
                 }
@@ -123,8 +107,8 @@ export class Search extends LitElement {
     render() {
         return html`
 
-            <fluent-text-field @change="${($event: any) => this.handleSearch($event.target.value)}" placeholder="Search" type="search">
-    </fluent-text-field>
+            <md-text-field @change="${($event: any) => this.handleSearch($event.target.value)}" placeholder="Search" type="search" .value=${this.searchData?.query || ''}>
+    </md-text-field>
 
         `;
     }

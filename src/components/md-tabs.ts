@@ -1,0 +1,259 @@
+import { LitElement, html, css } from 'lit';
+import { customElement, property, state, query } from 'lit/decorators.js';
+
+/**
+ * MD3 Tabs Container
+ *
+ * Container for md-tab and md-tab-panel components.
+ * Supports horizontal (top/bottom) and vertical (side) orientations.
+ *
+ * @fires tab-change - Emitted when active tab changes { detail: { panel: string } }
+ *
+ * @slot nav - Slot for md-tab elements
+ * @slot default - Slot for md-tab-panel elements
+ *
+ * @example
+ * ```html
+ * <md-tabs orientation="horizontal" placement="top">
+ *   <md-tab slot="nav" panel="tab1">Tab 1</md-tab>
+ *   <md-tab slot="nav" panel="tab2">Tab 2</md-tab>
+ *
+ *   <md-tab-panel name="tab1">Content 1</md-tab-panel>
+ *   <md-tab-panel name="tab2">Content 2</md-tab-panel>
+ * </md-tabs>
+ * ```
+ */
+@customElement('md-tabs')
+export class MdTabs extends LitElement {
+  /**
+   * Orientation of tabs: horizontal (top/bottom) or vertical (side)
+   */
+  @property({ type: String }) orientation: 'horizontal' | 'vertical' = 'horizontal';
+
+  /**
+   * Placement of tab bar
+   * - top/bottom for horizontal orientation
+   * - start/end for vertical orientation (side navigation)
+   */
+  @property({ type: String }) placement: 'top' | 'bottom' | 'start' | 'end' = 'top';
+
+  /**
+   * Active panel name
+   */
+  @property({ type: String }) active?: string;
+
+  @state() private _activePanel: string = '';
+
+  @query('slot[name="nav"]') private navSlot!: HTMLSlotElement;
+  @query('slot:not([name])') private panelSlot!: HTMLSlotElement;
+
+  static styles = css`
+    :host {
+      display: flex;
+      gap: 0;
+      width: 100%;
+    }
+
+    /* Horizontal orientation */
+    :host([orientation="horizontal"]) {
+      flex-direction: column;
+    }
+
+    :host([orientation="horizontal"][placement="bottom"]) {
+      flex-direction: column-reverse;
+    }
+
+    /* Vertical orientation (side navigation) */
+    :host([orientation="vertical"]) {
+      flex-direction: row;
+      height: 100%;
+    }
+
+    :host([orientation="vertical"][placement="end"]) {
+      flex-direction: row-reverse;
+    }
+
+    .tab-bar {
+      display: flex;
+      position: relative;
+      background: transparent;
+      border-bottom: 1px solid var(--md-sys-color-outline-variant, var(--sl-color-neutral-200));
+    }
+
+    /* Horizontal tab bar */
+    :host([orientation="horizontal"]) .tab-bar {
+      flex-direction: row;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    :host([orientation="horizontal"]) .tab-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    :host([orientation="horizontal"][placement="bottom"]) .tab-bar {
+      border-bottom: none;
+      border-top: 1px solid var(--md-sys-color-outline-variant, var(--sl-color-neutral-200));
+    }
+
+    /* Vertical tab bar (side navigation) */
+    :host([orientation="vertical"]) .tab-bar {
+      flex-direction: column;
+      border-bottom: none;
+      border-right: 1px solid var(--md-sys-color-outline-variant, var(--sl-color-neutral-200));
+      min-width: 200px;
+      max-width: 280px;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    :host([orientation="vertical"][placement="end"]) .tab-bar {
+      border-right: none;
+      border-left: 1px solid var(--md-sys-color-outline-variant, var(--sl-color-neutral-200));
+    }
+
+    .panel-container {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    ::slotted(md-tab-panel) {
+      display: none;
+    }
+
+    ::slotted(md-tab-panel[active]) {
+      display: block;
+    }
+
+    /* Dark mode */
+    @media (prefers-color-scheme: dark) {
+      .tab-bar {
+        background: transparent;
+        border-color: var(--md-sys-color-outline-variant, var(--sl-color-neutral-700));
+      }
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 600px) {
+      /* Move horizontal tabs to bottom on mobile */
+      :host([orientation="horizontal"]) {
+        flex-direction: column-reverse;
+      }
+
+      /* Override if explicitly set to bottom placement */
+      :host([orientation="horizontal"][placement="bottom"]) {
+        flex-direction: column-reverse;
+      }
+
+      :host([orientation="horizontal"]) .tab-bar {
+        border-bottom: none;
+        border-top: 1px solid var(--md-sys-color-outline-variant, var(--sl-color-neutral-200));
+      }
+
+      :host([orientation="vertical"]) .tab-bar {
+        min-width: 180px;
+        max-width: 220px;
+      }
+    }
+  `;
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.addEventListener('tab-selected', this._handleTabSelected as EventListener);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeEventListener('tab-selected', this._handleTabSelected as EventListener);
+  }
+
+  firstUpdated() {
+    // Set initial active tab
+    if (this.active) {
+      this._activePanel = this.active;
+    } else {
+      // Auto-select first tab if no active specified
+      const tabs = this._getTabs();
+      if (tabs.length > 0) {
+        this._activePanel = tabs[0].panel || '';
+      }
+    }
+    this._updatePanels();
+  }
+
+  updated(changedProperties: Map<string, any>) {
+    if (changedProperties.has('active') && this.active) {
+      this._activePanel = this.active;
+      this._updatePanels();
+    }
+  }
+
+  private _handleTabSelected(e: CustomEvent) {
+    e.stopPropagation();
+    const panel = e.detail.panel;
+    if (panel && panel !== this._activePanel) {
+      this._activePanel = panel;
+      this._updatePanels();
+
+      // Emit tab-change event
+      this.dispatchEvent(new CustomEvent('tab-change', {
+        detail: { panel },
+        bubbles: true,
+        composed: true
+      }));
+    }
+  }
+
+  private _getTabs(): any[] {
+    if (!this.navSlot) return [];
+    return this.navSlot.assignedElements().filter(el => el.tagName.toLowerCase() === 'md-tab');
+  }
+
+  private _getPanels(): any[] {
+    if (!this.panelSlot) return [];
+    return this.panelSlot.assignedElements().filter(el => el.tagName.toLowerCase() === 'md-tab-panel');
+  }
+
+  private _updatePanels() {
+    const tabs = this._getTabs();
+    const panels = this._getPanels();
+
+    // Update tabs active state
+    tabs.forEach((tab: any) => {
+      if (tab.panel === this._activePanel) {
+        tab.setAttribute('active', '');
+      } else {
+        tab.removeAttribute('active');
+      }
+    });
+
+    // Update panels visibility
+    panels.forEach((panel: any) => {
+      if (panel.name === this._activePanel) {
+        panel.setAttribute('active', '');
+      } else {
+        panel.removeAttribute('active');
+      }
+    });
+  }
+
+  render() {
+    return html`
+      <div class="tab-bar">
+        <slot name="nav"></slot>
+      </div>
+      <div class="panel-container">
+        <slot></slot>
+      </div>
+    `;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'md-tabs': MdTabs;
+  }
+}

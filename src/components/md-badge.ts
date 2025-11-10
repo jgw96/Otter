@@ -33,14 +33,14 @@ export class MdBadge extends LitElement {
     }
 
     .badge.filled {
-      background-color: var(--md-sys-color-secondary-container, #e8def8);
-      color: var(--md-sys-color-on-secondary-container, #1d192b);
+      background-color: var(--md-sys-color-secondary-container, var(--sl-color-primary-100, #e8def8));
+      color: var(--md-sys-color-on-secondary-container, var(--sl-color-primary-900, #1d192b));
     }
 
     .badge.outlined {
       background-color: transparent;
-      color: var(--md-sys-color-on-surface, #1d1b20);
-      border: 1px solid var(--md-sys-color-outline, #79747e);
+      color: var(--md-sys-color-on-surface, var(--sl-color-neutral-900, #1d1b20));
+      border: 1px solid var(--md-sys-color-outline, var(--sl-color-primary-600, #79747e));
     }
 
     .badge.clickable {
@@ -53,11 +53,11 @@ export class MdBadge extends LitElement {
     }
 
     .badge.clickable.filled:hover {
-      background-color: var(--md-sys-color-secondary-container-hover, #ddd0f0);
+      background-color: var(--md-sys-color-secondary-container-hover, var(--sl-color-primary-200, #ddd0f0));
     }
 
     .badge.clickable.outlined:hover {
-      background-color: var(--md-sys-color-surface-variant, #e7e0ec);
+      background-color: var(--md-sys-color-surface-variant, var(--sl-color-neutral-100, #e7e0ec));
     }
 
     .badge.clickable:active {
@@ -67,21 +67,21 @@ export class MdBadge extends LitElement {
     /* Dark mode support */
     @media (prefers-color-scheme: dark) {
       .badge.filled {
-        background-color: var(--md-sys-color-secondary-container, #4a4458);
-        color: var(--md-sys-color-on-secondary-container, #e8def8);
+        background-color: var(--md-sys-color-secondary-container, var(--sl-color-primary-800, #4a4458));
+        color: var(--md-sys-color-on-secondary-container, var(--sl-color-primary-100, #e8def8));
       }
 
       .badge.outlined {
-        color: var(--md-sys-color-on-surface, #e6e1e5);
-        border-color: var(--md-sys-color-outline, #938f99);
+        color: var(--md-sys-color-on-surface, var(--sl-color-neutral-100, #e6e1e5));
+        border-color: var(--md-sys-color-outline, var(--sl-color-primary-600, #938f99));
       }
 
       .badge.clickable.filled:hover {
-        background-color: var(--md-sys-color-secondary-container-hover, #544a5e);
+        background-color: var(--md-sys-color-secondary-container-hover, var(--sl-color-primary-700, #544a5e));
       }
 
       .badge.clickable.outlined:hover {
-        background-color: var(--md-sys-color-surface-variant, #49454f);
+        background-color: var(--md-sys-color-surface-variant, var(--sl-color-neutral-800, #49454f));
       }
     }
   `;

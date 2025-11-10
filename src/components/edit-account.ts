@@ -1,11 +1,12 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
-import { provideFluentDesignSystem, fluentTextField, fluentTextArea, fluentCheckbox } from '@fluentui/web-components';
+import './md-text-field';
+import './md-text-area';
+import './md-checkbox';
+import './md-button';
 import { editAccount, getCurrentUser } from '../services/account';
 import { fileOpen } from 'browser-fs-access';
-
-provideFluentDesignSystem().register(fluentTextField(), fluentTextArea(), fluentCheckbox());
 
 @customElement('edit-account')
 export class EditAccount extends LitElement {
@@ -43,8 +44,8 @@ export class EditAccount extends LitElement {
                 font-weight: bold;
             }
 
-            fluent-text-area::part(control) {
-                height: 100%;
+            md-text-area {
+                height: 200px;
             }
 
             #submit {
@@ -63,7 +64,7 @@ export class EditAccount extends LitElement {
                 border-radius: 6px;
             }
 
-            .image-wrapper fluent-button {
+            .image-wrapper md-button {
                 place-self: flex-start;
                 margin-top: 10px;
             }
@@ -71,13 +72,6 @@ export class EditAccount extends LitElement {
             @media(max-width: 800px) {
                 form {
                     width: 90vw;
-                }
-            }
-
-            @media(prefers-color-scheme: dark) {
-                fluent-text-area::part(control), fluent-button[appearance="neutral"]::part(control), fluent-text-field::part(control), fluent-text-field::part(root) {
-                    background: #1e1e1e;
-                    color: white;
                 }
             }
         `
@@ -90,10 +84,26 @@ export class EditAccount extends LitElement {
 
     async resetForm() {
         const currentUser = await getCurrentUser();
-        this.shadowRoot?.querySelector('#display_name')?.setAttribute('value', currentUser.display_name);
-        this.shadowRoot?.querySelector('#note')?.setAttribute('value', currentUser.note);
-        this.shadowRoot?.querySelector('#locked')?.setAttribute('checked', currentUser.locked);
-        this.shadowRoot?.querySelector('#bot')?.setAttribute('checked', currentUser.bot);
+
+        const displayNameField = this.shadowRoot?.querySelector('#display_name') as any;
+        if (displayNameField) {
+            displayNameField.value = currentUser.display_name;
+        }
+
+        const noteField = this.shadowRoot?.querySelector('#note') as any;
+        if (noteField) {
+            noteField.value = currentUser.note;
+        }
+
+        const lockedCheckbox = this.shadowRoot?.querySelector('#locked') as any;
+        if (lockedCheckbox) {
+            lockedCheckbox.checked = currentUser.locked;
+        }
+
+        const botCheckbox = this.shadowRoot?.querySelector('#bot') as any;
+        if (botCheckbox) {
+            botCheckbox.checked = currentUser.bot;
+        }
 
         const avatarPreview = this.shadowRoot?.querySelector('#avatar-preview');
         if (avatarPreview) {
@@ -140,18 +150,18 @@ export class EditAccount extends LitElement {
     }
 
     async submitProfile() {
-        const form = this.shadowRoot?.querySelector('form');
-        if (!form) return;
-
-        const formData = new FormData(form);
+        const displayNameField = this.shadowRoot?.querySelector('#display_name') as any;
+        const noteField = this.shadowRoot?.querySelector('#note') as any;
+        const lockedCheckbox = this.shadowRoot?.querySelector('#locked') as any;
+        const botCheckbox = this.shadowRoot?.querySelector('#bot') as any;
 
         const data = {
-            display_name: formData.get('display_name') as string,
-            note: formData.get('note') as string,
-            locked: formData.get('locked') as string,
-            bot: formData.get('bot') as string,
-            avatar: formData.get('avatar') as File,
-            header: formData.get('header') as File,
+            display_name: displayNameField?.value || '',
+            note: noteField?.value || '',
+            locked: lockedCheckbox?.checked ? 'true' : 'false',
+            bot: botCheckbox?.checked ? 'true' : 'false',
+            avatar: this.newAvatar,
+            header: this.newHeader,
         };
 
         console.log(data);
@@ -199,18 +209,18 @@ export class EditAccount extends LitElement {
         return html`
         <form>
             <label for="name">Name</label>
-            <fluent-text-field type="text" id="display_name" name="display_name" placeholder="Your name.."></fluent-text-field>
+            <md-text-field type="text" id="display_name" name="display_name" .placeholder="${'Your name..'}"></md-text-field>
 
             <label for="bio">Bio</label>
-            <fluent-text-area id="note" name="note" placeholder="Write something about yourself.." style="height:200px">
-            </fluent-text-area>
+            <md-text-area id="note" name="note" .placeholder="${'Write something about yourself..'}">
+            </md-text-area>
 
             <div class="image-wrapper">
                 <label for="avatar">Avatar</label>
 
                 <img id="avatar-preview" src="/assets/icons/256-icon.png" alt="Avatar preview">
 
-                <fluent-button appearance="accent" @click="${() => this.changeAvatar()}">Choose New</fluent-button>
+                <md-button variant="filled" @click="${() => this.changeAvatar()}">Choose New</md-button>
             </div>
 
             <div class="image-wrapper">
@@ -218,16 +228,16 @@ export class EditAccount extends LitElement {
 
                 <img id="header-preview" src="/assets/icons/256-icon.png" alt="Header preview">
 
-                <fluent-button appearance="accent" @click="${() => this.changeHeader()}">Choose New</fluent-button>
+                <md-button variant="filled" @click="${() => this.changeHeader()}">Choose New</md-button>
             </div>
 
             <label for="locked">Locked</label>
-            <fluent-checkbox id="locked" name="locked"></fluent-checkbox>
+            <md-checkbox id="locked" name="locked"></md-checkbox>
 
             <label for="bot">Bot</label>
-            <fluent-checkbox id="bot" name="bot"></fluent-checkbox>
+            <md-checkbox id="bot" name="bot"></md-checkbox>
 
-            <fluent-button @click="${() => this.submitProfile()}" id="submit" appearance="accent">Submit</fluent-button>
+            <md-button @click="${() => this.submitProfile()}" id="submit" variant="filled">Submit</md-button>
         </form>
         `;
     }

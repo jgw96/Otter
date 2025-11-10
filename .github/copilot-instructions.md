@@ -26,7 +26,10 @@ Current MD3 component suite (`src/components/`):
 | Menu Item | `md-menu-item` | Single actionable row | `disabled` | Emits `menu-item-click`. Includes ripple-esque press state. |
 | Dialog | `md-dialog` | Modal surfaces for focused tasks | `label`, `open`, `fullscreen` | Native `<dialog>` with MD3 header, close button, backdrop blur & escape support. |
 | Select | `md-select` | Dropdown selector | `value`, `placeholder`, `variant` (`filled`\|`outlined`), `disabled` | Emits `change` event with detail.value. Auto-manages option selection. |
-| Option | `md-option` | Single option in select | `value`, `disabled`, `selected` | Used inside `md-select`. Shows checkmark when selected.
+| Option | `md-option` | Single option in select | `value`, `disabled`, `selected` | Used inside `md-select`. Shows checkmark when selected. |
+| Tabs | `md-tabs` | Tabbed interface container | `orientation` (`horizontal`\|`vertical`), `placement` (`top`\|`bottom`\|`start`\|`end`), `active` | Manages tab selection & panel visibility. Supports side nav. Emits `tab-change`. |
+| Tab | `md-tab` | Individual tab button | `panel`, `disabled` | Place in `nav` slot. Supports `icon` slot. Active indicator animates. |
+| Tab Panel | `md-tab-panel` | Tab content container | `name` | Visibility managed by parent. Supports `no-padding` attribute.
 
 #### MD3 Styling Principles Adopted
 1. **Color**: Prefer semantic tokens (e.g. `--md-sys-color-primary`, `--md-sys-color-surface-container`, `--md-sys-color-outline`). If a token is missing, fall back to Shoelace primary (`--sl-color-primary-600`) or neutral until a full design token layer is added.
@@ -55,7 +58,10 @@ Current MD3 component suite (`src/components/`):
 | `fluent-menu-item` | `md-menu-item` | Replace attribute bindings; add `slot="prefix"` for icons. |
 | `sl-dialog` | `md-dialog` | Replace `label` attribute; headers now always present with built‑in close button and backdrop click-to-close. |
 | `fluent-combobox` | `md-select` | Change `@change` handler to read `event.detail.value`. Remove Fluent registration. |
-| `fluent-option` | `md-option` | Direct replacement inside `md-select`. No changes to `value` attribute needed.
+| `fluent-option` | `md-option` | Direct replacement inside `md-select`. No changes to `value` attribute needed. |
+| `fluent-tabs` | `md-tabs` | Remove Fluent registration. `orientation` & `placement` map directly. Add `slot="nav"` to tabs. |
+| `fluent-tab` | `md-tab` | Add `slot="nav"`. `panel` attribute unchanged. Icons use `slot="icon"`. |
+| `fluent-tab-panel` | `md-tab-panel` | Direct replacement. `name` attribute unchanged. Add `no-padding` if needed.
 
 #### Dialog Usage Example
 ```typescript
@@ -131,6 +137,72 @@ Outlined variant:
   <md-option value="mastodon.social">mastodon.social</md-option>
   <md-option value="fosstodon.org">fosstodon.org</md-option>
 </md-select>
+```
+
+#### Tabs Usage Examples
+Horizontal tabs (top placement):
+```typescript
+html`
+  <md-tabs orientation="horizontal" placement="top">
+    <md-tab slot="nav" panel="accounts">Accounts</md-tab>
+    <md-tab slot="nav" panel="trending">Trending</md-tab>
+    <md-tab slot="nav" panel="news">News</md-tab>
+
+    <md-tab-panel name="accounts">
+      <ul><!-- account list --></ul>
+    </md-tab-panel>
+
+    <md-tab-panel name="trending">
+      <ul><!-- trending content --></ul>
+    </md-tab-panel>
+
+    <md-tab-panel name="news">
+      <ul><!-- news items --></ul>
+    </md-tab-panel>
+  </md-tabs>
+`
+```
+
+Vertical tabs (side navigation):
+```typescript
+html`
+  <md-tabs orientation="vertical" placement="start">
+    <md-tab slot="nav" panel="home">
+      <sl-icon slot="icon" name="house"></sl-icon>
+      Home
+    </md-tab>
+    <md-tab slot="nav" panel="explore">
+      <sl-icon slot="icon" name="search"></sl-icon>
+      Explore
+    </md-tab>
+
+    <md-tab-panel name="home">
+      <!-- home content -->
+    </md-tab-panel>
+
+    <md-tab-panel name="explore">
+      <!-- explore content -->
+    </md-tab-panel>
+  </md-tabs>
+`
+```
+
+Programmatic control:
+```typescript
+// In component
+@property() activeTab = 'trending';
+
+// In template
+html`
+  <md-tabs .active=${this.activeTab} @tab-change=${this.handleTabChange}>
+    <!-- tabs and panels -->
+  </md-tabs>
+`
+
+// Handler
+private handleTabChange(e: CustomEvent) {
+  this.activeTab = e.detail.panel;
+}
 ```
 
 #### Adding New MD3 Components
@@ -360,24 +432,110 @@ Both locations must be updated when user logs in (see `src/services/account.ts`)
 ## Theming System
 
 ### Theme Architecture
-1. **CSS Variables**: Shoelace design tokens (`--sl-color-*`) defined in `index.html`
-2. **Theme Files**: `light.css`, `dark.css`, `global.css` copied to dist by Vite
-3. **Dynamic Updates**: Settings changes update CSS custom properties at runtime
+The app uses a **dual design token system** to support both legacy Shoelace components and modern Material Design 3 components:
 
-### Setting Primary Color
+1. **Shoelace Tokens**: `--sl-color-*` defined in `index.html`, `light.css`, `dark.css`
+2. **MD3 Tokens**: `--md-sys-color-*` defined in `src/styles/md-tokens.css`
+3. **Dynamic Updates**: Both token systems update simultaneously when user changes theme
+
+### MD3 Design Tokens (`src/styles/md-tokens.css`)
+Centralized Material Design 3 token file with:
+- **Color tokens**: Primary, secondary, tertiary, error, surface, outline colors
+- **Typography scale**: Display, headline, title, body, label sizes
+- **Elevation levels**: 0-5 shadow definitions
+- **Shape tokens**: Corner radius values (none to extra-large)
+- **Motion tokens**: Easing curves and duration values
+- **Automatic dark mode**: Media query switches tokens for `prefers-color-scheme: dark`
+
+Key MD3 color tokens that integrate with theming:
+```css
+--md-sys-color-primary: var(--sl-color-primary-600, #6750A4);
+--md-sys-color-outline: var(--sl-color-primary-600, #79747E);
+```
+
+These fallback to Shoelace primary color, ensuring user-selected theme applies to all MD3 components.
+
+### Theme Application Flow
+1. **App Load** (`app-index.ts`):
+   - Reads `primary_color` from settings (IndexedDB)
+   - Calls `applyThemeColor(color)` which updates:
+     - `--sl-color-primary-600` (Shoelace)
+     - `--md-sys-color-primary` (MD3)
+     - `--md-sys-color-outline` (MD3)
+     - `--primary-color` (legacy CSS variable)
+   - Generates lighter/darker variants for Shoelace shades
+
+2. **Theme Selection** (`app-theme.ts`):
+   - User picks color from palette or uses EyeDropper API
+   - Saves to `settings.primary_color` in IndexedDB
+   - Calls `applyThemeColor(color)` to update all tokens immediately
+   - Changes visible across entire app without reload
+
+### Setting Primary Color (Developer Guide)
 ```typescript
-// In app-index.ts on load
-const settings = await getSettings();
-if (settings.primary_color) {
-  document.body.style.setProperty('--sl-color-primary-600', settings.primary_color);
-  document.querySelector("html")!.style.setProperty('--primary-color', settings.primary_color);
+// In app-index.ts or app-theme.ts
+private applyThemeColor(color: string) {
+  // Shoelace tokens
+  document.body.style.setProperty('--sl-color-primary-600', color);
+  document.querySelector("html")!.style.setProperty('--primary-color', color);
+
+  // Generate variants
+  const lighterVariant = this.adjustColorBrightness(color, 40);
+  const darkerVariant = this.adjustColorBrightness(color, -40);
+
+  document.body.style.setProperty('--sl-color-primary-500', lighterVariant);
+  document.body.style.setProperty('--sl-color-primary-700', darkerVariant);
+
+  // MD3 tokens - automatically inherit via CSS var() fallback
+  document.body.style.setProperty('--md-sys-color-primary', color);
+  document.body.style.setProperty('--md-sys-color-outline', color);
 }
 ```
 
 ### Theme Component (`src/components/app-theme.ts`)
-- Provides UI for selecting predefined colors or custom color picker
+- Provides UI for selecting predefined pastel colors
+- Supports EyeDropper API for custom color picking (when available)
 - Updates settings via `setSettings({ primary_color: newColor })`
-- Changes apply immediately via CSS custom property updates
+- Changes apply immediately to both Shoelace and MD3 components
+
+### Adding Theme Support to New Components
+When creating MD3 components, **always** use MD3 tokens with Shoelace fallbacks:
+
+```css
+/* CORRECT - Uses MD3 token with fallback */
+button.filled {
+  background: var(--md-sys-color-primary, var(--sl-color-primary-600, #6750A4));
+  color: var(--md-sys-color-on-primary, #FFFFFF);
+}
+
+/* CORRECT - Outline that respects theme */
+button:focus-visible {
+  outline: 2px solid var(--md-sys-color-primary, var(--sl-color-primary-600));
+}
+
+/* INCORRECT - Hardcoded color, ignores theme */
+button {
+  background: #6750A4; /* ❌ Never do this */
+}
+```
+
+### Dark Mode Handling
+Dark mode is handled via CSS media queries, NOT JavaScript:
+```css
+/* Light mode default */
+:root {
+  --md-sys-color-primary: var(--sl-color-primary-600, #6750A4);
+}
+
+/* Dark mode override */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --md-sys-color-primary: var(--sl-color-primary-600, #D0BCFF);
+  }
+}
+```
+
+User's custom primary color overrides both light and dark defaults via inline styles.
 
 ### Responsive Styling
 All components use consistent breakpoint:
@@ -386,6 +544,15 @@ All components use consistent breakpoint:
   /* Mobile styles */
 }
 ```
+
+### Important Theme Files
+- `src/styles/md-tokens.css`: MD3 design token definitions
+- `light.css`: Shoelace light mode overrides + some MD3 tokens
+- `dark.css`: Shoelace dark mode overrides + some MD3 tokens
+- `global.css`: Global styles applied regardless of theme
+- `index.html`: Inline Shoelace token definitions
+- `src/app-index.ts`: Theme initialization logic
+- `src/components/app-theme.ts`: User-facing theme selector
 
 ## Common Task Examples
 

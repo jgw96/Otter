@@ -360,7 +360,15 @@ export class TimelineItem extends LitElement {
 
         this.isBoosted = true;
 
-        this.tweet && this.tweet.reblog ? this.tweet.reblog.favourites_count++ : this.tweet ? this.tweet.favourites_count++ : null;
+        // Update tweet state
+        if (this.tweet) {
+            this.tweet.favourited = true;
+            if (this.tweet.reblog) {
+                this.tweet.reblog.favourites_count++;
+            } else {
+                this.tweet.favourites_count++;
+            }
+        }
 
         const { boostPost } = await import('../services/timeline');
         await boostPost(id);
@@ -371,6 +379,8 @@ export class TimelineItem extends LitElement {
                 id
             }
         }));
+
+        this.requestUpdate();
     }
 
     async reblog(id: string) {
@@ -378,7 +388,15 @@ export class TimelineItem extends LitElement {
 
         this.isReblogged = true;
 
-        this.tweet && this.tweet.reblog ? this.tweet.reblog.reblogs_count++ : this.tweet ? this.tweet.reblogs_count++ : null;
+        // Update tweet state
+        if (this.tweet) {
+            this.tweet.reblogged = true;
+            if (this.tweet.reblog) {
+                this.tweet.reblog.reblogs_count++;
+            } else {
+                this.tweet.reblogs_count++;
+            }
+        }
 
         const { reblogPost } = await import('../services/timeline');
         await reblogPost(id);
@@ -389,14 +407,24 @@ export class TimelineItem extends LitElement {
                 id
             }
         }));
+
+        this.requestUpdate();
     }
 
     async bookmark(id: string) {
         console.log("bookmark", id);
+
+        this.isBookmarked = true;
+
+        // Update tweet state
+        if (this.tweet) {
+            this.tweet.bookmarked = true;
+        }
+
         const { addBookmark } = await import('../services/bookmarks');
         await addBookmark(id);
 
-        this.isBookmarked = true;
+        this.requestUpdate();
     }
 
     async replies() {
@@ -627,9 +655,9 @@ export class TimelineItem extends LitElement {
                           <md-icon slot="suffix" src="/assets/chatbox-outline.svg"></md-icon>
                           </md-button>` : null}
 
-                          <md-button variant="text" ?disabled="${this.isBookmarked || this.tweet?.reply_to.bookmarked}" pill @click="${() => this.bookmark(this.tweet?.reply_to.id || "")}"><md-icon slot="suffix" src="/assets/bookmark-outline.svg"></md-icon></md-button>
-                          ${this.settings && this.settings.wellness === false ? html`<md-button variant="text" ?disabled="${this.isBoosted || this.tweet?.reply_to.favourited}" pill @click="${() => this.favorite(this.tweet?.reply_to.id || "")}">${this.tweet?.reply_to.favourites_count} <md-icon slot="suffix" src="/assets/heart-outline.svg"></md-icon></md-button>` : null}
-                          ${this.settings && this.settings.wellness === false ? html`<md-button variant="text" ?disabled="${this.isReblogged || this.tweet?.reply_to.reblogged}" pill @click="${() => this.reblog(this.tweet?.reply_to.id || "")}">${this.tweet?.reply_to.reblogs_count} <md-icon slot="suffix" src="/assets/repeat-outline.svg"></md-icon></md-button>` : null}
+                          <md-button variant="text" ?disabled=${this.isBookmarked || this.tweet?.reply_to.bookmarked} pill @click="${() => this.bookmark(this.tweet?.reply_to.id || "")}"><md-icon slot="suffix" src="/assets/bookmark-outline.svg"></md-icon></md-button>
+                          ${this.settings && this.settings.wellness === false ? html`<md-button variant="text" ?disabled=${this.isBoosted || this.tweet?.reply_to.favourited} pill @click="${() => this.favorite(this.tweet?.reply_to.id || "")}">${this.tweet?.reply_to.favourites_count} <md-icon slot="suffix" src="/assets/heart-outline.svg"></md-icon></md-button>` : null}
+                          ${this.settings && this.settings.wellness === false ? html`<md-button variant="text" ?disabled=${this.isReblogged || this.tweet?.reply_to.reblogged} pill @click="${() => this.reblog(this.tweet?.reply_to.id || "")}">${this.tweet?.reply_to.reblogs_count} <md-icon slot="suffix" src="/assets/repeat-outline.svg"></md-icon></md-button>` : null}
                         </div>
                       </md-card>
                     ` : null
@@ -687,9 +715,9 @@ export class TimelineItem extends LitElement {
                             ${this.show === true ? html`<md-button variant="text" pill @click="${() => this.replies()}">
                             <md-icon slot="suffix" src="/assets/chatbox-outline.svg"></md-icon>
                             </md-button>` : null}
-                            <md-button variant="text" ?disabled="${this.isBookmarked || this.tweet?.bookmarked}" pill @click="${() => this.bookmark(this.tweet?.id || "")}"><md-icon slot="suffix" src="/assets/bookmark-outline.svg"></md-icon></md-button>
-                            ${this.settings && this.settings.wellness === false ? html`<md-button variant="text" ?disabled="${this.isBoosted || this.tweet?.favourited}" pill @click="${() => this.favorite(this.tweet?.id || "")}">${this.tweet?.favourites_count} <md-icon slot="suffix" src="/assets/heart-outline.svg"></md-icon></md-button>` : null}
-                            ${this.settings && this.settings.wellness === false ? html`<md-button variant="text" ?disabled="${this.isReblogged || this.tweet?.reblogged}" pill @click="${() => this.reblog(this.tweet?.id || "")}">${this.tweet?.reblogs_count} <md-icon slot="suffix" src="/assets/repeat-outline.svg"></md-icon></md-button>` : null}
+                            <md-button variant="text" ?disabled=${this.isBookmarked || this.tweet?.bookmarked} pill @click="${() => this.bookmark(this.tweet?.id || "")}"><md-icon slot="suffix" src="/assets/bookmark-outline.svg"></md-icon></md-button>
+                            ${this.settings && this.settings.wellness === false ? html`<md-button variant="text" ?disabled=${this.isBoosted || this.tweet?.favourited} pill @click="${() => this.favorite(this.tweet?.id || "")}">${this.tweet?.favourites_count} <md-icon slot="suffix" src="/assets/heart-outline.svg"></md-icon></md-button>` : null}
+                            ${this.settings && this.settings.wellness === false ? html`<md-button variant="text" ?disabled=${this.isReblogged || this.tweet?.reblogged} pill @click="${() => this.reblog(this.tweet?.id || "")}">${this.tweet?.reblogs_count} <md-icon slot="suffix" src="/assets/repeat-outline.svg"></md-icon></md-button>` : null}
                         </div>
                     </md-card>
                     ` : html`
@@ -720,9 +748,9 @@ export class TimelineItem extends LitElement {
                         ${this.show === true ? html`<md-button variant="text" pill @click="${() => this.replies()}">
                             <md-icon slot="suffix" src="/assets/chatbox-outline.svg"></md-icon>
                         </md-button>` : null}
-                            <md-button variant="text" ?disabled="${this.isBookmarked}" pill @click="${() => this.bookmark(this.tweet?.id || "")}"><md-icon slot="suffix" src="/assets/bookmark-outline.svg"></md-icon></md-button>
-                            ${this.settings && this.settings.wellness === false ? html`<md-button variant="text" ?disabled="${this.isBoosted || this.tweet?.favourited}" pill @click="${() => this.favorite(this.tweet?.id || "")}">${this.tweet?.reblog.favourites_count} <md-icon slot="suffix" src="/assets/heart-outline.svg"></md-icon></md-button>` : null}
-                            ${this.settings && this.settings.wellness === false ? html`<md-button variant="text" ?disabled="${this.isReblogged || this.tweet?.reblogged}"  pill @click="${() => this.reblog(this.tweet?.id || "")}">${this.tweet?.reblog.reblogs_count} <md-icon slot="suffix" src="/assets/repeat-outline.svg"></md-icon></md-button>` : null}
+                            <md-button variant="text" ?disabled=${this.isBookmarked} pill @click="${() => this.bookmark(this.tweet?.id || "")}"><md-icon slot="suffix" src="/assets/bookmark-outline.svg"></md-icon></md-button>
+                            ${this.settings && this.settings.wellness === false ? html`<md-button variant="text" ?disabled=${this.isBoosted || this.tweet?.favourited} pill @click="${() => this.favorite(this.tweet?.id || "")}">${this.tweet?.reblog.favourites_count} <md-icon slot="suffix" src="/assets/heart-outline.svg"></md-icon></md-button>` : null}
+                            ${this.settings && this.settings.wellness === false ? html`<md-button variant="text" ?disabled=${this.isReblogged || this.tweet?.reblogged}  pill @click="${() => this.reblog(this.tweet?.id || "")}">${this.tweet?.reblog.reblogs_count} <md-icon slot="suffix" src="/assets/repeat-outline.svg"></md-icon></md-button>` : null}
                         </div>
                     </md-card>
 

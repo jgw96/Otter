@@ -18,6 +18,10 @@ export class MdButton extends LitElement {
       display: inline-block;
     }
 
+    :host([disabled]) {
+      display: inline-block;
+    }
+
     button {
       position: relative;
       display: inline-flex;
@@ -102,8 +106,8 @@ export class MdButton extends LitElement {
     }
 
     button.filled:disabled {
-      background: rgba(var(--md-sys-color-on-surface-rgb, 29, 27, 32), 0.12);
-      color: rgba(var(--md-sys-color-on-surface-rgb, 29, 27, 32), 0.38);
+      background: color-mix(in srgb, currentColor 12%, transparent);
+      color: color-mix(in srgb, currentColor 38%, transparent);
       box-shadow: none;
     }
 
@@ -115,8 +119,8 @@ export class MdButton extends LitElement {
     }
 
     button.outlined:disabled {
-      border-color: rgba(var(--md-sys-color-on-surface-rgb, 29, 27, 32), 0.12);
-      color: rgba(var(--md-sys-color-on-surface-rgb, 29, 27, 32), 0.38);
+      border-color: color-mix(in srgb, currentColor 12%, transparent);
+      color: color-mix(in srgb, currentColor 38%, transparent);
     }
 
     /* Text variant */
@@ -127,7 +131,7 @@ export class MdButton extends LitElement {
     }
 
     button.text:disabled {
-      color: rgba(var(--md-sys-color-on-surface-rgb, 29, 27, 32), 0.38);
+      color: color-mix(in srgb, currentColor 38%, transparent);
     }
 
     /* Elevated variant */
@@ -142,8 +146,8 @@ export class MdButton extends LitElement {
     }
 
     button.elevated:disabled {
-      background: rgba(var(--md-sys-color-on-surface-rgb, 29, 27, 32), 0.12);
-      color: rgba(var(--md-sys-color-on-surface-rgb, 29, 27, 32), 0.38);
+      background: color-mix(in srgb, currentColor 12%, transparent);
+      color: color-mix(in srgb, currentColor 38%, transparent);
       box-shadow: none;
     }
 
@@ -155,8 +159,8 @@ export class MdButton extends LitElement {
     }
 
     button.tonal:disabled {
-      background: rgba(var(--md-sys-color-on-surface-rgb, 29, 27, 32), 0.12);
-      color: rgba(var(--md-sys-color-on-surface-rgb, 29, 27, 32), 0.38);
+      background: color-mix(in srgb, currentColor 12%, transparent);
+      color: color-mix(in srgb, currentColor 38%, transparent);
     }
 
     /* Dark mode support */
@@ -242,6 +246,7 @@ export class MdButton extends LitElement {
 
     return html`
       <button
+        part="button"
         class="${classes}"
         ?disabled="${this.disabled}"
         type="${this.type}"

@@ -1,0 +1,14 @@
+/* MD3 Global Color Tokens */
+:root {
+  /* Light mode by default */
+  --md-sys-color-background: #fef7ff;
+  --md-sys-color-on-background: #1d1b20;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark mode overrides */
+    --md-sys-color-background: #151218;
+    --md-sys-color-on-background: #e6e1e5;
+  }
+}

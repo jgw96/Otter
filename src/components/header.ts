@@ -2,6 +2,7 @@ import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
 import { fluentButton, provideFluentDesignSystem } from '@fluentui/web-components';
+import './md-icon.js';
 
 import { enableVibrate } from '../utils/handle-vibrate';
 provideFluentDesignSystem().register(fluentButton());
@@ -161,15 +162,15 @@ export class AppHeader extends LitElement {
 
         <div id="actions">
           <!-- <fluent-button @click="${() => this.openBotDrawer()}" appearance="lightweight" title=="Open MammothBot" id="mammoth-bot">
-            <sl-icon src="/assets/sparkles-outline.svg" alt="MammothBot"></sl-icon>
+            <md-icon src="/assets/sparkles-outline.svg" alt="MammothBot"></md-icon>
           </fluent-button> -->
 
           <fluent-button appearance="lightweight" title="Open Theme Settings" id="open-button" circle size="small" @click="${() => this.handleTheming()}">
-            <sl-icon src="/assets/color-palette-outline.svg" alt="Theme"></sl-icon>
+            <md-icon src="/assets/color-palette-outline.svg" alt="Theme"></md-icon>
           </fluent-button>
 
           <fluent-button id="settings-button" appearance="lightweight"  title="Open Settings" @click="${() => this.openSettings()}" circle size="small">
-            <sl-icon src="/assets/settings-outline.svg"></sl-icon>
+            <md-icon src="/assets/settings-outline.svg"></md-icon>
           </fluent-button>
         </div>
 

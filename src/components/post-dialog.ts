@@ -5,6 +5,7 @@ import './md-dialog.js';
 import './md-button.js';
 import './md-text-field.js';
 import './md-text-area.js';
+import './md-icon.js';
 import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 import { publishPost, uploadImageAsFormData, uploadImageFromBlob } from '../services/posts';
 import { createAPost, createImage } from '../services/ai';
@@ -491,7 +492,7 @@ export class PostDialog extends LitElement {
             <div slot="footer" class="dialog-footer-actions">
                 <md-button variant="text" @click="${() => this.markAsSensitive()}">
                     Set Visibility
-                    <sl-icon src="/assets/eye-outline.svg"></sl-icon>
+                    <md-icon src="/assets/eye-outline.svg"></md-icon>
                 </md-button>
 
                 <!--<div id="post-ai-actions">-->
@@ -504,7 +505,7 @@ export class PostDialog extends LitElement {
                         return html`
                         <div class="img-preview">
                             <md-button size="small" @click="${() => this.removeImage(preview)}">
-                                <sl-icon src="/assets/close-outline.svg"></sl-icon>
+                                <md-icon src="/assets/close-outline.svg"></md-icon>
                             </md-button>
                             <img src="${preview}" />
                         </div>
@@ -532,7 +533,7 @@ export class PostDialog extends LitElement {
 
                 <md-button pill variant="outlined" @click="${() => this.attachFile()}">
                     Attach Media
-                    <sl-icon src="/assets/attach-outline.svg"></sl-icon>
+                    <md-icon src="/assets/attach-outline.svg"></md-icon>
                 </md-button>
                 <md-button ?disabled="${this.hasStatus === false || this.attaching === true}" pill variant="filled" @click="${() => this.publish()}">Publish</md-button>
             </div>
