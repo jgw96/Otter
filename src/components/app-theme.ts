@@ -1,11 +1,9 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
-import '@shoelace-style/shoelace/dist/components/button/button.js';
-// import '@shoelace-style/shoelace/dist/components/color-picker/color-picker.js';
-import '@shoelace-style/shoelace/dist/components/input/input.js';
-import '@shoelace-style/shoelace/dist/components/select/select.js';
-import '@shoelace-style/shoelace/dist/components/menu/menu.js';
+import "./md-button.js";
+import "./md-icon.js";
+
 import { getSettings, setSettings, Settings } from '../services/settings';
 
 @customElement('app-theme')
@@ -150,15 +148,7 @@ export class AppTheme extends LitElement {
 
         if (potentialColor) {
           this.primary_color = potentialColor;
-          document.body.style.setProperty('--sl-color-primary-600', potentialColor);
-
-          document.querySelector("html")!.style.setProperty('--primary-color', potentialColor);
-
-          const littleLighter = this.LightenDarkenColor(potentialColor, 40);
-          document.body.style.setProperty('--sl-color-primary-500', littleLighter);
-
-          const littleDarker = this.LightenDarkenColor(potentialColor, -40);
-          document.body.style.setProperty('--sl-color-primary-700', littleDarker);
+          this.applyThemeColor(potentialColor);
         }
         else {
           // get css variable color
@@ -193,15 +183,34 @@ export class AppTheme extends LitElement {
             focus: this.settings!.focus
         })
 
-        // set css variable color
-        document.body.style.setProperty('--sl-color-primary-600', color);
-        document.querySelector("html")!.style.setProperty('--primary-color', color);
+        // Apply to both Shoelace and MD3 design tokens
+        this.applyThemeColor(color);
+    }
+
+    /**
+     * Apply theme color to both Shoelace and MD3 design tokens
+     */
+    private applyThemeColor(color: string) {
+        const root = document.documentElement;
+
+        // Shoelace tokens
+        root.style.setProperty('--sl-color-primary-600', color);
+        root.style.setProperty('--primary-color', color);
 
         const littleLighter = this.LightenDarkenColor(color, 40);
-        document.body.style.setProperty('--sl-color-primary-500', littleLighter);
+        root.style.setProperty('--sl-color-primary-500', littleLighter);
 
         const littleDarker = this.LightenDarkenColor(color, -40);
-        document.body.style.setProperty('--sl-color-primary-700', littleDarker);
+        root.style.setProperty('--sl-color-primary-700', littleDarker);
+
+        // MD3 tokens - primary color (set on :root for highest priority)
+        root.style.setProperty('--md-sys-color-primary', color);
+        root.style.setProperty('--md-sys-color-outline', color);
+
+        // Also update body for legacy support
+        document.body.style.setProperty('--sl-color-primary-600', color);
+        document.body.style.setProperty('--md-sys-color-primary', color);
+        document.body.style.setProperty('--md-sys-color-outline', color);
     }
 
     LightenDarkenColor(col: string, amt: number) {
@@ -271,9 +280,9 @@ export class AppTheme extends LitElement {
                     <div class="color" id="custom" @click="${() => this.chooseColor("#057dcd")}"></div>
 
 
-                    ${ "EyeDropper" in window ? html`<sl-button circle @click="${() => this.customColor()}">
-                      <sl-icon src="/assets/add-outline.svg"></sl-icon>
-                    </sl-button>` : null}
+                    ${ "EyeDropper" in window ? html`<md-button circle @click="${() => this.customColor()}">
+                      <md-icon src="/assets/add-outline.svg"></md-icon>
+                    </md-button>` : null}
                 </div>
             </div>
         </div>

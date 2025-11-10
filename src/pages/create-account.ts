@@ -3,11 +3,7 @@ import { customElement, state } from 'lit/decorators.js'
 import { getServers } from '../services/account';
 
 import '@shoelace-style/shoelace/dist/components/badge/badge.js';
-import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
-
-import { fluentButton, provideFluentDesignSystem } from '@fluentui/web-components';
-
-provideFluentDesignSystem().register(fluentButton())
+import '../components/md-dialog.js';
 
 
 @customElement('create-account')
@@ -25,7 +21,7 @@ export class CreateAccount extends LitElement {
                 display: block;
             }
 
-            sl-dialog::part(base) {
+            md-dialog::part(base) {
                 z-index: 99999;
             }
 
@@ -81,12 +77,12 @@ export class CreateAccount extends LitElement {
                 margin-top:  2em;
             }
 
-            fluent-button {
+            md-button {
                 width: 100%;
             }
 
             @media(prefers-color-scheme: dark) {
-                fluent-text-area::part(control), fluent-button[appearance="neutral"]::part(control), fluent-text-field::part(control), fluent-text-field::part(root) {
+                md-text-area::part(textarea), md-button[variant="outlined"]::part(control) {
                     background: #1e1e1e;
                     color: white;
                 }
@@ -134,7 +130,7 @@ export class CreateAccount extends LitElement {
         console.log("filledValues", this.filledValues)
 
         if (this.filledValues.includes("username") && this.filledValues.includes("password") && this.filledValues.includes("email")) {
-            const button = this.shadowRoot?.querySelector('fluent-button') as HTMLElement;
+            const button = this.shadowRoot?.querySelector('md-button') as HTMLElement;
             button.removeAttribute("disabled");
         }
     }
@@ -144,17 +140,17 @@ export class CreateAccount extends LitElement {
         return html`
           <app-header ?enableBack=${true}></app-header>
 
-          <sl-dialog id="create-dialog" label="Create Account">
+          <md-dialog id="create-dialog" label="Create Account">
             <span .innerHTML="${this.fullDesc}"></span>
 
-            <fluent-button @click="${() => this.doRegister()}" slot="footer" appearance="accent">Go Create An Account</fluent-button>
-          </sl-dialog>
+            <md-button @click="${() => this.doRegister()}" slot="footer" variant="filled">Go Create An Account</md-button>
+          </md-dialog>
 
-          <sl-dialog id="registered-dialog" label="Account Created">
+          <md-dialog id="registered-dialog" label="Account Created">
             <p>A confirmation email has been sent to the provided email address, please click the link in the email to confirm your account</p>
 
-            <fluent-button appearance="accent">Account Confirmed, Login</fluent-button>
-          </sl-dialog>
+            <md-button variant="filled">Account Confirmed, Login</md-button>
+          </md-dialog>
 
           <main>
             <h1>Create Account</h1>
@@ -177,7 +173,7 @@ export class CreateAccount extends LitElement {
                               <p>${server.info.short_description ||"No Description..."}</p>
                             </div>
 
-                            <fluent-button @click="${() => this.startRegister(server)}">Create Account</fluent-button>
+                            <md-button @click="${() => this.startRegister(server)}">Create Account</md-button>
                         </li>
                     `
         })}

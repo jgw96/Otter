@@ -4,8 +4,9 @@ import { classMap } from 'lit/directives/class-map.js';
 
 import '../components/user-profile';
 
-import '@shoelace-style/shoelace/dist/components/card/card.js';
-import '@shoelace-style/shoelace/dist/components/icon/icon.js';
+import '../components/md-card';
+import '../components/md-icon';
+import '../components/md-icon-button';
 
 import '../components/image-carousel';
 
@@ -13,8 +14,7 @@ import '../components/image-carousel';
 
 // import * as blurhash from "blurhash-wasm";
 
-import { fluentButton, provideFluentDesignSystem } from '@fluentui/web-components';
-provideFluentDesignSystem().register(fluentButton());
+import '../components/md-button';
 
 // @ts-ignore
 import ImgWorker from '../utils/img-worker?worker';
@@ -50,11 +50,8 @@ export class TimelineItem extends LitElement {
                 margin-bottom: 10px;
             }
 
-            sl-card {
+            md-card {
                 content-visibility: auto;
-                cursor: pointer;
-
-                border-radius: 8px;
 
                 animation-name: slideUp;
                 animation-duration: 0.3s;
@@ -70,19 +67,6 @@ export class TimelineItem extends LitElement {
 
                 margin-bottom: 6px;
                 display: block;
-            }
-
-            @media(prefers-color-scheme: dark) {
-                fluent-button::part(control) {
-                    --neutral-fill-stealth-active: #1b1d26;
-                    --neutral-fill-stealth-hover: #1b1d26;
-                }
-            }
-
-            fluent-button::part(content) {
-                display: flex;
-                align-items: center;
-                gap: 2px;
             }
 
             .sensitive {
@@ -138,13 +122,6 @@ export class TimelineItem extends LitElement {
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
-            }
-
-
-            @media(prefers-color-scheme: light) {
-                sl-card {
-                    --sl-panel-background-color: white;
-                }
             }
 
             @media(prefers-color-scheme: light) {
@@ -218,43 +195,23 @@ export class TimelineItem extends LitElement {
                 margin: 0;
             }
 
-
-            sl-card {
-                --padding: 10px;
+            md-card {
                 width: 100%;
-
-                --sl-panel-background-color: rgb(32 32 35);;
-                color: white;
-
                 overflow-x: hidden;
-
                 content-visibility: auto;
             }
 
-            sl-card a {
+            md-card a {
                 color: var(--sl-color-secondary-700);
             }
 
-            sl-card::part(base) {
-                border: none;
-            }
-
-            sl-card::part(body) {
+            md-card::part(body) {
                 padding-top: 0;
             }
 
-            .actions fluent-button:disabled {
-                color: var(--sl-color-primary-600);
-            }
-
-            .actions fluent-button::part(control) {
-                opacity: 1 !important;
-            }
-
-            sl-card img {
+            md-card img {
                 object-fit: cover;
                 border-radius: 6px 6px 0px 0px;
-
             }
 
             .header-block {
@@ -279,15 +236,11 @@ export class TimelineItem extends LitElement {
                 gap: 6px;
             }
 
-            .actions fluent-button {
+            .actions md-button {
                 background: transparent;
                 border: none;
                 font-size: 1.2em;
                 color: grey;
-            }
-
-            .actions sl-icon svg {
-
             }
 
             img {
@@ -300,11 +253,7 @@ export class TimelineItem extends LitElement {
                 }
             }
 
-            actions fluent-button sl-icon {
-                font-size: 1.2em;
-            }
-
-            sl-card::part(footer) {
+            md-card::part(footer) {
                 border-top: none;
             }
 
@@ -325,29 +274,15 @@ export class TimelineItem extends LitElement {
                 gap: 8px;
             }
 
-            @media(max-width: 600px) {
+            @media(max-width: 700px) {
                 .actions {
                     justify-content: space-between;
                 }
             }
 
             @media(prefers-color-scheme: light) {
-                sl-card {
-                    color: #000000e3;
-                }
-
                 #reply-to {
                     color: black;
-                }
-
-                .actions fluent-button::part(base) {
-                    color: white;
-                }
-            }
-
-            @media(prefers-color-scheme: light) {
-                sl-card {
-                    --sl-panel-background-color: white;
                 }
             }
 
@@ -397,7 +332,7 @@ export class TimelineItem extends LitElement {
             }
                 , options);
 
-            observer.observe(this.shadowRoot?.querySelector('sl-card') as Element);
+            observer.observe(this.shadowRoot?.querySelector('md-card') as Element);
         }
 
         if (this.tweet && this.tweet.in_reply_to_id !== null) {
@@ -425,7 +360,15 @@ export class TimelineItem extends LitElement {
 
         this.isBoosted = true;
 
-        this.tweet && this.tweet.reblog ? this.tweet.reblog.favourites_count++ : this.tweet ? this.tweet.favourites_count++ : null;
+        // Update tweet state
+        if (this.tweet) {
+            this.tweet.favourited = true;
+            if (this.tweet.reblog) {
+                this.tweet.reblog.favourites_count++;
+            } else {
+                this.tweet.favourites_count++;
+            }
+        }
 
         const { boostPost } = await import('../services/timeline');
         await boostPost(id);
@@ -436,6 +379,8 @@ export class TimelineItem extends LitElement {
                 id
             }
         }));
+
+        this.requestUpdate();
     }
 
     async reblog(id: string) {
@@ -443,7 +388,15 @@ export class TimelineItem extends LitElement {
 
         this.isReblogged = true;
 
-        this.tweet && this.tweet.reblog ? this.tweet.reblog.reblogs_count++ : this.tweet ? this.tweet.reblogs_count++ : null;
+        // Update tweet state
+        if (this.tweet) {
+            this.tweet.reblogged = true;
+            if (this.tweet.reblog) {
+                this.tweet.reblog.reblogs_count++;
+            } else {
+                this.tweet.reblogs_count++;
+            }
+        }
 
         const { reblogPost } = await import('../services/timeline');
         await reblogPost(id);
@@ -454,14 +407,24 @@ export class TimelineItem extends LitElement {
                 id
             }
         }));
+
+        this.requestUpdate();
     }
 
     async bookmark(id: string) {
         console.log("bookmark", id);
+
+        this.isBookmarked = true;
+
+        // Update tweet state
+        if (this.tweet) {
+            this.tweet.bookmarked = true;
+        }
+
         const { addBookmark } = await import('../services/bookmarks');
         await addBookmark(id);
 
-        this.isBookmarked = true;
+        this.requestUpdate();
     }
 
     async replies() {
@@ -670,37 +633,37 @@ export class TimelineItem extends LitElement {
             <span>Sensitive Content</span>
             <p>${this.tweet.spoiler_text || "No spoiler text provided"}</p>
 
-            <fluent-button appearance="lightweight" pill @click="${() => this.viewSensitive()}">
+            <md-button variant="text" pill @click="${() => this.viewSensitive()}">
                 View
-                <sl-icon src="/assets/eye-outline.svg"></sl-icon>
-            </fluent-button>
+                <md-icon slot="suffix" src="/assets/eye-outline.svg"></md-icon>
+            </md-button>
         </div>
         ` : html`
         ${this.tweet?.reblog === null || this.tweet?.reblog === undefined ? html`
         ${this.tweet?.reply_to !== null && this.tweet?.reply_to !== undefined && this.show === true ? html`
                       <div id="reply-to">
-                        <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
+                        <md-icon src="/assets/chatbox-outline.svg"></md-icon>
                         Thread
                       </div>
 
-                      <sl-card part="card">
+                      <md-card part="card">
                         <user-profile .account="${this.tweet?.reply_to.account}"></user-profile>
                         <div .innerHTML="${this.tweet?.reply_to.content}"></div>
 
                         <div class="actions" slot="footer">
-                          ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies()}">
-                          <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
-                          </fluent-button>` : null}
+                          ${this.show === true ? html`<md-button variant="text" pill @click="${() => this.replies()}">
+                          <md-icon slot="suffix" src="/assets/chatbox-outline.svg"></md-icon>
+                          </md-button>` : null}
 
-                          <fluent-button appearance="lightweight" ?disabled="${this.isBookmarked || this.tweet?.reply_to.bookmarked}" pill @click="${() => this.bookmark(this.tweet?.reply_to.id || "")}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></fluent-button>
-                          ${this.settings && this.settings.wellness === false ? html`<fluent-button appearance="lightweight" ?disabled="${this.isBoosted || this.tweet?.reply_to.favourited}" pill @click="${() => this.favorite(this.tweet?.reply_to.id || "")}">${this.tweet?.reply_to.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></fluent-button>` : null}
-                          ${this.settings && this.settings.wellness === false ? html`<fluent-button appearance="lightweight" ?disabled="${this.isReblogged || this.tweet?.reply_to.reblogged}" pill @click="${() => this.reblog(this.tweet?.reply_to.id || "")}">${this.tweet?.reply_to.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></fluent-button>` : null}
+                          <md-button variant="text" ?disabled=${this.isBookmarked || this.tweet?.reply_to.bookmarked} pill @click="${() => this.bookmark(this.tweet?.reply_to.id || "")}"><md-icon slot="suffix" src="/assets/bookmark-outline.svg"></md-icon></md-button>
+                          ${this.settings && this.settings.wellness === false ? html`<md-button variant="text" ?disabled=${this.isBoosted || this.tweet?.reply_to.favourited} pill @click="${() => this.favorite(this.tweet?.reply_to.id || "")}">${this.tweet?.reply_to.favourites_count} <md-icon slot="suffix" src="/assets/heart-outline.svg"></md-icon></md-button>` : null}
+                          ${this.settings && this.settings.wellness === false ? html`<md-button variant="text" ?disabled=${this.isReblogged || this.tweet?.reply_to.reblogged} pill @click="${() => this.reblog(this.tweet?.reply_to.id || "")}">${this.tweet?.reply_to.reblogs_count} <md-icon slot="suffix" src="/assets/repeat-outline.svg"></md-icon></md-button>` : null}
                         </div>
-                      </sl-card>
+                      </md-card>
                     ` : null
                     }
 
-                <sl-card part="card" class="${classMap({ replyCard: this.tweet?.reply_to ? true : false })}">
+                <md-card part="card" class="${classMap({ replyCard: this.tweet?.reply_to ? true : false })}">
                       ${this.tweet && this.tweet.media_attachments.length > 0 ? html`
                           <image-carousel .images="${this.tweet.media_attachments}" slot="image">
                           </image-carousel>
@@ -708,30 +671,18 @@ export class TimelineItem extends LitElement {
                     }
 
                       <div class="header-actions-block" slot="header">
-                        <!-- <sl-icon-button @click="${() => this.summarizePost(this.tweet?.content || null)}" src="/assets/search-outline.svg">
-
-                        </sl-icon-button> -->
-
-                        <!-- <sl-dropdown>
-                            <sl-button size="small" pill slot="trigger" caret>AI</sl-button>
-                            <sl-menu>
-                                <sl-menu-item @click="${() => this.summarizePost(this.tweet?.content || null)}">Summarize</sl-menu-item>
-                                <sl-menu-item @click="${() => this.translatePost(this.tweet?.content || null)}">Translate</sl-menu-item>
-                            </sl-menu>
-                        </sl-dropdown> -->
-
                         <div>
-                        <sl-button size="small" @click="${() => this.translatePost(this.tweet?.content || null)}" pill>Translate</sl-button>
+                        <md-button pill size="small" @click="${() => this.translatePost(this.tweet?.content || null)}" pill>Translate</md-button>
 
-                        <sl-icon-button @click="${() => this.shareStatus(this.tweet || null)}" src="/assets/share-social-outline.svg">
-                        </sl-icon-button>
+                        <md-icon-button @click="${() => this.shareStatus(this.tweet || null)}" src="/assets/share-social-outline.svg" label="Share">
+                        </md-icon-button>
 
                         ${this.tweet?.account.acct === this.currentUser?.acct ? html`
-                            <sl-icon-button @click="${() => this.deleteStatus()}" src="/assets/trash-outline.svg">
-                            </sl-icon-button>
+                            <md-icon-button @click="${() => this.deleteStatus()}" src="/assets/trash-outline.svg" label="Delete">
+                            </md-icon-button>
 
-                            <sl-icon-button @click="${() => this.initEditStatus()}" src="/assets/brush-outline.svg">
-                            </sl-icon-button>
+                            <md-icon-button @click="${() => this.initEditStatus()}" src="/assets/brush-outline.svg" label="Edit">
+                            </md-icon-button>
                             ` : null
                     }
                     </div>
@@ -761,16 +712,16 @@ export class TimelineItem extends LitElement {
                     }
 
                         <div class="actions" slot="footer">
-                            ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies()}">
-                            <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
-                            </fluent-button>` : null}
-                            <fluent-button appearance="lightweight" ?disabled="${this.isBookmarked || this.tweet?.bookmarked}" pill @click="${() => this.bookmark(this.tweet?.id || "")}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></fluent-button>
-                            ${this.settings && this.settings.wellness === false ? html`<fluent-button appearance="lightweight" ?disabled="${this.isBoosted || this.tweet?.favourited}" pill @click="${() => this.favorite(this.tweet?.id || "")}">${this.tweet?.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></fluent-button>` : null}
-                            ${this.settings && this.settings.wellness === false ? html`<fluent-button appearance="lightweight" ?disabled="${this.isReblogged || this.tweet?.reblogged}" pill @click="${() => this.reblog(this.tweet?.id || "")}">${this.tweet?.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></fluent-button>` : null}
+                            ${this.show === true ? html`<md-button variant="text" pill @click="${() => this.replies()}">
+                            <md-icon slot="suffix" src="/assets/chatbox-outline.svg"></md-icon>
+                            </md-button>` : null}
+                            <md-button variant="text" ?disabled=${this.isBookmarked || this.tweet?.bookmarked} pill @click="${() => this.bookmark(this.tweet?.id || "")}"><md-icon slot="suffix" src="/assets/bookmark-outline.svg"></md-icon></md-button>
+                            ${this.settings && this.settings.wellness === false ? html`<md-button variant="text" ?disabled=${this.isBoosted || this.tweet?.favourited} pill @click="${() => this.favorite(this.tweet?.id || "")}">${this.tweet?.favourites_count} <md-icon slot="suffix" src="/assets/heart-outline.svg"></md-icon></md-button>` : null}
+                            ${this.settings && this.settings.wellness === false ? html`<md-button variant="text" ?disabled=${this.isReblogged || this.tweet?.reblogged} pill @click="${() => this.reblog(this.tweet?.id || "")}">${this.tweet?.reblogs_count} <md-icon slot="suffix" src="/assets/repeat-outline.svg"></md-icon></md-button>` : null}
                         </div>
-                    </sl-card>
+                    </md-card>
                     ` : html`
-                    <sl-card slot="card">
+                    <md-card slot="card">
 
                       ${this.tweet.reblog && this.tweet.reblog.media_attachments.length > 0 ? html`
                          <image-carousel .images="${this.tweet.reblog.media_attachments}" slot="image">
@@ -785,8 +736,8 @@ export class TimelineItem extends LitElement {
                                 <span>Boosted by</span>
                                 <user-profile boosted class="smaller-profile" ?small="${true}" .account="${this.tweet?.account}"></user-profile>
                             </div>
-                            <sl-icon-button @click="${() => this.shareStatus(this.tweet || null)}" src="/assets/share-social-outline.svg">
-                            </sl-icon-button>
+                            <md-icon-button @click="${() => this.shareStatus(this.tweet || null)}" src="/assets/share-social-outline.svg" label="Share">
+                            </md-icon-button>
 
                         </div>
                         <h5>${this.tweet?.reblog.account.acct} posted</h5>
@@ -794,14 +745,14 @@ export class TimelineItem extends LitElement {
                         <div @click="${() => this.openPost()}" .innerHTML="${this.tweet?.reblog.content}"></div>
 
                         <div class="actions" slot="footer">
-                        ${this.show === true ? html`<fluent-button appearance="lightweight" pill @click="${() => this.replies()}">
-                            <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
-                        </fluent-button>` : null}
-                            <fluent-button appearance="lightweight" ?disabled="${this.isBookmarked}" pill @click="${() => this.bookmark(this.tweet?.id || "")}"><sl-icon src="/assets/bookmark-outline.svg"></sl-icon></fluent-button>
-                            ${this.settings && this.settings.wellness === false ? html`<fluent-button appearance="lightweight" ?disabled="${this.isBoosted || this.tweet?.favourited}" pill @click="${() => this.favorite(this.tweet?.id || "")}">${this.tweet?.reblog.favourites_count} <sl-icon src="/assets/heart-outline.svg"></sl-icon></fluent-button>` : null}
-                            ${this.settings && this.settings.wellness === false ? html`<fluent-button appearance="lightweight" ?disabled="${this.isReblogged || this.tweet?.reblogged}"  pill @click="${() => this.reblog(this.tweet?.id || "")}">${this.tweet?.reblog.reblogs_count} <sl-icon src="/assets/repeat-outline.svg"></sl-icon></fluent-button>` : null}
+                        ${this.show === true ? html`<md-button variant="text" pill @click="${() => this.replies()}">
+                            <md-icon slot="suffix" src="/assets/chatbox-outline.svg"></md-icon>
+                        </md-button>` : null}
+                            <md-button variant="text" ?disabled=${this.isBookmarked} pill @click="${() => this.bookmark(this.tweet?.id || "")}"><md-icon slot="suffix" src="/assets/bookmark-outline.svg"></md-icon></md-button>
+                            ${this.settings && this.settings.wellness === false ? html`<md-button variant="text" ?disabled=${this.isBoosted || this.tweet?.favourited} pill @click="${() => this.favorite(this.tweet?.id || "")}">${this.tweet?.reblog.favourites_count} <md-icon slot="suffix" src="/assets/heart-outline.svg"></md-icon></md-button>` : null}
+                            ${this.settings && this.settings.wellness === false ? html`<md-button variant="text" ?disabled=${this.isReblogged || this.tweet?.reblogged}  pill @click="${() => this.reblog(this.tweet?.id || "")}">${this.tweet?.reblog.reblogs_count} <md-icon slot="suffix" src="/assets/repeat-outline.svg"></md-icon></md-button>` : null}
                         </div>
-                    </sl-card>
+                    </md-card>
 
 
                     `}

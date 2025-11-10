@@ -1,16 +1,11 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
-import { fluentButton, fluentTextField, fluentCombobox, fluentOption, provideFluentDesignSystem } from '@fluentui/web-components';
+import '../components/md-text-field';
+import '../components/md-button';
 
 import { router } from '../utils/router';
 import { enableVibrate } from '../utils/handle-vibrate';
-
-provideFluentDesignSystem().register(fluentButton());
-provideFluentDesignSystem().register(fluentTextField());
-provideFluentDesignSystem().register(fluentCombobox());
-provideFluentDesignSystem().register(fluentButton());
-provideFluentDesignSystem().register(fluentOption());
 
 let scrollWidth: number = 0;
 
@@ -27,7 +22,7 @@ export class AppLogin extends LitElement {
                 display: block;
             }
 
-            sl-dialog::part(base) {
+            md-dialog::part(base) {
                 z-index: 99999;
             }
 
@@ -39,7 +34,7 @@ export class AppLogin extends LitElement {
                 gap: 20px;
                 position: fixed;
                 inset: 0px;
-                height: 72vh;
+                height: 100vh;
                 width: 100vw;
             }
 
@@ -85,16 +80,16 @@ export class AppLogin extends LitElement {
                 padding-right: 100px;
             }
 
-            .scroll-item fluent-button {
+            .scroll-item md-button {
                 width: 100px;
                 align-self: center;
             }
 
-            sl-dialog a {
+            md-dialog a {
               color: var(--sl-color-primary-600);
             }
 
-            main fluent-text-field {
+            main md-text-field {
                 width: 20em;
             }
 
@@ -113,15 +108,15 @@ export class AppLogin extends LitElement {
                 justify-content: center;
             }
 
-            sl-dialog::part(panel) {
+            md-dialog::part(panel) {
                 backdrop-filter: blur(80px);
 
                 height: 80vh;
                 width: 80vw;
               }
 
-            @media(max-width: 600px) {
-                sl-dialog::part(panel) {
+            @media(max-width: 700px) {
+                md-dialog::part(panel) {
                     height: 100vh;
                     width: 100vw;
                     max-height: 100vh;
@@ -138,7 +133,7 @@ export class AppLogin extends LitElement {
                     flex-direction: column;
                 }
 
-                .scroll-item fluent-button {
+                .scroll-item md-button {
                     display: none;
                 }
 
@@ -199,12 +194,12 @@ export class AppLogin extends LitElement {
     }
 
     async openIntro() {
-        await import("@shoelace-style/shoelace/dist/components/dialog/dialog.js")
+        await import("../components/md-dialog.js")
         this.loadIntro = true;
 
         await this.updateComplete;
 
-        const dialog = this.shadowRoot?.querySelector('sl-dialog') as any;
+        const dialog = this.shadowRoot?.querySelector('md-dialog') as any;
 
         dialog.show();
     }
@@ -229,16 +224,16 @@ export class AppLogin extends LitElement {
       }
 
       async getStarted() {
-        const dialog = this.shadowRoot?.querySelector('sl-dialog') as any;
+        const dialog = this.shadowRoot?.querySelector('md-dialog') as any;
         await dialog.hide();
 
         scrollWidth = 0;
       }
 
-    handleServerInput(server: string) {
-        console.log(server)
+    handleServerInput(event: any) {
+        console.log(event.target.value)
 
-        this.chosenServer = server;
+        this.chosenServer = event.target.value;
     }
 
     joinMastodon() {
@@ -254,7 +249,7 @@ export class AppLogin extends LitElement {
         return html`
         ${
             this.loadIntro ? html`
-                      <sl-dialog label="Intro To Mastodon">
+                      <md-dialog label="Intro To Mastodon">
                         <div id="intro-carousel">
 
             <div class="scroll-item">
@@ -266,7 +261,7 @@ export class AppLogin extends LitElement {
                 you will need to enter the URL of the Mastodon instance you signed up at.
             </p>
 
-            <fluent-button appearance="lightweight" pill @click="${() => this.next()}">Next</fluent-button>
+            <md-button variant="text" pill @click="${() => this.next()}">Next</md-button>
 
             </div>
 
@@ -285,7 +280,7 @@ export class AppLogin extends LitElement {
                 Each instance is run by a different administrator and can have its own rules and moderation policies.
             </p>
 
-            <fluent-button appearance="lightweight" pill @click="${() => this.next()}">Next</fluent-button>
+            <md-button variant="text" pill @click="${() => this.next()}">Next</md-button>
             </div>
 
             <div class="scroll-item">
@@ -308,33 +303,31 @@ export class AppLogin extends LitElement {
                 email address or approving new accounts manually. Be sure to read the rules and guidelines of the instance you
                 are joining before signing up.</p>
 
-                <fluent-button variant="accent" pill @click="${() => this.getStarted()}">Get Started</fluent-button>
+                <md-button variant="filled" pill @click="${() => this.getStarted()}">Get Started</md-button>
                 </div>
 
                         </div>
-        </sl-dialog>
+        </md-dialog>
             ` : null
         }
 
         <main>
 
-            <div id="login-block">
-                <fluent-combobox placeholder="mastodon.social" @change="${($event: any) => this.handleServerInput($event.target.value)}">
-                    ${
-                        this.instances.map((instance: any) => {
-                            return html`
-                            <fluent-option value="${instance}">${instance}</fluent-option>
-                            `
-                        })
-                    }
-                </fluent-combobox>
+            <img src="/assets/icons/Android/96-icon.png" alt="Otter Logo">
 
-                <fluent-button @click="${() => this.login()}" appearance="accent">Login</fluent-button>
-                <fluent-button @click="${() => this.joinMastodon()}" appearance="lightweight">Sign up for Mastodon Account</fluent-button>
+            <div id="login-block">
+                <md-text-field
+                    placeholder="mastodon.social"
+                    .value="${this.chosenServer}"
+                    @input="${this.handleServerInput}">
+                </md-text-field>
+
+                <md-button @click="${() => this.login()}" variant="filled">Login</md-button>
+                <md-button @click="${() => this.joinMastodon()}" variant="text">Sign up for Mastodon Account</md-button>
             </div>
 
-            <fluent-button @click="${() => this.openIntro()}" appearance="lightweight">Intro To Mastodon</fluent-button>
-            <fluent-button @click="${() => this.explore()}" appearance="lightweight">Explore without an account</fluent-button>
+            <md-button @click="${() => this.openIntro()}" variant="text">Intro To Mastodon</md-button>
+            <md-button @click="${() => this.explore()}" variant="text">Explore without an account</md-button>
 
             <p>Welcome To Otter, your Mastodon Client</p>
 

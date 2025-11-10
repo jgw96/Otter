@@ -1,36 +1,27 @@
 import { LitElement, css, html } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
 
-import '@shoelace-style/shoelace/dist/components/button/button.js';
-import '@shoelace-style/shoelace/dist/components/tab-group/tab-group.js';
-import '@shoelace-style/shoelace/dist/components/tab/tab.js';
-import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js';
-import '@shoelace-style/shoelace/dist/components/drawer/drawer.js';
-import '@shoelace-style/shoelace/dist/components/switch/switch.js';
-import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
-import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
-
-import { fluentButton, fluentBadge, fluentToolbar, fluentMenu, fluentMenuItem, provideFluentDesignSystem } from '@fluentui/web-components';
-provideFluentDesignSystem().register(fluentButton());
-provideFluentDesignSystem().register(fluentBadge());
-provideFluentDesignSystem().register(fluentToolbar());
-provideFluentDesignSystem().register(fluentMenu());
-provideFluentDesignSystem().register(fluentMenuItem());
-
 import '../components/timeline';
 import '../components/timeline-item';
-import '../components/bookmarks';
-import '../components/favorites';
-import '../components/notifications';
+
 import '../components/app-theme';
 import '../components/right-click';
-import '../components/sponsor-button';
 import '../components/user-terms';
-import '../components/offline-notify';
 
-import './search-page';
-
-import '@khmyznikov/pwa-install';
+import '../components/otter-drawer';
+import '../components/md-button';
+import '../components/md-badge';
+import '../components/md-toolbar';
+import '../components/md-menu';
+import '../components/md-menu-item';
+import '../components/md-dialog';
+import '../components/md-switch';
+import '../components/md-dropdown';
+import '../components/md-tabs';
+import '../components/md-tab';
+import '../components/md-tab-panel';
+import '../components/md-icon';
+import '../components/md-icon-button';
 
 import { styles } from '../styles/shared-styles';
 import { router } from '../utils/router';
@@ -64,6 +55,14 @@ export class AppHome extends LitElement {
 
   @state() homeLoad: boolean = false;
 
+  // Lazy loading states for tabs
+  @state() bookmarksLoaded: boolean = false;
+  @state() favoritesLoaded: boolean = false;
+  @state() notificationsLoaded: boolean = false;
+  @state() searchLoaded: boolean = false;
+
+  @state() activeTab: string = 'general';
+
   static get styles() {
     return [
       styles,
@@ -76,27 +75,51 @@ export class AppHome extends LitElement {
       }
 
       app-timeline, app-bookmarks, app-notifications, app-favorites, app-bookmarks, search-page {
-        margin-left: 40px;
-        margin-right: 40px;
+      margin-left: 40px;
+      margin-right: 40px;
+    }
+
+    md-tabs {
+      height: calc(100vh - 80px);
+    }
+
+    md-tab-panel {
+      overflow: auto;
+    }
+
+    md-tab md-icon {
+      width: 1.8em;
+      height: 1.8em;
+    }
+
+    /* Dark mode support for tabs */
+    @media (prefers-color-scheme: dark) {
+      md-tabs {
+        --md-sys-color-surface: #0f1118;
+        --md-sys-color-outline-variant: #2a2d36;
       }
 
-      sl-dialog::part(base) {
-                z-index: 99999;
-            }
+      md-tab {
+        --md-sys-color-on-surface-variant: #c4c6cf;
+      }
 
-      fluent-menu-item {
+      .tab-label {
+        color: #c4c6cf;
+      }
+    }
+
+      md-menu-item {
         --neutral-fill-stealth-hover: #181818;
       }
 
-      #open-tweet-dialog::part(panel) {
-        height: 92vh;
-        max-height: 100vh;
-        max-width: 100vw;
-        width: 60vw;
+      #open-tweet-dialog {
+        --md-dialog-max-width: 60vw;
+        --md-dialog-height: 92vh;
       }
 
-      #open-tweet-dialog::part(body) {
-        padding-top: 0;
+      #open-tweet-dialog::part(dialog) {
+        width: 55vw;
+        max-width: 55vw;
       }
 
       mammoth-bot {
@@ -110,23 +133,23 @@ export class AppHome extends LitElement {
         position: unset;
       }
 
-      fluent-menu {
+      md-menu {
         background: #ffffff14;
         backdrop-filter: blur(48px);
         color: white;
         z-index: 99;
       }
 
-      fluent-menu-item {
+      md-menu-item {
         color: white;
       }
 
       @media(prefers-color-scheme: light) {
-        fluent-menu-item {
+        md-menu-item {
           color: black;
         }
 
-        fluent-menu {
+        md-menu {
           background: rgb(235 235 235);
           backdrop-filter: none;
         }
@@ -147,22 +170,6 @@ export class AppHome extends LitElement {
       #settings-profile-inner h3 {
         margin-top: 0;
         margin-bottom: 0;
-      }
-
-      .sponsor {
-        background: rgba(128, 128, 128, 0.14);
-        border-radius: 6px;
-        padding: 8px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        align-items: end;
-
-        margin-top: 8px;
-      }
-
-      .sponsor a {
-        color: white;
       }
 
       #no-replies {
@@ -197,10 +204,6 @@ export class AppHome extends LitElement {
 
         margin-top: 6px;
     }
-
-      .setting sl-switch {
-        --sl-toggle-size-medium: 16px;
-      }
 
       #context-menu {
         z-index: 10000;
@@ -242,12 +245,12 @@ export class AppHome extends LitElement {
       }
 
       @media(prefers-color-scheme: light) {
-        fluent-menu-item {
+        md-menu-item {
                     --neutral-fill-stealth-hover: white;
                 }
       }
 
-      fluent-badge {
+      md-badge {
         cursor: pointer;
       }
 
@@ -274,24 +277,19 @@ export class AppHome extends LitElement {
         width: 160px;
       }
 
-      fluent-toolbar {
+      md-toolbar {
         width: 100%;
         margin-top: 33px;
         padding-top: 8px;
         background: transparent;
         margin-bottom: 6px;
         top: 13px;
-
         padding-right: 10px;
         position: fixed;
       }
 
-      fluent-toolbar::part(positioning-region) {
-        justify-content: flex-end;
-      }
-
       @media(prefers-color-scheme: dark) {
-        fluent-toolbar {
+        md-toolbar {
           background: transparent;
         }
       }
@@ -378,7 +376,7 @@ export class AppHome extends LitElement {
         width: 20%;
       }
 
-      #profile-card-actions fluent-button {
+      #profile-card-actions md-button {
         width: 80%;
       }
 
@@ -400,12 +398,7 @@ export class AppHome extends LitElement {
         font-size: 14px;
       }
 
-      sl-dialog::part(header-actions) {
-        display: flex;
-        align-items: center;
-      }
-
-      sl-dialog img {
+      md-dialog img {
         height: 160px;
         margin-top: 16px;
         background: #0e0e0e45;
@@ -429,31 +422,17 @@ export class AppHome extends LitElement {
         position: fixed;
       }
 
-      sl-drawer::part(base) {
+      otter-drawer::part(base) {
         z-index: 99999;
       }
 
-      sl-drawer::part(panel) {
+      otter-drawer::part(body) {
         overflow-x: hidden;
 
         backdrop-filter: blur(40px);
 
         content-visibility: auto;
         contain: strict;
-      }
-
-      sl-dialog {
-        --width: 38em;
-      }
-
-      sl-dialog sl-textarea::part(textarea) {
-        height: 14em;
-      }
-
-      sl-dialog::part(panel) {
-        backdrop-filter: blur(40px);
-
-        content-visibility: auto;
       }
 
       sl-card::part(footer) {
@@ -466,27 +445,6 @@ export class AppHome extends LitElement {
         contain: content;
       }
 
-    sl-tab-panel[aria-hidden="false"] {
-      display: initial;
-    }
-
-    sl-tab-panel[aria-hidden="true"] {
-      display: none;
-    }
-
-    sl-tab-panel::part(base)::-webkit-scrollbar) {
-      display: none;
-    }
-
-    sl-tab-group sl-icon {
-      width: 1.8em;
-      height: 1.8em;
-    }
-
-    sl-tab::part(base) {
-      gap: 8px;
-    }
-
     #mobile-actions {
       position: fixed;
       bottom: 72px;
@@ -495,21 +453,19 @@ export class AppHome extends LitElement {
     }
 
     @media(max-width: 1030px) {
-      #profile-card-actions fluent-button {
+      #profile-card-actions md-button {
         width: 100%;
       }
     }
 
 
-    @media(max-width: 600px) and (prefers-color-scheme: light) {
-      sl-tab-group::part(tabs) {
-        background: white;
-      }
-    }
-
-    @media(max-width: 600px) {
+    @media(max-width: 700px) {
       #profile {
         display: none;
+      }
+
+      md-tab {
+        flex: 1;
       }
 
       .tab-label {
@@ -533,31 +489,24 @@ export class AppHome extends LitElement {
         display: none;
       }
 
-      fluent-toolbar {
+      md-toolbar {
         display: none;
-      }
-
-      sl-tab-group::part(tabs) {
-        border-top: hidden;
       }
 
       #mobile-actions {
         display: flex;
       }
 
-      #mobile-actions sl-button::part(base) {
-        border-radius: 16px;
-        height: 56px;
-        width: 56px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding-top: 4px;
-
+      #mobile-actions md-button {
         box-shadow: #0000008a 0px 1px 13px 0px;
       }
 
-      #mobile-actions sl-button sl-icon {
+      #mobile-actions md-button::part(button) {
+        width: 64px;
+        height: 64px;
+      }
+
+      #mobile-actions md-button md-icon {
         height: 30px;
         width: 30px;
         vertical-align: text-bottom;
@@ -565,21 +514,26 @@ export class AppHome extends LitElement {
 
       main {
         display: block;
-        padding-top: 30px;
+        padding-top: 0;
         margin-top: initial;
-      }
-
-      sl-tab-group::part(nav) {
         position: fixed;
-        bottom: 0;
-        right: 0;
+        top: 0;
         left: 0;
-        background: rgb(15 17 24);
-        z-index: 2;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
       }
 
-      sl-tab-group::part(tabs) {
-        justify-content: space-between;
+      md-tabs {
+        height: 100%;
+        width: 100%;
+      }
+
+      md-tab-panel {
+        height: 100%;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-top: 40px;
       }
     }
 
@@ -587,18 +541,6 @@ export class AppHome extends LitElement {
       position: fixed;
       bottom: 18px;
       left: 12px;
-    }
-
-    @media(prefers-color-scheme: light) {
-      .sponsor a {
-        color: black;
-      }
-    }
-
-    @media(max-width: 600px) {
-      sl-tab-group::part(tabs) {
-        width: initial;
-      }
     }
 
     @media(min-width: 1300px) {
@@ -663,12 +605,12 @@ export class AppHome extends LitElement {
       }
     }, { timeout: 3000 });
 
-    window.matchMedia(" (max-width: 600px)").addEventListener("change", (e) => {
+    window.matchMedia(" (max-width: 700px)").addEventListener("change", (e) => {
       if (e.matches) {
-        const tabGroup = this.shadowRoot?.querySelector("sl-tab-group");
+        const tabGroup = this.shadowRoot?.querySelector("md-tabs");
         tabGroup?.setAttribute("placement", "bottom");
       } else {
-        const tabGroup = this.shadowRoot?.querySelector("sl-tab-group");
+        const tabGroup = this.shadowRoot?.querySelector("md-tabs");
         tabGroup?.setAttribute("placement", "start");
       }
     });
@@ -677,6 +619,22 @@ export class AppHome extends LitElement {
     console.log("tabData", tabData)
 
     if (tabData) {
+      // Preload the component for the requested tab
+      switch (tabData) {
+        case 'bookmarks':
+          this.loadBookmarks();
+          break;
+        case 'faves':
+          this.loadFavorites();
+          break;
+        case 'notifications':
+          this.loadNotifications();
+          break;
+        case 'search':
+          this.loadSearch();
+          break;
+      }
+
       setTimeout(() => {
         this.openATab(tabData);
       }, 1000)
@@ -864,9 +822,7 @@ export class AppHome extends LitElement {
 
   openATab(name: string) {
     console.log('tab name', name);
-    const tab = this.shadowRoot?.querySelector(`sl-tab[panel=${name}]`) as any;
-    console.log("tab", tab)
-    tab.click();
+    this.activeTab = name;
   }
 
   async shareMyProfile() {
@@ -952,65 +908,111 @@ export class AppHome extends LitElement {
     homeTimeline.refreshTimeline();
   }
 
+  // Lazy loading methods for tab components
+  async loadBookmarks() {
+    if (!this.bookmarksLoaded) {
+      await import('../components/bookmarks');
+      this.bookmarksLoaded = true;
+    }
+  }
+
+  async loadFavorites() {
+    if (!this.favoritesLoaded) {
+      await import('../components/favorites');
+      this.favoritesLoaded = true;
+    }
+  }
+
+  async loadNotifications() {
+    if (!this.notificationsLoaded) {
+      await import('../components/notifications');
+      this.notificationsLoaded = true;
+    }
+  }
+
+  async loadSearch() {
+    if (!this.searchLoaded) {
+      await import('./search-page');
+      this.searchLoaded = true;
+    }
+  }
+
+  async handleTabChange(event: CustomEvent) {
+    const panel = event.detail.panel;
+    this.activeTab = panel;
+
+    // Lazy load components based on which tab is shown
+    switch (panel) {
+      case 'bookmarks':
+        await this.loadBookmarks();
+        break;
+      case 'faves':
+        await this.loadFavorites();
+        break;
+      case 'notifications':
+        await this.loadNotifications();
+        break;
+      case 'search':
+        await this.loadSearch();
+        break;
+    }
+  }
+
   render() {
     return html`
 
-      <offline-notify></offline-notify>
-
       <right-click>
-        <fluent-menu>
-          <fluent-menu-item @click="${() => this.openNewDialog()}">
-            <sl-icon slot="prefix" src="/assets/add-outline.svg"></sl-icon>
+        <md-menu>
+                    <md-menu-item @menu-item-click=${() => router.navigate("/new-post")}>
+            <md-icon slot="prefix" src="/assets/add-outline.svg"></md-icon>
             New Post
-          </fluent-menu-item>
+          </md-menu-item>
 
-          <fluent-menu-item @click="${() => this.openATab("search")}">
-            <sl-icon src="/assets/search-outline.svg"></sl-icon>
+          <md-menu-item @click="${() => this.openATab("search")}">
+            <md-icon slot="prefix" src="/assets/search-outline.svg"></md-icon>
             Explore
-          </fluent-menu-item>
-          <fluent-menu-item @click="${() => this.openATab("notifications")}">
-            <sl-icon src="/assets/notifications-outline.svg"></sl-icon>
+          </md-menu-item>
+          <md-menu-item @click="${() => this.openATab("notifications")}">
+            <md-icon slot="prefix" src="/assets/notifications-outline.svg"></md-icon>
             Notifications
-          </fluent-menu-item>
-          <fluent-menu-item @click="${() => this.openATab("messages")}">
-            <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
+          </md-menu-item>
+          <md-menu-item @click="${() => this.openATab("messages")}">
+            <md-icon slot="prefix" src="/assets/chatbox-outline.svg"></md-icon>
             Messages
-          </fluent-menu-item>
-          <fluent-menu-item @click="${() => this.openATab("bookmarks")}">
-            <sl-icon src="/assets/bookmark-outline.svg"></sl-icon>
+          </md-menu-item>
+          <md-menu-item @click="${() => this.openATab("bookmarks")}">
+            <md-icon slot="prefix" src="/assets/bookmark-outline.svg"></md-icon>
             Bookmarks
-          </fluent-menu-item>
-          <fluent-menu-item @click="${() => this.openATab("faves")}">
-            <sl-icon src="/assets/heart-outline.svg"></sl-icon>
+          </md-menu-item>
+          <md-menu-item @click="${() => this.openATab("faves")}">
+            <md-icon slot="prefix" src="/assets/heart-outline.svg"></md-icon>
             Favorites
-          </fluent-menu-item>
-        </fluent-menu>
+          </md-menu-item>
+        </md-menu>
       </right-click>
 
       <app-header @open-bot-drawer="${() => this.openBotDrawer()}" @open-settings="${() => this.openSettingsDrawer()}" @open-theming="${() => this.openThemingDrawer()}">
       </app-header>
 
       <!-- <fluent-button appearance="lightweight" @click="${() => this.doFocusMode()}" circle size="small" id="focusModeButton">
-        <sl-icon src="/assets/eye-outline.svg"></sl-icon>
+        <md-icon src="/assets/eye-outline.svg"></md-icon>
       </fluent-button> -->
 
-      <sponsor-button id="focusModeButton"></sponsor-button>
-
-      <sl-drawer label="Theming" id="theming-drawer">
+      <otter-drawer label="Theming" id="theming-drawer">
         <app-theme @color-chosen="${($event: any) => this.handlePrimaryColor($event.detail.color)}"></app-theme>
-      </sl-drawer>
+      </otter-drawer>
 
-      <sl-dialog id="summary-dialog" label="">
+  <md-dialog id="summary-dialog" label="">
         ${this.summary}
-      </sl-dialog>
+  </md-dialog>
 
-      <sl-dialog id="open-tweet-dialog">
+  <md-dialog id="open-tweet-dialog">
         ${this.openTweet ? html`<post-detail .passed_tweet="${this.openTweet}"></post-detail>` : null}
-      </sl-dialog>
+  </md-dialog>
 
       <post-dialog @published="${() => this.handleReload()}"></post-dialog>
 
-      <sl-drawer id="settings-drawer" placement="end" label="Settings">
+      <otter-drawer id="settings-drawer" placement="end" label="Settings">
 
         <div>
           <div id="settings-profile-inner">
@@ -1019,36 +1021,36 @@ export class AppHome extends LitElement {
               <h3>${this.user ? this.user.display_name : "Loading..."}</h3>
 
               <div id="user-actions">
-                <sl-dropdown>
-                  <sl-icon-button slot="trigger" src="/assets/settings-outline.svg"></sl-icon-button>
-                  <fluent-menu>
-                    <fluent-menu-item @click="${() => this.viewMyProfile()}">
-                      <sl-icon slot="prefix" src="/assets/eye-outline.svg"></sl-icon>
+                <md-dropdown>
+                  <md-icon-button slot="trigger" src="/assets/settings-outline.svg"></md-icon-button>
+                  <md-menu>
+                    <md-menu-item @click="${() => this.viewMyProfile()}">
+                      <md-icon slot="prefix" src="/assets/eye-outline.svg"></md-icon>
                       View My Profile
-                    </fluent-menu-item>
-                    <fluent-menu-item @click="${() => this.shareMyProfile()}">
-                      <sl-icon slot="prefix" src="/assets/share-social-outline.svg"></sl-icon>
+                    </md-menu-item>
+                    <md-menu-item @click="${() => this.shareMyProfile()}">
+                      <md-icon slot="prefix" src="/assets/share-social-outline.svg"></md-icon>
                       Share My Profile
-                    </fluent-menu-item>
-                    <fluent-menu-item @click="${() => this.editMyProfile()}">
+                    </md-menu-item>
+                    <md-menu-item @click="${() => this.editMyProfile()}">
                       Edit My Profile
-                    </fluent-menu-item>
-                    <!-- <fluent-menu-item>
+                    </md-menu-item>
+                    <!-- <md-menu-item>
                       Add an existing Account
-                    </fluent-menu-item> -->
-                  </fluent-menu>
-                </sl-dropdown>
+                    </md-menu-item> -->
+                  </md-menu>
+                </md-dropdown>
               </div>
             </div>
 
             <p id="user-url">${this.user ? this.user.url : "Loading..."}</p>
 
-            <fluent-badge appearance="accent" @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count :
+            <md-badge variant="filled" clickable @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count :
         "0"} followers
-            </fluent-badge>
-            <fluent-badge appearance="accent" @click="${() => this.goToFollowing()}">${this.user ? this.user.following_count :
+            </md-badge>
+            <md-badge variant="filled" clickable @click="${() => this.goToFollowing()}">${this.user ? this.user.following_count :
         "0"} following
-            </fluent-badge>
+            </md-badge>
 
           </div>
         </div>
@@ -1061,8 +1063,8 @@ export class AppHome extends LitElement {
           <div>
             <h4>Wellness Mode</h4>
 
-            <sl-switch @sl-change="${($event: any) => this.handleWellnessMode($event.target.checked)}"
-              ?checked="${this.wellnessMode}"></sl-switch>
+            <md-switch @sl-change="${($event: any) => this.handleWellnessMode($event.target.checked)}"
+              ?checked="${this.wellnessMode}"></md-switch>
           </div>
 
           <p>
@@ -1074,8 +1076,8 @@ export class AppHome extends LitElement {
           <div>
             <h4>Data Saver Mode</h4>
 
-            <sl-switch @sl-change="${($event: any) => this.handleDataSaverMode($event.target.checked)}"
-              ?checked="${this.dataSaverMode}"></sl-switch>
+            <md-switch @sl-change="${($event: any) => this.handleDataSaverMode($event.target.checked)}"
+              ?checked="${this.dataSaverMode}"></md-switch>
           </div>
 
           <p>
@@ -1099,18 +1101,6 @@ export class AppHome extends LitElement {
           </ul>
         </div>
 
-        <div class="sponsor">
-          Thanks for using Otter! If you are enjoying the app and want to help me spend more time on it, please consider
-          sponsoring me on GitHub!
-          <iframe src="https://github.com/sponsors/jgw96/button" title="Sponsor jgw96" height="32" width="114"
-            style="border: 0; border-radius: 6px;"></iframe>
-        </div>
-
-        <div class="sponsor">
-          Dont have a Github? You can also support me on Patreon!
-          <a href="https://www.patreon.com/lilpwa" target="_blank">patreon.com/lilpwa</a>
-        </div>
-
         ${this.instanceInfo ? html`
         <div id="instanceInfo">
           <h4>Instance Info</h4>
@@ -1122,9 +1112,9 @@ export class AppHome extends LitElement {
         </div>
         ` : null}
 
-      </sl-drawer>
+      </otter-drawer>
 
-      <sl-drawer id="replies-drawer" placement="end" label="Comments">
+      <otter-drawer id="replies-drawer" placement="end" label="Comments">
         ${this.replies.length > 0 ? html`<ul>
           ${this.replies.map((reply: any) => {
           return html`
@@ -1140,89 +1130,88 @@ export class AppHome extends LitElement {
 
         <div slot="footer" id="reply-post-actions">
           <sl-input placeholder="Reply"></sl-input>
-          <fluent-button appearance="accent" @click="${() => this.replyToAStatus()}">Reply</fluent-button>
+          <md-button variant="filled" @click="${() => this.replyToAStatus()}">Reply</md-button>
         </div>
-      </sl-drawer>
+      </otter-drawer>
 
-      <sl-drawer id="bot-drawer" placement="bottom" label="Otter Bot">
+      <otter-drawer id="bot-drawer" placement="bottom" label="Otter Bot">
         <!-- <mammoth-bot></mammoth-bot> -->
-      </sl-drawer>
+      </otter-drawer>
 
-      <fluent-toolbar>
-      <fluent-button pill size="large" appearance="accent" @click="${() => this.openNewDialog()}">
+      <md-toolbar align="end">
+      <md-button pill variant="filled" @click="${() => this.openNewDialog()}">
           New Post
 
-          <sl-icon slot="suffix" src="/assets/add-outline.svg"></sl-icon>
-        </fluent-button>
-      </fluent-toolbar>
+          <md-icon slot="suffix" src="/assets/add-outline.svg"></md-icon>
+        </md-button>
+      </md-toolbar>
 
 
       <main>
 
-        <sl-tab-group .placement="${window.matchMedia(" (max-width: 600px)").matches ? "bottom" : "start"}">
-          <sl-tab @click="${() => this.reloadHome()}" slot="nav" panel="general">
-            <sl-icon src="/assets/home-outline.svg"></sl-icon>
-
+        <md-tabs
+          @tab-change="${(e: CustomEvent) => this.handleTabChange(e)}"
+          .active="${this.activeTab}"
+          orientation="${window.matchMedia("(max-width: 700px)").matches ? "horizontal" : "vertical"}"
+          .placement="${window.matchMedia("(max-width: 700px)").matches ? "bottom" : "start"}"
+        >
+          <md-tab @click="${() => this.reloadHome()}" slot="nav" panel="general">
+            <md-icon slot="icon" src="/assets/home-outline.svg"></md-icon>
             <span class="tab-label">Home</span>
-          </sl-tab>
-          <sl-tab slot="nav" panel="search">
-            <sl-icon src="/assets/search-outline.svg"></sl-icon>
-
+          </md-tab>
+          <md-tab slot="nav" panel="search">
+            <md-icon slot="icon" src="/assets/search-outline.svg"></md-icon>
             <span class="tab-label">Explore</span>
-          </sl-tab>
-          <sl-tab slot="nav" panel="notifications">
-            <sl-icon src="/assets/notifications-outline.svg"></sl-icon>
-
+          </md-tab>
+          <md-tab slot="nav" panel="notifications">
+            <md-icon slot="icon" src="/assets/notifications-outline.svg"></md-icon>
             <span class="tab-label">Notifications</span>
-          </sl-tab>
-          <!-- <sl-tab slot="nav" panel="messages">
-                                          <sl-icon src="/assets/chatbox-outline.svg"></sl-icon>
-
-                                          <span class="tab-label">Messages</span>
-                                        </sl-tab> -->
-          <sl-tab id="bookmarks-tab" slot="nav" panel="bookmarks">
-            <sl-icon src="/assets/bookmark-outline.svg"></sl-icon>
-
+          </md-tab>
+          <!-- <md-tab slot="nav" panel="messages">
+            <md-icon slot="icon" src="/assets/chatbox-outline.svg"></md-icon>
+            <span class="tab-label">Messages</span>
+          </md-tab> -->
+          <md-tab id="bookmarks-tab" slot="nav" panel="bookmarks">
+            <md-icon slot="icon" src="/assets/bookmark-outline.svg"></md-icon>
             <span class="tab-label">Bookmarks</span>
-          </sl-tab>
-          <sl-tab id="faves-tab" slot="nav" panel="faves">
-            <sl-icon src="/assets/heart-outline.svg"></sl-icon>
-
+          </md-tab>
+          <md-tab id="faves-tab" slot="nav" panel="faves">
+            <md-icon slot="icon" src="/assets/heart-outline.svg"></md-icon>
             <span class="tab-label">Favorites</span>
-          </sl-tab>
+          </md-tab>
 
 
-          <sl-tab-panel name="general">
+          <md-tab-panel name="general">
             <app-timeline @open="${($event: CustomEvent) => this.handleOpenTweet($event.detail.tweet)}" @handle-summary="${($event: any) => this.showSummary($event)}" class="homeTimeline" timelineType="home"
               @replies="${($event: any) => this.handleReplies($event.detail.data, $event.detail.id)}"></app-timeline>
-          </sl-tab-panel>
-          <sl-tab-panel name="media">
+          </md-tab-panel>
+          <md-tab-panel name="media">
             <app-timeline timelineType="media"></app-timeline>
-          </sl-tab-panel>
-          <sl-tab-panel name="messages">
+          </md-tab-panel>
+          <md-tab-panel name="messages">
             <app-messages></app-messages>
-          </sl-tab-panel>
-          <sl-tab-panel name="custom">
+          </md-tab-panel>
+          <md-tab-panel name="custom">
             <app-timeline timelineType="public"></app-timeline>
-          </sl-tab-panel>
-          <sl-tab-panel name="bookmarks">
-            <app-bookmarks></app-bookmarks>
-          </sl-tab-panel>
-          <sl-tab-panel name="faves">
-            <app-favorites></app-favorites>
-          </sl-tab-panel>
-          <sl-tab-panel name="notifications">
-            <app-notifications @open="${($event: CustomEvent) => this.handleOpenTweet($event.detail.tweet)}"></app-notifications>
-          </sl-tab-panel>
-          <sl-tab-panel name="search">
-            <search-page></search-page>
-          </sl-tab-panel>
-        </sl-tab-group>
+          </md-tab-panel>
+          <md-tab-panel name="bookmarks">
+            ${this.bookmarksLoaded ? html`<app-bookmarks></app-bookmarks>` : html`<p>Loading bookmarks...</p>`}
+          </md-tab-panel>
+          <md-tab-panel name="faves">
+            ${this.favoritesLoaded ? html`<app-favorites></app-favorites>` : html`<p>Loading favorites...</p>`}
+          </md-tab-panel>
+          <md-tab-panel name="notifications">
+            ${this.notificationsLoaded ? html`<app-notifications @open="${($event: CustomEvent) => this.handleOpenTweet($event.detail.tweet)}"></app-notifications>` : html`<p>Loading notifications...</p>`}
+          </md-tab-panel>
+          <md-tab-panel name="search">
+            ${this.searchLoaded ? html`<search-page></search-page>` : html`<p>Loading search...</p>`}
+          </md-tab-panel>
+        </md-tabs>
 
         <div id="mobile-actions">
-        <sl-button size="large" pill variant="primary" @click="${() => this.openNewDialog()}">
-            <sl-icon src="/assets/add-outline.svg"></sl-icon>
-          </sl-button>
+        <md-button size="large" pill variant="filled" @click="${() => this.openNewDialog()}">
+            <md-icon src="/assets/add-outline.svg"></md-icon>
+          </md-button>
         </div>
 
         <div id="profile">
@@ -1232,52 +1221,50 @@ export class AppHome extends LitElement {
               <h3>${this.user ? this.user.display_name : "Loading..."}</h3>
 
               <div id="user-actions">
-                <sl-dropdown>
-                  <sl-icon-button slot="trigger" src="/assets/settings-outline.svg"></sl-icon-button>
-                  <fluent-menu>
-                    <fluent-menu-item @click="${() => this.viewMyProfile()}">
-                      <sl-icon slot="prefix" src="/assets/eye-outline.svg"></sl-icon>
+                <md-dropdown>
+                  <md-icon-button slot="trigger" src="/assets/settings-outline.svg"></md-icon-button>
+                  <md-menu>
+                    <md-menu-item @click="${() => this.viewMyProfile()}">
+                      <md-icon slot="prefix" src="/assets/eye-outline.svg"></md-icon>
                       View My Profile
-                    </fluent-menu-item>
-                    <fluent-menu-item @click="${() => this.shareMyProfile()}">
-                      <sl-icon slot="prefix" src="/assets/share-social-outline.svg"></sl-icon>
+                    </md-menu-item>
+                    <md-menu-item @click="${() => this.shareMyProfile()}">
+                      <md-icon slot="prefix" src="/assets/share-social-outline.svg"></md-icon>
                       Share My Profile
-                    </fluent-menu-item>
-                    <fluent-menu-item @click="${() => this.editMyProfile()}">
+                    </md-menu-item>
+                    <md-menu-item @click="${() => this.editMyProfile()}">
                        Edit My Profile
-                    </fluent-menu-item>
-                    <!-- <fluent-menu-item>
+                    </md-menu-item>
+                    <!-- <md-menu-item>
                       Add an existing Account
-                    </fluent-menu-item> -->
-                  </fluent-menu>
-                </sl-dropdown>
+                    </md-menu-item> -->
+                  </md-menu>
+                </md-dropdown>
               </div>
             </div>
 
             <p id="user-url">${this.user ? this.user.url : "Loading..."}</p>
 
-            <fluent-badge appearance="accent" @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count :
+            <md-badge variant="filled" clickable @click="${() => this.goToFollowers()}">${this.user ? this.user.followers_count :
         "0"} followers
-            </fluent-badge>
-            <fluent-badge appearance="accent" @click="${() => this.goToFollowing()}">${this.user ? this.user.following_count :
+            </md-badge>
+            <md-badge variant="filled" clickable @click="${() => this.goToFollowing()}">${this.user ? this.user.following_count :
         "0"} following
-            </fluent-badge>
+            </md-badge>
 
           </div>
 
           <!-- <div id="profile-card-actions">
-                  <fluent-button pill size="large" appearance="accent" @click="${() => this.openNewDialog()}">
+                  <md-button pill size="large" variant="filled" @click="${() => this.openNewDialog()}">
                     New Post
 
-                    <sl-icon slot="suffix" src="/assets/add-outline.svg"></sl-icon>
-                  </fluent-button>
+                    <md-icon slot="suffix" src="/assets/add-outline.svg"></md-icon>
+                  </md-button>
                 </div> -->
         </div>
 
         <!-- <mammoth-bot></mammoth-bot> -->
       </main>
-
-      <pwa-install disable-install-description="true"></pwa-install>
     `;
   }
 }

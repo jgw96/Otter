@@ -8,12 +8,10 @@ import { router } from '../utils/router';
 import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 
 // import fluent tabs
-import { fluentTabs, fluentTab, fluentTabPanel, fluentButton, fluentTextField, provideFluentDesignSystem } from '@fluentui/web-components';
+import { fluentTabs, fluentTab, fluentTabPanel, provideFluentDesignSystem } from '@fluentui/web-components';
 provideFluentDesignSystem().register(fluentTabs());
 provideFluentDesignSystem().register(fluentTab());
 provideFluentDesignSystem().register(fluentTabPanel());
-provideFluentDesignSystem().register(fluentButton());
-provideFluentDesignSystem().register(fluentTextField());
 
 @customElement('search-page')
 export class SearchPage extends LitElement {

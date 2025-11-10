@@ -17,7 +17,7 @@ export class AppIndex extends LitElement {
         padding-bottom: 16px;
       }
 
-      @media(max-width: 600px) {
+      @media(max-width: 700px) {
         main {
           padding-left: 8px;
           padding-right: 8px;
@@ -59,16 +59,67 @@ export class AppIndex extends LitElement {
     const potentialColor = settings.primary_color;
 
     if (potentialColor) {
-      document.body.style.setProperty('--sl-color-primary-600', potentialColor);
-
-      document.querySelector("html")!.style.setProperty('--primary-color', potentialColor);
+      this.applyThemeColor(potentialColor);
     }
     else {
       // get css variable color
       const color = getComputedStyle(document.body).getPropertyValue('--sl-color-primary-600');
-      document.querySelector("html")!.style.setProperty('--primary-color', color);
-
+      this.applyThemeColor(color);
     }
+  }
+
+  /**
+   * Apply theme color to both Shoelace and MD3 design tokens
+   */
+  private applyThemeColor(color: string) {
+    const root = document.documentElement;
+
+    // Shoelace tokens
+    root.style.setProperty('--sl-color-primary-600', color);
+    root.style.setProperty('--primary-color', color);
+
+    // MD3 tokens - primary color (set on :root for highest priority)
+    root.style.setProperty('--md-sys-color-primary', color);
+    root.style.setProperty('--md-sys-color-outline', color);
+
+    // Generate lighter/darker variants for better MD3 integration
+    const lighterVariant = this.adjustColorBrightness(color, 40);
+    const darkerVariant = this.adjustColorBrightness(color, -40);
+
+    root.style.setProperty('--sl-color-primary-500', lighterVariant);
+    root.style.setProperty('--sl-color-primary-700', darkerVariant);
+
+    // Also update body for legacy support
+    document.body.style.setProperty('--sl-color-primary-600', color);
+    document.body.style.setProperty('--md-sys-color-primary', color);
+    document.body.style.setProperty('--md-sys-color-outline', color);
+  }
+
+  /**
+   * Adjust color brightness (from app-theme component)
+   */
+  private adjustColorBrightness(col: string, amt: number): string {
+    let usePound = false;
+    if (col[0] === "#") {
+      col = col.slice(1);
+      usePound = true;
+    }
+
+    const num = parseInt(col, 16);
+
+    let r = (num >> 16) + amt;
+    if (r > 255) r = 255;
+    else if (r < 0) r = 0;
+
+    let b = ((num >> 8) & 0x00FF) + amt;
+    if (b > 255) b = 255;
+    else if (b < 0) b = 0;
+
+    let g = (num & 0x0000FF) + amt;
+    if (g > 255) g = 255;
+    else if (g < 0) g = 0;
+
+    return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16);
   }
 
   firstUpdated() {

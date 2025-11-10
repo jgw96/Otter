@@ -1,5 +1,9 @@
 :host,
 .sl-theme-dark {
+  /* MD3 Color Tokens - Dark Mode */
+  --md-sys-color-background: #151218;
+  --md-sys-color-on-background: #e6e1e5;
+
   --sl-color-gray-50: hsl(240 5.1% 15%);
   --sl-color-gray-100: hsl(240 5.7% 18.2%);
   --sl-color-gray-200: hsl(240 4.6% 22%);
@@ -780,7 +784,7 @@
   margin: var(--sl-spacing-medium);
 }
 
-fluent-button::part(control) {
+md-button::part(control) {
   border: none;
 }
 

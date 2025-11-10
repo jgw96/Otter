@@ -1,0 +1,199 @@
+import { LitElement, html, css } from 'lit';
+import { customElement, property, query } from 'lit/decorators.js';
+
+/**
+ * Material Design 3 Text Field Component
+ * A single-line text input field with MD3 styling.
+ * Replaces fluent-text-field with MD3 styling.
+ */
+@customElement('md-text-field')
+export class MdTextField extends LitElement {
+  @property({ type: String }) value = '';
+  @property({ type: String }) placeholder = '';
+  @property({ type: Boolean }) disabled = false;
+  @property({ type: Boolean }) autofocus = false;
+  @property({ type: String }) variant: 'filled' | 'outlined' = 'filled';
+  @property({ type: String }) type: 'text' | 'email' | 'password' | 'search' | 'tel' | 'url' = 'text';
+
+  @query('input') private _input!: HTMLInputElement;
+
+  static styles = css`
+    :host {
+      display: block;
+      width: 100%;
+    }
+
+    .text-field-container {
+      position: relative;
+      width: 100%;
+    }
+
+    input {
+      width: 100%;
+      min-height: 40px;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 4px 4px 0 0;
+      background-color: var(--md-sys-color-surface-container-highest, #e6e0e9);
+      font-family: 'Roboto', system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 24px;
+      letter-spacing: 0.5px;
+      color: var(--md-sys-color-on-surface, #1d1b20);
+      border-bottom: 1px solid var(--md-sys-color-on-surface-variant, #49454f);
+      transition: background-color 0.2s cubic-bezier(0.2, 0, 0, 1),
+                  border-bottom-color 0.2s cubic-bezier(0.2, 0, 0, 1),
+                  border-bottom-width 0.2s cubic-bezier(0.2, 0, 0, 1);
+      box-sizing: border-box;
+    }
+
+    input::placeholder {
+      color: var(--md-sys-color-on-surface-variant, #49454f);
+      opacity: 1;
+    }
+
+    input:hover:not(:disabled) {
+      background-color: color-mix(
+        in srgb,
+        var(--md-sys-color-on-surface, #1d1b20) 8%,
+        var(--md-sys-color-surface-container-highest, #e6e0e9)
+      );
+    }
+
+    input:focus {
+      outline: none;
+      border-bottom-color: var(--md-sys-color-primary, #6750a4);
+      border-bottom-width: 2px;
+      background-color: color-mix(
+        in srgb,
+        var(--md-sys-color-on-surface, #1d1b20) 12%,
+        var(--md-sys-color-surface-container-highest, #e6e0e9)
+      );
+    }
+
+    input:disabled {
+      opacity: 0.38;
+      cursor: not-allowed;
+      background-color: var(--md-sys-color-surface-container-highest, #e6e0e9);
+    }
+
+    /* Outlined variant */
+    input.outlined {
+      background-color: transparent;
+      border: 1px solid var(--md-sys-color-outline, #79747e);
+      border-radius: 4px;
+    }
+
+    input.outlined:hover:not(:disabled) {
+      border-color: var(--md-sys-color-on-surface, #1d1b20);
+      background-color: transparent;
+    }
+
+    input.outlined:focus {
+      border-color: var(--md-sys-color-primary, #6750a4);
+      border-width: 2px;
+      background-color: transparent;
+      padding: 11px 15px; /* Adjust for border width change */
+    }
+
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+      input {
+        background-color: var(--md-sys-color-surface-container-highest, #49454f);
+        color: var(--md-sys-color-on-surface, #e6e0e9);
+        border-bottom-color: var(--md-sys-color-outline, #938f99);
+      }
+
+      input::placeholder {
+        color: var(--md-sys-color-on-surface-variant, #cac4d0);
+      }
+
+      input:hover:not(:disabled) {
+        background-color: color-mix(
+          in srgb,
+          var(--md-sys-color-on-surface, #e6e0e9) 8%,
+          var(--md-sys-color-surface-container-highest, #49454f)
+        );
+      }
+
+      input:focus {
+        border-bottom-color: var(--md-sys-color-primary, #d0bcff);
+        background-color: color-mix(
+          in srgb,
+          var(--md-sys-color-on-surface, #e6e0e9) 12%,
+          var(--md-sys-color-surface-container-highest, #49454f)
+        );
+      }
+
+      input:disabled {
+        background-color: var(--md-sys-color-surface-container-highest, #49454f);
+      }
+
+      input.outlined {
+        background-color: transparent;
+        border-color: var(--md-sys-color-outline, #938f99);
+      }
+
+      input.outlined:hover:not(:disabled) {
+        border-color: var(--md-sys-color-on-surface, #e6e0e9);
+      }
+
+      input.outlined:focus {
+        border-color: var(--md-sys-color-primary, #d0bcff);
+      }
+    }
+  `;
+
+  connectedCallback() {
+    super.connectedCallback();
+  }
+
+  firstUpdated() {
+    if (this.autofocus && this._input) {
+      this._input.focus();
+    }
+  }
+
+  private _handleInput(e: Event) {
+    const input = e.target as HTMLInputElement;
+    this.value = input.value;
+    this.dispatchEvent(new CustomEvent('input', {
+      detail: { value: this.value },
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  private _handleChange(e: Event) {
+    const input = e.target as HTMLInputElement;
+    this.value = input.value;
+    this.dispatchEvent(new CustomEvent('change', {
+      detail: { value: this.value },
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  render() {
+    return html`
+      <div class="text-field-container">
+        <input
+          type="${this.type}"
+          .value="${this.value}"
+          placeholder="${this.placeholder}"
+          ?disabled="${this.disabled}"
+          class="${this.variant}"
+          @input="${this._handleInput}"
+          @change="${this._handleChange}"
+        />
+      </div>
+    `;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'md-text-field': MdTextField;
+  }
+}

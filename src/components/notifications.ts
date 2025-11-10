@@ -3,17 +3,18 @@ import { customElement, state } from 'lit/decorators.js';
 
 import './user-profile';
 import './timeline-item';
+import './md-dialog';
+import './md-switch';
+import './md-button';
 
 import '@shoelace-style/shoelace/dist/components/divider/divider';
 
 // import fluent tabs
-import { fluentTabs, fluentTab, fluentTabPanel, fluentButton, fluentSwitch, provideFluentDesignSystem } from '@fluentui/web-components';
+import { fluentTabs, fluentTab, fluentTabPanel, provideFluentDesignSystem } from '@fluentui/web-components';
 import { Post } from '../interfaces/Post';
 provideFluentDesignSystem().register(fluentTabs());
 provideFluentDesignSystem().register(fluentTab());
 provideFluentDesignSystem().register(fluentTabPanel());
-provideFluentDesignSystem().register(fluentButton());
-provideFluentDesignSystem().register(fluentSwitch());
 
 
 @customElement('app-notifications')
@@ -34,24 +35,14 @@ export class Notifications extends LitElement {
                 content-visibility: auto;
             }
 
-            #open-tweet-dialog::part(panel) {
-                height: 92vh;
-                max-height: 100vh;
-                max-width: 100vw;
-                width: 60vw;
-            }
-
-            #open-tweet-dialog::part(body) {
-                padding-top: 0;
+            md-dialog#open-tweet-dialog {
+                --md-dialog-max-width: 60vw;
+                --md-dialog-max-height: 92vh;
             }
 
             @media(prefers-color-scheme: dark) {
                 fluent-tab {
                     color: white;
-                }
-
-                fluent-button {
-                    background: transparent;
                 }
 
                 li {
@@ -71,13 +62,9 @@ export class Notifications extends LitElement {
                 gap: 10px;
             }
 
-            fluent-button::part(control) {
-                border: none;
+            md-switch {
+                font-size: 14px;
             }
-
-            sl-switch {
-                --sl-toggle-size-small: 16px;
-              }
 
             ul {
                 display: flex;
@@ -174,17 +161,19 @@ export class Notifications extends LitElement {
                 font-weight: normal;
             }
 
-            @media(max-width: 600px) {
+            @media(max-width: 700px) {
                 sl-tab-group {
                     padding-left: 10px;
                     padding-right: 10px;
                 }
 
-                #open-tweet-dialog::part(panel) {
-                    height: 100vh;
-                    max-height: 100vh;
-                    max-width: 100vw;
-                    width: 100vw;
+                md-dialog#open-tweet-dialog {
+                    --md-dialog-max-width: 100vw;
+                    --md-dialog-max-height: 100vh;
+                }
+
+                md-dialog#open-tweet-dialog dialog {
+                    border-radius: 0;
                 }
             }
         `
@@ -273,15 +262,15 @@ export class Notifications extends LitElement {
 
     render() {
         return html`
-        <sl-dialog id="open-tweet-dialog">
+        <md-dialog id="open-tweet-dialog" label="Post Details" .open="${!!this.openTweet}" @md-dialog-hide="${() => this.openTweet = null}">
             ${this.openTweet ? html`<post-detail .passed_tweet="${this.openTweet}"></post-detail>` : null}
-        </sl-dialog>
+        </md-dialog>
 
           <div id="notify-actions">
             <div id="notify-inner">
-            <sl-switch size="small" label="Notifications" ?checked="${this.subbed}" @sl-change="${($event: any) => this.sub($event.target.checked)}">Notifications</sl-switch>
+            <md-switch ?checked="${this.subbed}" @change="${($event: any) => this.sub($event.target.checked)}">Notifications</md-switch>
             </div>
-            <fluent-button appearance="accent" pill size="small" @click="${() => this.clear()}">Clear</fluent-button>
+            <md-button variant="filled" pill size="small" @click="${() => this.clear()}">Clear</md-button>
           </div>
 
           <fluent-tabs orientation="horizontal">

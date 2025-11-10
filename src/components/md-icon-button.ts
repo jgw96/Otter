@@ -1,0 +1,189 @@
+import { LitElement, html, css } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
+import './md-icon';
+
+/**
+ * Material Design 3 Icon Button Component
+ *
+ * An icon button is a clickable icon that triggers an action.
+ * Supports standard, filled, and outlined variants.
+ *
+ * @slot - Default slot for custom icon content
+ *
+ * @fires click - Standard click event
+ *
+ * @csspart base - The button's base container
+ * @csspart icon - The icon container
+ */
+@customElement('md-icon-button')
+export class MdIconButton extends LitElement {
+  /** The path/URL to the SVG icon file */
+  @property({ type: String }) src?: string;
+
+  /** The label for accessibility */
+  @property({ type: String }) label?: string;
+
+  /** Button variant */
+  @property({ type: String }) variant: 'standard' | 'filled' | 'outlined' = 'standard';
+
+  /** Whether the button is disabled */
+  @property({ type: Boolean }) disabled = false;
+
+  static styles = css`
+    :host {
+      display: inline-flex;
+    }
+
+    .icon-button {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      padding: 8px;
+      border: none;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--md-sys-color-on-surface-variant, rgba(255, 255, 255, 0.7));
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+      font-size: 24px;
+      outline: none;
+    }
+
+    /* Variants */
+    .icon-button--standard {
+      background: transparent;
+    }
+
+    .icon-button--filled {
+      background: var(--md-sys-color-primary, var(--sl-color-primary-600));
+      color: var(--md-sys-color-on-primary, white);
+    }
+
+    .icon-button--outlined {
+      border: 1px solid var(--md-sys-color-outline, rgba(255, 255, 255, 0.12));
+    }
+
+    /* Hover states */
+    .icon-button:not(:disabled):hover {
+      background: color-mix(in srgb, var(--md-sys-color-on-surface, white) 8%, transparent);
+    }
+
+    .icon-button--filled:not(:disabled):hover {
+      background: color-mix(in srgb, var(--md-sys-color-primary, var(--sl-color-primary-600)) 92%, var(--md-sys-color-on-primary, white) 8%);
+      box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+    }
+
+    .icon-button--outlined:not(:disabled):hover {
+      background: color-mix(in srgb, var(--md-sys-color-on-surface, white) 8%, transparent);
+      border-color: var(--md-sys-color-outline, rgba(255, 255, 255, 0.2));
+    }
+
+    /* Active states */
+    .icon-button:not(:disabled):active {
+      background: color-mix(in srgb, var(--md-sys-color-on-surface, white) 12%, transparent);
+    }
+
+    .icon-button--filled:not(:disabled):active {
+      background: color-mix(in srgb, var(--md-sys-color-primary, var(--sl-color-primary-600)) 88%, var(--md-sys-color-on-primary, white) 12%);
+    }
+
+    /* Focus state */
+    .icon-button:focus-visible {
+      outline: 2px solid var(--md-sys-color-primary, var(--sl-color-primary-600));
+      outline-offset: 2px;
+    }
+
+    /* Disabled state */
+    .icon-button:disabled {
+      opacity: 0.38;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    /* Light mode */
+    @media (prefers-color-scheme: light) {
+      .icon-button {
+        color: var(--md-sys-color-on-surface-variant, rgba(0, 0, 0, 0.6));
+      }
+
+      .icon-button:not(:disabled):hover {
+        background: color-mix(in srgb, var(--md-sys-color-on-surface, black) 8%, transparent);
+      }
+
+      .icon-button--outlined {
+        border-color: var(--md-sys-color-outline, rgba(0, 0, 0, 0.12));
+      }
+
+      .icon-button--outlined:not(:disabled):hover {
+        background: color-mix(in srgb, var(--md-sys-color-on-surface, black) 8%, transparent);
+        border-color: var(--md-sys-color-outline, rgba(0, 0, 0, 0.2));
+      }
+
+      .icon-button:not(:disabled):active {
+        background: color-mix(in srgb, var(--md-sys-color-on-surface, black) 12%, transparent);
+      }
+    }
+
+    .icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  `;
+
+  private handleClick(e: MouseEvent) {
+    if (this.disabled) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+  }
+
+  private handleKeyDown(e: KeyboardEvent) {
+    if (this.disabled) return;
+
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this.click();
+    }
+  }
+
+  render() {
+    const classes = {
+      'icon-button': true,
+      'icon-button--standard': this.variant === 'standard',
+      'icon-button--filled': this.variant === 'filled',
+      'icon-button--outlined': this.variant === 'outlined'
+    };
+
+    return html`
+      <button
+        part="base"
+        class="${Object.entries(classes).filter(([_, v]) => v).map(([k]) => k).join(' ')}"
+        ?disabled=${this.disabled}
+        @click=${this.handleClick}
+        @keydown=${this.handleKeyDown}
+        aria-label="${this.label || 'icon button'}"
+      >
+        <div part="icon" class="icon">
+          ${this.src
+            ? html`<md-icon src="${this.src}" label="${ifDefined(this.label)}"></md-icon>`
+            : html`<slot></slot>`
+          }
+        </div>
+      </button>
+    `;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'md-icon-button': MdIconButton;
+  }
+}

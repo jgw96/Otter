@@ -13,8 +13,8 @@
   <meta name="description"
     content="Discover a simpler way to socialize online with Otter, the Mastodon app that prioritizes ease-of-use and clean design. Experience the open-source, decentralized social network without the clutter. Join communities, share your thoughts, and connect with like-minded individuals all with just a few taps. Say goodbye to overwhelming feeds and complicated features, Otter simplifies the social media experience." />
 
-  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#181818" />
-  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f3f3f3" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#151218" />
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fef7ff" />
 
   <!-- These meta tags are Apple-specific, and set the web application to run in full-screen mode with a black status bar. Learn more at https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html-->
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -653,11 +653,12 @@
       --tree-item-expand-collapse-selected-hover: #e0e0e0;
     }
 
-    fluent-button::part(control) {
+    md-button::part(control) {
       border: none;
     }
   </style>
   <link rel="stylesheet" media="(prefers-color-scheme:dark)" href="/dark.css">
+  <link rel="stylesheet" href="/src/styles/md-tokens.css">
 
   <style>
     :root {
@@ -716,19 +717,31 @@
       min-height: 100vh;
     }
 
+    /* MD3 Color Tokens */
+    :root {
+      /* Light mode MD3 background colors */
+      --md-sys-color-background: #fef7ff;
+      --md-sys-color-on-background: #1d1b20;
+    }
+
     @media (prefers-color-scheme: dark) {
+      :root {
+        /* Dark mode MD3 background colors */
+        --md-sys-color-background: #151218;
+        --md-sys-color-on-background: #e6e1e5;
+      }
 
       body {
-        background-color: #181818;
-        color: white;
+        background-color: var(--md-sys-color-background);
+        color: var(--md-sys-color-on-background);
       }
     }
 
     @media (prefers-color-scheme: light) {
 
       body {
-        background-color: rgb(243 243 243);
-        color: black;
+        background-color: var(--md-sys-color-background);
+        color: var(--md-sys-color-on-background);
       }
 
     }
@@ -753,7 +766,7 @@
       width: 6em;
     }
 
-    fluent-button::part(control) {
+    md-button::part(control) {
       border: none;
     }
   </style>
@@ -784,7 +797,7 @@
       This wil be very quick.
     </p>
 
-    <fluent-button appearance="accent" id="updateButton">Reload</fluent-button>
+    <md-button variant="filled" id="updateButton">Reload</md-button>
   </div>
 
   <script>

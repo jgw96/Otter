@@ -44,7 +44,7 @@ export const savePlace = async (id: string) => {
 }
 
 export const getHomeTimeline = async () => {
-    const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/timeline?code=${token}&server=${server}`);
+    const response = await fetch(`http://localhost:8000/timeline?code=${token}&server=${server}`);
     const data = await response.json();
     return data;
 }
@@ -224,13 +224,13 @@ export const getPaginatedHomeTimeline = async (type = "home") => {
 }
 
 export const getPublicTimeline = async () => {
-    const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/public?code=${token}&server=${server}`);
+    const response = await fetch(`http://localhost:8000/public?code=${token}&server=${server}`);
     const data = await response.json();
     return data;
 }
 
 export const boostPost = async (id: string) => {
-    // const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/boost?id=${id}&code=${accessToken}&server=${server}`, {
+    // const response = await fetch(`http://localhost:8000/boost?id=${id}&code=${accessToken}&server=${server}`, {
     //     method: 'POST',
     //     headers: {
     //         'Content-Type': 'application/json'
@@ -256,7 +256,7 @@ export const boostPost = async (id: string) => {
 }
 
 export const reblogPost = async (id: string) => {
-    const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/reblog?id=${id}&code=${accessToken}&server=${server}`, {
+    const response = await fetch(`http://localhost:8000/reblog?id=${id}&code=${accessToken}&server=${server}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -267,13 +267,13 @@ export const reblogPost = async (id: string) => {
 }
 
 export const getReplies = async (id: string) => {
-    const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/replies?id=${id}&code=${accessToken}&server=${server}`);
+    const response = await fetch(`http://localhost:8000/replies?id=${id}&code=${accessToken}&server=${server}`);
     const data = await response.json();
     return data;
 }
 
 export const reply = async (id: string, reply: string) => {
-    const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/reply?id=${id}&text=${reply}&code=${accessToken}&server=${server}`, {
+    const response = await fetch(`http://localhost:8000/reply?id=${id}&text=${reply}&code=${accessToken}&server=${server}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -284,19 +284,19 @@ export const reply = async (id: string, reply: string) => {
 }
 
 export const mediaTimeline = async () => {
-    const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/mediaTimeline?limit=40&code=${accessToken}&server=${server}`);
+    const response = await fetch(`http://localhost:8000/mediaTimeline?limit=40&code=${accessToken}&server=${server}`);
     const data = await response.json();
     return data;
 };
 
 export const searchTimeline = async (query: string) => {
-    const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/search?query=${query}&code=${accessToken}&server=${server}`);
+    const response = await fetch(`http://localhost:8000/search?query=${query}&code=${accessToken}&server=${server}`);
     const data = await response.json();
     return data;
 }
 
 export const getHashtagTimeline = async (hashtag: string) => {
-    const response = await fetch(`https://mammoth-server-node-qsqckaz7va-uc.a.run.app/hashtag?tag=${hashtag}&code=${accessToken}&server=${server}`);
+    const response = await fetch(`http://localhost:8000/hashtag?tag=${hashtag}&code=${accessToken}&server=${server}`);
     const data = await response.json();
     return data;
 }

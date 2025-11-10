@@ -1,6 +1,10 @@
 :root,
 :host,
 .sl-theme-light {
+  /* MD3 Color Tokens - Light Mode */
+  --md-sys-color-background: #fef7ff;
+  --md-sys-color-on-background: #1d1b20;
+
   --sl-color-gray-50: hsl(0 0% 97.5%);
   --sl-color-gray-100: hsl(240 4.8% 95.9%);
   --sl-color-gray-200: hsl(240 5.9% 90%);
@@ -618,6 +622,6 @@
   --tree-item-expand-collapse-selected-hover: #e0e0e0;
 }
 
-fluent-button::part(control) {
+md-button::part(control) {
   border: none;
 }

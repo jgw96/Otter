@@ -1,10 +1,11 @@
 import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 
-import { fluentButton, provideFluentDesignSystem } from '@fluentui/web-components';
+import './md-icon.js';
+import './md-icon-button.js';
 
 import { enableVibrate } from '../utils/handle-vibrate';
-provideFluentDesignSystem().register(fluentButton());
+
 @customElement('app-header')
 export class AppHeader extends LitElement {
   @property({ type: String }) title = 'Otter';
@@ -67,7 +68,7 @@ export class AppHeader extends LitElement {
         gap: 16px;
       }
 
-      fluent-button {
+      md-button, md-icon-button {
         -webkit-app-region: no-drag;
         app-region: no-drag;
       }
@@ -93,12 +94,12 @@ export class AppHeader extends LitElement {
       }
 
       @media(prefers-color-scheme: dark) {
-        fluent-button[appearance="neutral"]::part(control) {
+        md-button[variant="outlined"]::part(control) {
           background: #1e1e1e;
           color: white;
         }
 
-          fluent-button::part(control) {
+          md-button::part(control) {
               --neutral-fill-stealth-active: #1b1d26;
               --neutral-fill-stealth-hover: #1b1d26;
           }
@@ -152,25 +153,25 @@ export class AppHeader extends LitElement {
       <header>
 
       <div id="back-button-block">
-          ${this.enableBack ? html`<fluent-button @click="${() => this.goBack()}" title="back" size="small" href="/home">
+          ${this.enableBack ? html`<md-button @click="${() => this.goBack()}" title="back" size="small" href="/home">
             Back
-          </fluent-button>` : null}
+          </md-button>` : null}
 
           <img src="/assets/icons/Android/64-icon.png" alt="Otter" width="20" height="20">
         </div>
 
         <div id="actions">
-          <!-- <fluent-button @click="${() => this.openBotDrawer()}" appearance="lightweight" title=="Open MammothBot" id="mammoth-bot">
-            <sl-icon src="/assets/sparkles-outline.svg" alt="MammothBot"></sl-icon>
-          </fluent-button> -->
+          <!-- <md-button @click="${() => this.openBotDrawer()}" variant="text" title=="Open MammothBot" id="mammoth-bot">
+            <md-icon src="/assets/sparkles-outline.svg" alt="MammothBot"></md-icon>
+          </md-button> -->
 
-          <fluent-button appearance="lightweight" title="Open Theme Settings" id="open-button" circle size="small" @click="${() => this.handleTheming()}">
-            <sl-icon src="/assets/color-palette-outline.svg" alt="Theme"></sl-icon>
-          </fluent-button>
+          <md-icon-button title="Open Theme Settings" id="open-button" @click="${() => this.handleTheming()}">
+            <md-icon src="/assets/color-palette-outline.svg" alt="Theme"></md-icon>
+          </md-icon-button>
 
-          <fluent-button id="settings-button" appearance="lightweight"  title="Open Settings" @click="${() => this.openSettings()}" circle size="small">
-            <sl-icon src="/assets/settings-outline.svg"></sl-icon>
-          </fluent-button>
+          <md-icon-button id="settings-button" title="Open Settings" @click="${() => this.openSettings()}">
+            <md-icon src="/assets/settings-outline.svg"></md-icon>
+          </md-icon-button>
         </div>
 
       </header>

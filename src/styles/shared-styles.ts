@@ -13,7 +13,7 @@ export const styles = css`
     padding-top: 60px;
   }
 
-  fluent-button::part(control) {
+  md-button::part(control) {
     border: none;
   }
 

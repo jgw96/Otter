@@ -1,9 +1,8 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
-import { fluentTextArea, provideFluentDesignSystem } from '@fluentui/web-components';
+import '../components/md-text-area';
 import { requestMammothBot } from '../services/ai';
-provideFluentDesignSystem().register(fluentTextArea());
 
 @customElement('mammoth-bot')
 export class MammothBot extends LitElement {
@@ -33,7 +32,7 @@ export class MammothBot extends LitElement {
                 color: #d2d2d2;
             }
 
-            fluent-text-area::part(control) {
+            md-text-area::part(textarea) {
                 height: 130px;
                 width: 26vw;
                 overflow-y: clip;
@@ -99,17 +98,17 @@ export class MammothBot extends LitElement {
                 margin-bottom: 6px;
             }
 
-            fluent-button {
+            md-button {
                 place-self: flex-end;
                 margin-top: 6px;
             }
 
-            fluent-button::part(control) {
+            md-button::part(control) {
                 border: none;
             }
 
             @media(max-width: 800px) {
-                fluent-text-area::part(control) {
+                md-text-area::part(textarea) {
                     display: flex;
                     position: unset;
 
@@ -122,7 +121,7 @@ export class MammothBot extends LitElement {
             }
 
             @media(prefers-color-scheme: dark) {
-                fluent-text-area::part(control), fluent-button[appearance="neutral"]::part(control), fluent-text-field::part(control), fluent-text-field::part(root) {
+                md-text-area::part(textarea), md-button[variant="outlined"]::part(control) {
                     background: #1e1e1e;
                     color: white;
                 }
@@ -135,7 +134,7 @@ export class MammothBot extends LitElement {
     ];
 
     async handleInput() {
-        const value = (this.shadowRoot?.querySelector("fluent-text-area") as any).value;
+        const value = (this.shadowRoot?.querySelector("md-text-area") as any).value;
         console.log("value", value);
 
         this.previousMessages = [
@@ -145,7 +144,7 @@ export class MammothBot extends LitElement {
             content: value
         }];
 
-        const textarea = this.shadowRoot?.querySelector("fluent-text-area") as any;
+        const textarea = this.shadowRoot?.querySelector("md-text-area") as any;
         textarea.value = "";
 
         const data = await requestMammothBot(value, this.previousMessages);
@@ -192,9 +191,9 @@ export class MammothBot extends LitElement {
                 }
             </ul>
 
-            <fluent-text-area placeholder="Hello, I am MammothBot. I can help you with Mastodon, such as by generating posts etc, summarizing posts and more. You can chat with me like you would anyone else, no need to talk like a robot 😊" rows="3"></fluent-text-area>
+            <md-text-area placeholder="Hello, I am MammothBot. I can help you with Mastodon, such as by generating posts etc, summarizing posts and more. You can chat with me like you would anyone else, no need to talk like a robot 😊" rows="3"></md-text-area>
 
-            <fluent-button @click="${() => this.handleInput()}" appearance="accent">Send</fluent-button>
+            <md-button @click="${() => this.handleInput()}" variant="filled">Send</md-button>
         `;
     }
 }
