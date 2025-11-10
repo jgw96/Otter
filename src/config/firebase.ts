@@ -1,0 +1,26 @@
+/**
+ * Firebase Functions Configuration
+ *
+ * Switch between local emulator and production based on environment
+ */
+
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+// Firebase project configuration
+const FIREBASE_PROJECT_ID = 'coho-mastodon';
+const FIREBASE_REGION = 'us-central1';
+
+// Base URLs
+const PRODUCTION_BASE_URL = `https://${FIREBASE_REGION}-${FIREBASE_PROJECT_ID}.cloudfunctions.net`;
+const LOCAL_BASE_URL = `http://localhost:5001/${FIREBASE_PROJECT_ID}/${FIREBASE_REGION}`;
+
+// Export the appropriate base URL
+// Use local emulator when running on localhost, otherwise use production
+export const FIREBASE_FUNCTIONS_BASE_URL = isLocal
+  ? LOCAL_BASE_URL
+  : PRODUCTION_BASE_URL;
+
+// Helper function to build Firebase Function URLs
+export function getFirebaseFunctionUrl(functionName: string): string {
+  return `${FIREBASE_FUNCTIONS_BASE_URL}/${functionName}`;
+}

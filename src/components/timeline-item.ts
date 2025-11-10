@@ -697,7 +697,7 @@ export class TimelineItem extends LitElement {
                       </div>
 
                         <user-profile .account="${this.tweet?.account}"></user-profile>
-                        <div @click="${this.openPost}" .innerHTML="${this.tweet?.content}"></div>
+                        <div @click="${this.openPost}" .innerHTML="${this.tweet?.content || ""}"></div>
 
                         ${this.tweet && this.tweet.card ? html`
                               <div @click="${() => this.openLinkCard(this.tweet?.card?.url || "")}" class="link-card">

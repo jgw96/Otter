@@ -149,18 +149,19 @@ export class AppLogin extends LitElement {
     ];
 
     async firstUpdated() {
-        // get code from url
+        // get code and state from url
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
+        const state = urlParams.get('state');
 
         const accessToken = localStorage.getItem('accessToken');
 
         const server = localStorage.getItem('server');
 
-        if (code) {
+        if (code && state) {
             const { authToClient } = await import('../services/account');
 
-            await authToClient(code);
+            await authToClient(code, state);
 
             await router.navigate("/home");
         }

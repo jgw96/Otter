@@ -1,5 +1,6 @@
-// http://localhost:8000/
 import { set } from 'idb-keyval';
+import { FIREBASE_FUNCTIONS_BASE_URL } from '../config/firebase';
+
 let accessToken = localStorage.getItem('accessToken') || '';
 set('accessToken', accessToken);
 set('server', localStorage.getItem('server') || '')
@@ -45,7 +46,7 @@ export const getPeers = async () => {
 
 export const checkFollowing = async (id: string) => {
     try {
-        const response = await fetch(`http://localhost:8000/isfollowing?id=${id}&code=${accessToken}&server=${server}`);
+        const response = await fetch(`${FIREBASE_FUNCTIONS_BASE_URL}/isFollowing?id=${id}&code=${accessToken}&server=${server}`);
         const data = await response.json();
 
         return data;
@@ -102,7 +103,7 @@ export const unfollowUser = async (id: string) => {
 }
 
 export const getAccount = async (id: string) => {
-    const response = await fetch(`http://localhost:8000/account?id=${id}&code=${accessToken}&server=${server}`);
+    const response = await fetch(`${FIREBASE_FUNCTIONS_BASE_URL}/getAccount?id=${id}&code=${accessToken}&server=${server}`);
     const data = await response.json();
 
     console.log("account data", data)
@@ -110,25 +111,25 @@ export const getAccount = async (id: string) => {
 };
 
 export const getUsersPosts = async (id: string) => {
-    const response = await fetch(`http://localhost:8000/userPosts?id=${id}&code=${accessToken}&server=${server}`);
+    const response = await fetch(`${FIREBASE_FUNCTIONS_BASE_URL}/getUserPosts?id=${id}&code=${accessToken}&server=${server}`);
     const data = await response.json();
     return data;
 }
 
 export const getUsersFollowers = async (id: string) => {
-    const response = await fetch(`http://localhost:8000/followers?id=${id}&code=${accessToken}&server=${server}`);
+    const response = await fetch(`${FIREBASE_FUNCTIONS_BASE_URL}/getFollowers?id=${id}&code=${accessToken}&server=${server}`);
     const data = await response.json();
     return data;
 }
 
 export const getFollowing = async (id: string) => {
-    const response = await fetch(`http://localhost:8000/following?id=${id}&code=${accessToken}&server=${server}`);
+    const response = await fetch(`${FIREBASE_FUNCTIONS_BASE_URL}/getFollowing?id=${id}&code=${accessToken}&server=${server}`);
     const data = await response.json();
     return data;
 }
 
 export const followUser = async (id: string) => {
-    const response = await fetch(`http://localhost:8000/follow?id=${id}&code=${accessToken}&server=${server}`, {
+    const response = await fetch(`${FIREBASE_FUNCTIONS_BASE_URL}/follow?id=${id}&code=${accessToken}&server=${server}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -139,21 +140,27 @@ export const followUser = async (id: string) => {
 }
 
 export const getInstanceInfo = async () => {
-    const response = await fetch(`http://localhost:8000/instance?code=${accessToken}&server=${server}`);
+    // This function doesn't exist in the old server either, calling Mastodon API directly
+    const response = await fetch(`https://${server}/api/v1/instance`, {
+        headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }
+    });
     const data = await response.json();
     return data;
 }
 
 export const initAuth = async (serverURL: string) => {
     const redirect_uri = location.origin;
-    const response = await fetch(`http://localhost:8000/authenticate?server=https://${serverURL}&redirect_uri=${redirect_uri}`, {
+    const response = await fetch(`${FIREBASE_FUNCTIONS_BASE_URL}/authenticate?server=${serverURL}&redirect_uri=${redirect_uri}`, {
         method: 'POST'
     });
 
-    const data = await response.text();
+    const data = await response.json();
     console.log("data", data)
 
-    window.location.href = data;
+    // Firebase function returns {url: "..."}
+    window.location.href = data.url || data;
 
     localStorage.setItem('server', serverURL);
 
@@ -163,38 +170,45 @@ export const initAuth = async (serverURL: string) => {
 }
 
 // @ts-ignore
-export const authToClient = async (code: string) => {
+export const authToClient = async (code: string, state: string) => {
     try {
         token = code;
         localStorage.setItem('token', code);
         const redirect_uri = location.origin;
 
-        const response = await fetch(`http://localhost:8000/client?code=${token}&server=${server}&redirect_uri=${redirect_uri}`, {
+        const response = await fetch(`${FIREBASE_FUNCTIONS_BASE_URL}/getClient?code=${token}&state=${state}&redirect_uri=${redirect_uri}`, {
             method: 'POST'
         });
 
-        const tokenData = await response.text();
+        const data = await response.json();
 
-        console.log("tokenData", tokenData);
+        console.log("tokenData", data);
 
-        localStorage.setItem('accessToken', tokenData)
+        // Firebase function returns {access_token: "..."}
+        const tokenData = data.access_token || data;
+
+        // Update both localStorage and IndexedDB
+        localStorage.setItem('accessToken', tokenData);
+        await set('accessToken', tokenData);
+
+        // Update module-level variable
+        accessToken = tokenData;
 
         // try to get user info
         try {
-            const data = await getCurrentUser();
-            console.log("data", data)
+            const userData = await getCurrentUser();
+            console.log("user data", userData)
             return tokenData;
         }
         catch (err) {
-            console.error("prrrrrrrrroblems", err)
-            // await initAuth(server);
+            console.error("Error getting user info", err)
             return tokenData;
         }
 
     }
     catch (err) {
-        console.error("prrrrrrrrroblems", err)
-        await initAuth(server);
+        console.error("Auth to client error", err)
+        throw err;
     }
 }
 

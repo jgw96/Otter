@@ -1,5 +1,6 @@
 import { set } from 'idb-keyval';
 import { getUsersPosts } from './account';
+import { FIREBASE_FUNCTIONS_BASE_URL } from '../config/firebase';
 
 let token = localStorage.getItem('token') || '';
 let accessToken = localStorage.getItem('accessToken') || '';
@@ -44,7 +45,7 @@ export const savePlace = async (id: string) => {
 }
 
 export const getHomeTimeline = async () => {
-    const response = await fetch(`http://localhost:8000/timeline?code=${token}&server=${server}`);
+    const response = await fetch(`${FIREBASE_FUNCTIONS_BASE_URL}/getTimelinePaginated?code=${token}&server=${server}`);
     const data = await response.json();
     return data;
 }
@@ -224,7 +225,12 @@ export const getPaginatedHomeTimeline = async (type = "home") => {
 }
 
 export const getPublicTimeline = async () => {
-    const response = await fetch(`http://localhost:8000/public?code=${token}&server=${server}`);
+    // Call Mastodon API directly - public timeline doesn't need proxy
+    const response = await fetch(`https://${server}/api/v1/timelines/public?limit=40`, {
+        headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }
+    });
     const data = await response.json();
     return data;
 }
@@ -256,7 +262,7 @@ export const boostPost = async (id: string) => {
 }
 
 export const reblogPost = async (id: string) => {
-    const response = await fetch(`http://localhost:8000/reblog?id=${id}&code=${accessToken}&server=${server}`, {
+    const response = await fetch(`${FIREBASE_FUNCTIONS_BASE_URL}/reblog?id=${id}&code=${accessToken}&server=${server}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -267,36 +273,53 @@ export const reblogPost = async (id: string) => {
 }
 
 export const getReplies = async (id: string) => {
-    const response = await fetch(`http://localhost:8000/replies?id=${id}&code=${accessToken}&server=${server}`);
+    const response = await fetch(`${FIREBASE_FUNCTIONS_BASE_URL}/getReplies?id=${id}&code=${accessToken}&server=${server}`);
     const data = await response.json();
     return data;
 }
 
 export const reply = async (id: string, reply: string) => {
-    const response = await fetch(`http://localhost:8000/reply?id=${id}&text=${reply}&code=${accessToken}&server=${server}`, {
+    // Call Mastodon API directly - this endpoint doesn't exist in old server
+    const formData = new FormData();
+    formData.append("status", reply);
+    formData.append("in_reply_to_id", id);
+
+    const response = await fetch(`https://${server}/api/v1/statuses`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
-        }
+            'Authorization': `Bearer ${accessToken}`
+        },
+        body: formData
     });
     const data = await response.json();
     return data;
 }
 
 export const mediaTimeline = async () => {
-    const response = await fetch(`http://localhost:8000/mediaTimeline?limit=40&code=${accessToken}&server=${server}`);
+    // Call Mastodon API directly
+    const currentUser = localStorage.getItem('currentUserID');
+    const response = await fetch(`https://${server}/api/v1/accounts/${currentUser}/statuses?only_media=true&limit=40`, {
+        headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }
+    });
     const data = await response.json();
     return data;
 };
 
 export const searchTimeline = async (query: string) => {
-    const response = await fetch(`http://localhost:8000/search?query=${query}&code=${accessToken}&server=${server}`);
+    const response = await fetch(`${FIREBASE_FUNCTIONS_BASE_URL}/search?query=${query}&code=${accessToken}&server=${server}`);
     const data = await response.json();
     return data;
 }
 
 export const getHashtagTimeline = async (hashtag: string) => {
-    const response = await fetch(`http://localhost:8000/hashtag?tag=${hashtag}&code=${accessToken}&server=${server}`);
+    // Call Mastodon API directly
+    const response = await fetch(`https://${server}/api/v1/timelines/tag/${hashtag}`, {
+        headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }
+    });
     const data = await response.json();
     return data;
 }

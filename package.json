@@ -2,6 +2,7 @@
   "name": "pwa-starter",
   "version": "0.0.1",
   "description": "A starter kit for building PWAs!",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "dev-server": "vite --port 3000",
