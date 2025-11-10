@@ -622,6 +622,6 @@
   --tree-item-expand-collapse-selected-hover: #e0e0e0;
 }
 
-fluent-button::part(control) {
+md-button::part(control) {
   border: none;
 }

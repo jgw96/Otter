@@ -140,7 +140,7 @@ export class MdDialog extends LitElement {
     }
 
     /* Mobile adjustments */
-    @media (max-width: 600px) {
+    @media (max-width: 700px) {
       dialog:not(.fullscreen) {
         max-width: calc(100vw - 32px);
         max-height: calc(100vh - 32px);

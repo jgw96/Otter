@@ -236,7 +236,7 @@ export class TimelineItem extends LitElement {
                 gap: 6px;
             }
 
-            .actions fluent-button {
+            .actions md-button {
                 background: transparent;
                 border: none;
                 font-size: 1.2em;
@@ -274,7 +274,7 @@ export class TimelineItem extends LitElement {
                 gap: 8px;
             }
 
-            @media(max-width: 600px) {
+            @media(max-width: 700px) {
                 .actions {
                     justify-content: space-between;
                 }

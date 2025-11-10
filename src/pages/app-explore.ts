@@ -3,6 +3,7 @@ import { customElement, state } from 'lit/decorators.js'
 import { getPreviewTimeline } from '../services/timeline';
 
 import '../components/preview-timeline';
+import '../components/md-text-field';
 
 import "@shoelace-style/shoelace/dist/components/dropdown/dropdown.js";
 import "@shoelace-style/shoelace/dist/components/button/button.js";
@@ -71,13 +72,13 @@ export class AppExplore extends LitElement {
         }
 
         @media(prefers-color-scheme: dark) {
-            fluent-button {
+            md-button {
                 color: white;
             }
         }
 
         @media(prefers-color-scheme: light) {
-            fluent-button {
+            md-button {
                 color: black;
             }
 
@@ -134,9 +135,9 @@ export class AppExplore extends LitElement {
           <div>
             <div id="sign-up-block">
                 <p>Already have an account? Log in to your server. Otherwise, sign up for a account to follow people, like posts, and more!</p>
-                <fluent-text-field id="server-input" placeholder="https://tech.lgbt"></fluent-text-field>
-                <fluent-button id="login-button" appearance="accent" @click="${this.login}">Login</fluent-button>
-                <fluent-button appearance="outline" @click="${this.signup}">Sign up</fluent-button>
+                <md-text-field id="server-input" placeholder="https://tech.lgbt"></md-text-field>
+                <md-button id="login-button" variant="filled" @click="${this.login}">Login</md-button>
+                <md-button variant="outlined" @click="${this.signup}">Sign up</md-button>
             </div>
 
             <div>

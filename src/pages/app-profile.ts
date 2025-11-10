@@ -4,14 +4,15 @@ import { styleMap } from 'lit/directives/style-map.js';
 import { checkFollowing, followUser, getAccount, getUsersPosts, isFollowingMe, unfollowUser } from '../services/account';
 
 import '../components/timeline-item';
+import '../components/md-dialog';
+import '../components/md-text-area';
 
 import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 import '@shoelace-style/shoelace/dist/components/badge/badge.js';
 
-import { fluentBadge, provideFluentDesignSystem } from "@fluentui/web-components";
+import '../components/md-badge';
 import { Post } from '../interfaces/Post';
 import { editPost } from '../services/posts';
-provideFluentDesignSystem().register(fluentBadge());
 
 @customElement('app-profile')
 export class AppProfile extends LitElement {
@@ -32,7 +33,7 @@ export class AppProfile extends LitElement {
                 height: 100vh;
             }
 
-            sl-dialog::part(base) {
+            md-dialog::part(base) {
                 z-index: 99999;
             }
 
@@ -47,7 +48,7 @@ export class AppProfile extends LitElement {
                 gap: 10px;
             }
 
-            #edit-input-block fluent-text-area::part(control) {
+            #edit-input-block md-text-area::part(textarea) {
                 height: 200px;
             }
 
@@ -306,7 +307,7 @@ export class AppProfile extends LitElement {
                 font-size: 12px;
               }
 
-              @media(max-width: 600px) {
+              @media(max-width: 700px) {
                 main {
                     display: flex;
                     flex-direction: column;
@@ -467,15 +468,15 @@ export class AppProfile extends LitElement {
         return html`
         <app-header ?enableBack="${true}"></app-header>
 
-        <sl-dialog id="edit" label="Edit Post">
+        <md-dialog id="edit" label="Edit Post">
             <span id="preview-content"></span>
 
             <div id="edit-input-block">
-            <fluent-text-area id="content"></fluent-text-area>
+            <md-text-area id="content"></md-text-area>
 
             <sl-button type="primary" @click=${() => this.confirmEdit()}>Save</sl-button>
             </div>
-        </sl-dialog>
+        </md-dialog>
 
         <main>
             <div id="profile">
@@ -504,24 +505,24 @@ export class AppProfile extends LitElement {
                     }
 
                     <div id="follower-info">
-                      <fluent-badge appearance="accent">${this.user ? this.user.followers_count : 0} followers</fluent-badge>
-                      <fluent-badge appearance="accent">${this.user ? this.user.following_count : 0} following</fluent-badge>
+                      <md-badge variant="filled">${this.user ? this.user.followers_count : 0} followers</md-badge>
+                      <md-badge variant="filled">${this.user ? this.user.following_count : 0} following</md-badge>
                     </div>
 
                     <div id="fields">
                         ${this.user ? this.user.fields.map((field: any) => html`
                         <div>
-                            <fluent-badge appearance="accent">
+                            <md-badge variant="filled">
                                 <span class="field-name" .innerHTML="${field.name}"></span>
                                <span class="field-value" .innerHTML="${field.value}"></span>
-                            </fluent-badge>
+                            </md-badge>
                         </div>
                         `) : null}
                     </div>
 
                     <div id="profile-card-actions">
-                        ${this.followed && this.following ? html`<fluent-button appearance="accent" id="unfollow" @click="${() => this.unfollow()}">Mutuals</fluent-button>` : this.followed ? html`<fluent-button id="unfollow" @click="${() => this.unfollow()}" appearance="accent" pill>Unfollow</fluent-button>` : html`<fluent-button pill appearance="accent"
-                            @click="${() => this.follow()}">Follow</fluent-button>`}
+                        ${this.followed && this.following ? html`<md-button variant="filled" id="unfollow" @click="${() => this.unfollow()}">Mutuals</md-button>` : this.followed ? html`<md-button id="unfollow" @click="${() => this.unfollow()}" variant="filled" pill>Unfollow</md-button>` : html`<md-button pill variant="filled"
+                            @click="${() => this.follow()}">Follow</md-button>`}
                     </div>
                 </div>
             </div>
@@ -536,8 +537,8 @@ export class AppProfile extends LitElement {
                         <p>${this.user.display_name}</p>
                     </div>
 
-                 ${this.followed ? html`<fluent-button pill disabled>Following</fluent-button>` : html`<fluent-button pill appearance="accent"
-                            @click="${() => this.follow()}">Follow</fluent-button>`}
+                 ${this.followed ? html`<md-button pill disabled>Following</md-button>` : html`<md-button pill variant="filled"
+                            @click="${() => this.follow()}">Follow</md-button>`}
             </div>
                 ` : null
             }

@@ -342,7 +342,7 @@ interface Settings {
 - Shared styles in `src/styles/shared-styles.ts`
 - Shoelace CSS custom properties for theming (`--sl-color-primary-600`)
 - Theme colors stored in `light.css`, `dark.css`, `global.css` (copied to dist by Vite)
-- Responsive breakpoint: `@media(max-width: 600px)`
+- Responsive breakpoint: `@media(max-width: 700px)`
 
 ### State Management
 - Component-level `@state()` for private reactive state
@@ -540,7 +540,7 @@ User's custom primary color overrides both light and dark defaults via inline st
 ### Responsive Styling
 All components use consistent breakpoint:
 ```css
-@media(max-width: 600px) {
+@media(max-width: 700px) {
   /* Mobile styles */
 }
 ```

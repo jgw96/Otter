@@ -171,7 +171,7 @@ export class MdCard extends LitElement {
     }
 
     /* Responsive */
-    @media (max-width: 600px) {
+    @media (max-width: 700px) {
       .card__header,
       .card__body,
       .card__footer {

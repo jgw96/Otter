@@ -784,7 +784,7 @@
   margin: var(--sl-spacing-medium);
 }
 
-fluent-button::part(control) {
+md-button::part(control) {
   border: none;
 }
 

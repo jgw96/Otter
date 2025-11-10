@@ -41,7 +41,7 @@ export class Timeline extends LitElement {
                 display: block;
             }
 
-            sl-dialog::part(base) {
+            md-dialog::part(base) {
                 z-index: 99999;
             }
 
@@ -61,7 +61,7 @@ export class Timeline extends LitElement {
                 justify-content: space-between;
             }
 
-            fluent-button {
+            md-button {
                 border: none;
             }
 
@@ -79,7 +79,7 @@ export class Timeline extends LitElement {
             }
 
             @media(prefers-color-scheme: dark) {
-                fluent-button::part(control) {
+                md-button::part(control) {
                     --neutral-fill-rest: #242428;
                     --netural-fill-stealth-active: #242428;
                     color: white;

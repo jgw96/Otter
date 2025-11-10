@@ -4,13 +4,12 @@ import { customElement, property, state } from 'lit/decorators.js';
 import '../components/header';
 import '../components/timeline-item';
 import '../components/md-icon';
+import '../components/md-text-area';
 import { Post } from '../interfaces/Post';
 import { getReplies } from '../services/timeline';
 
-import { fluentButton, fluentTextArea, provideFluentDesignSystem } from "@fluentui/web-components";
 import { replyToPost } from '../services/posts';
 import { classMap } from 'lit/directives/class-map.js';
-provideFluentDesignSystem().register(fluentButton(), fluentTextArea());
 
 @customElement('post-detail')
 export class PostDetail extends LitElement {
@@ -49,7 +48,7 @@ export class PostDetail extends LitElement {
                 flex-direction: column;
             }
 
-            fluent-button::part(control) {
+            md-button::part(control) {
                 border: none;
             }
 
@@ -105,7 +104,7 @@ export class PostDetail extends LitElement {
             }
 
             @media(prefers-color-scheme: dark) {
-                fluent-text-area::part(control), fluent-button[appearance="neutral"]::part(control), fluent-text-field::part(control), fluent-text-field::part(root) {
+                md-text-area::part(textarea), md-button[variant="outlined"]::part(control) {
                     background: #1e1e1e;
                     color: white;
                 }
@@ -215,7 +214,7 @@ export class PostDetail extends LitElement {
     }
 
     async handleReply() {
-        const textArea = this.shadowRoot?.querySelector('fluent-text-area') as any;
+        const textArea = this.shadowRoot?.querySelector('md-text-area') as any;
 
 
         if (textArea.value && this.tweet && this.tweet.id) {
@@ -237,12 +236,12 @@ export class PostDetail extends LitElement {
             <div id="main-block">
                 <timeline-item id="main" .tweet="${this.tweet}"></timeline-item>
                 <div id="post-actions">
-                    <fluent-text-area placeholder="Reply to this post..."></fluent-text-area>
-                    <fluent-button @click="${() => this.handleReply()}" id="reply-button" appearance="accent">
+                    <md-text-area placeholder="Reply to this post..."></md-text-area>
+                    <md-button @click="${() => this.handleReply()}" id="reply-button" variant="filled">
                         Reply
 
                         <md-icon slot="suffix" src="/assets/add-outline.svg"></md-icon>
-                    </fluent-button>
+                    </md-button>
                 </div>
             </div>
 

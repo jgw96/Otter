@@ -459,7 +459,7 @@ export class AppHome extends LitElement {
     }
 
 
-    @media(max-width: 600px) {
+    @media(max-width: 700px) {
       #profile {
         display: none;
       }
@@ -605,7 +605,7 @@ export class AppHome extends LitElement {
       }
     }, { timeout: 3000 });
 
-    window.matchMedia(" (max-width: 600px)").addEventListener("change", (e) => {
+    window.matchMedia(" (max-width: 700px)").addEventListener("change", (e) => {
       if (e.matches) {
         const tabGroup = this.shadowRoot?.querySelector("md-tabs");
         tabGroup?.setAttribute("placement", "bottom");
@@ -1152,8 +1152,8 @@ export class AppHome extends LitElement {
         <md-tabs
           @tab-change="${(e: CustomEvent) => this.handleTabChange(e)}"
           .active="${this.activeTab}"
-          orientation="${window.matchMedia("(max-width: 600px)").matches ? "horizontal" : "vertical"}"
-          .placement="${window.matchMedia("(max-width: 600px)").matches ? "bottom" : "start"}"
+          orientation="${window.matchMedia("(max-width: 700px)").matches ? "horizontal" : "vertical"}"
+          .placement="${window.matchMedia("(max-width: 700px)").matches ? "bottom" : "start"}"
         >
           <md-tab @click="${() => this.reloadHome()}" slot="nav" panel="general">
             <md-icon slot="icon" src="/assets/home-outline.svg"></md-icon>

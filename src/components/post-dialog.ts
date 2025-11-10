@@ -175,7 +175,7 @@ export class PostDialog extends LitElement {
                 width: 80%;
             }
 
-            @media(max-width: 600px) {
+            @media(max-width: 700px) {
                 md-dialog::part(dialog) {
                     height: 100vh;
                     max-height: 100vh;

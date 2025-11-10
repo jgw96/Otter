@@ -68,7 +68,7 @@ export class MdToolbar extends LitElement {
     }
 
     /* Mobile adjustments */
-    @media (max-width: 600px) {
+    @media (max-width: 700px) {
       .toolbar {
         min-height: 56px;
         padding: 4px 8px;

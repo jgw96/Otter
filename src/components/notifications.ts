@@ -161,7 +161,7 @@ export class Notifications extends LitElement {
                 font-weight: normal;
             }
 
-            @media(max-width: 600px) {
+            @media(max-width: 700px) {
                 sl-tab-group {
                     padding-left: 10px;
                     padding-right: 10px;

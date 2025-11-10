@@ -137,7 +137,7 @@ export class MdTabs extends LitElement {
     }
 
     /* Mobile adjustments */
-    @media (max-width: 600px) {
+    @media (max-width: 700px) {
       /* Move horizontal tabs to bottom on mobile */
       :host([orientation="horizontal"]) {
         flex-direction: column-reverse;
