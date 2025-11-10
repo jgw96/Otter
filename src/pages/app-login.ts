@@ -254,11 +254,11 @@ export class AppLogin extends LitElement {
                         <div id="intro-carousel">
 
             <div class="scroll-item">
-            <h2>What is Otter?</h2>
+            <h2>What is Coho?</h2>
             <p>
-                Otter is the app your using 😊. It is an open source, cross-platform Mastodon client. Otter
+                Coho is the app your using 😊. It is an open source, cross-platform Mastodon client. Coho
                 brings the best of Mastodon to any device, with a fast and intuitive interface,
-                no matter your device or internet connection. To use Otter, you need a Mastodon account. Once you have a Mastodon account
+                no matter your device or internet connection. To use Coho, you need a Mastodon account. Once you have a Mastodon account
                 you will need to enter the URL of the Mastodon instance you signed up at.
             </p>
 
@@ -314,7 +314,7 @@ export class AppLogin extends LitElement {
 
         <main>
 
-            <img src="/assets/icons/Android/96-icon.png" alt="Otter Logo">
+            <img src="/assets/icons/Android/96-icon.png" alt="Coho Logo">
 
             <div id="login-block">
                 <md-text-field
@@ -330,7 +330,7 @@ export class AppLogin extends LitElement {
             <md-button @click="${() => this.openIntro()}" variant="text">Intro To Mastodon</md-button>
             <md-button @click="${() => this.explore()}" variant="text">Explore without an account</md-button>
 
-            <p>Welcome To Otter, your Mastodon Client</p>
+            <p>Welcome To Coho, your Mastodon Client</p>
 
             <a href="https://github.com/jgw96/mammoth-app#readme" target="_blank">Learn More</a>
         </main>

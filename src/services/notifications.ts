@@ -90,10 +90,10 @@ export const subToPush = async () => {
     const permission = await Notification.requestPermission();
     if (permission === "granted") {
         // show notification
-        registration?.showNotification("Otter", {
+        registration?.showNotification("Coho", {
             body: "You have successfully subscribed to push notifications!",
             icon: "/assets/icons/128-icon.png",
-            tag: "mammoth-subscribe"
+            tag: "coho-subscribe"
         });
     }
 

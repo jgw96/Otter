@@ -1081,7 +1081,7 @@ export class AppHome extends LitElement {
           </div>
 
           <p>
-            Data Saver Mode reduces the amount of data used by Otter.
+            Data Saver Mode reduces the amount of data used by Coho.
           </p>
         </div>
 
@@ -1134,7 +1134,7 @@ export class AppHome extends LitElement {
         </div>
       </otter-drawer>
 
-      <otter-drawer id="bot-drawer" placement="bottom" label="Otter Bot">
+      <otter-drawer id="bot-drawer" placement="bottom" label="Coho Bot">
         <!-- <mammoth-bot></mammoth-bot> -->
       </otter-drawer>
 

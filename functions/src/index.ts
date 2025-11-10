@@ -1,6 +1,6 @@
 /**
- * Firebase Functions for Otter Mastodon PWA
- * Ported from monolithic Express server
+ * Firebase Functions for Coho Mastodon PWA
+ * Migrated from Azure Functions
  */
 
 import {onRequest} from "firebase-functions/v2/https";

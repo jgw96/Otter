@@ -1,8 +1,8 @@
-# Otter: Your Mastodon App
+# Coho: Your Mastodon App
 
 **Not familiar with Mastodon? [Learn More](https://joinmastodon.org/)**
 
-## Status: Currently In Public Beta
+## Status: Currently In Public Alpha
 
 <div>
   <img height="400px" src="/public/assets/screenshots/new-screens/desktop-one.png" />
@@ -23,9 +23,9 @@
 
 ### AI Enhanced
 
-- Struggling to find that perfect image to go along with your post? Have a funny idea for an image on a post? Generate it right in Otter with the magic of AI
+- Struggling to find that perfect image to go along with your post? Have a funny idea for an image on a post? Generate it right in Coho with the magic of AI
 - Not understanding something in a post, or just want to learn more about a specific topic in a post? Click the search button on a post to have AI help you understand the post!
-- AI driven autocomplete and status generation: Have something to say but not sure how to say it best? Ask Otter to write it for you!
+- AI driven autocomplete and status generation: Have something to say but not sure how to say it best? Ask Coho to write it for you!
 
 ### Customizeable
 

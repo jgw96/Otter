@@ -118,7 +118,7 @@ const getNotifications = async () => {
             // build message for notification
             let message = '';
             let actions = [];
-            let title = 'Otter';
+            let title = 'Coho';
             // if data[0].type === 'mention' || 'reblog' || 'favourite'
             switch (data[0].type) {
                 case 'mention':
@@ -152,10 +152,10 @@ const getNotifications = async () => {
 
 
             // show notification
-            const notify = self.registration.showNotification('Otter', {
+            const notify = self.registration.showNotification('Coho', {
                 body: message,
                 icon: '/assets/icons/Android/256-icon.png',
-                tag: 'otter',
+                tag: 'coho',
                 renotify: false,
                 actions: actions,
                 data: {
@@ -191,7 +191,7 @@ self.addEventListener('push', async (event) => {
     // build message for notification
     let message = '';
     let actions = [];
-    let title = 'Otter';
+    let title = 'Coho';
     // if data[0].type === 'mention' || 'reblog' || 'favourite'
     switch (data[0].type) {
         case 'mention':
@@ -226,7 +226,7 @@ self.addEventListener('push', async (event) => {
     const newNotification = new Notification(title, {
         body: message,
         icon: '/assets/icons/Android/256-icon.png',
-        tag: 'otter',
+        tag: 'coho',
         renotify: false,
         actions: actions,
         data: {

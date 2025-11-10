@@ -1,7 +1,7 @@
-# Otter - Mastodon PWA Development Guide
+# Coho - Mastodon PWA Development Guide
 
 ## Project Overview
-Otter is a Progressive Web App (PWA) Mastodon client built with Lit web components, emphasizing offline capabilities, AI features, and cross-platform deployment. The app uses a custom router, service workers for offline support, and Azure Functions for AI features.
+Coho is a Progressive Web App (PWA) Mastodon client built with Lit web components, emphasizing offline capabilities, AI features, and cross-platform deployment. The app uses a custom router, service workers for offline support, and Firebase Functions for AI features.
 
 ## Architecture
 
@@ -13,7 +13,7 @@ Otter is a Progressive Web App (PWA) Mastodon client built with Lit web componen
 - **Build Tool**: Vite with PWA plugin, WASM support, and terser minification
 
 ### Material Design 3 Migration & Custom Components
-Otter is migrating away from Fluent UI surface primitives toward a unified set of custom Material Design 3 (MD3) components. All NEW custom components should follow MD3 guidelines for elevation, shape, color roles, typography, and motion. When updating existing components, prefer adopting the same tokens and interaction patterns.
+Coho is migrating away from Fluent UI surface primitives toward a unified set of custom Material Design 3 (MD3) components. All NEW custom components should follow MD3 guidelines for elevation, shape, color roles, typography, and motion. When updating existing components, prefer adopting the same tokens and interaction patterns.
 
 Current MD3 component suite (`src/components/`):
 
@@ -241,19 +241,27 @@ Key components are in `src/components/` and pages in `src/pages/`. Services are 
 - **Mastodon API**: Direct REST API calls to user's chosen instance, authenticated with Bearer tokens
 - **WebSocket**: Real-time timeline updates via `timeline-worker.ts` connecting to Mastodon streaming API
 
-### Backend (Azure Functions)
-API functions in `api/` directory are Azure Functions (Node.js):
-- `HandleAIAction/`: OpenAI integration for post generation
-- `createImage/`: AI image generation
-- `mammothBot/`: AI assistant features
-- `summarizeStatus/`, `translateStatus/`: Content processing
+### Backend (Firebase Functions)
+API functions in `functions/` directory are Firebase Functions (Node.js):
+- `generateImage/`: OpenAI integration for image generation
+- `generateStatus/`: AI post generation
+- `bookmark/`, `reblog/`, `boost/`, `follow/`: Mastodon API proxy functions
+- Authentication functions: `authenticate/`, `getClient/`
 
 All functions use pattern:
 ```typescript
-const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest) => {
+export const functionName = onRequest(async (request, response) => {
+  // Handle CORS
+  if (request.method === "OPTIONS") {
+    response.set(corsHeaders);
+    response.status(204).send("");
+    return;
+  }
+  
+  response.set(corsHeaders);
   // Logic here
-  context.res = { status: 200, body: data };
-};
+  response.json(data);
+});
 ```
 
 ## Development Workflows
@@ -272,22 +280,33 @@ npm test                    # Run Playwright tests
 npm run start-for-tests     # Build and serve for testing
 ```
 
-### Azure Functions Development
+### Firebase Functions Development
 ```bash
-cd api
+cd functions
 npm install
 npm run build        # Compile TypeScript
-npm start            # Start Azure Functions locally (func start)
+npm run serve        # Start Firebase emulators locally
 ```
 
-Or use VS Code task: "func: host start" (handles install, build, and start).
+Or use Firebase CLI:
+```bash
+firebase emulators:start
+```
 
 ### Deployment
 ```bash
-npm run deploy  # Deploy to Azure Static Web Apps using SWA CLI
+firebase deploy  # Deploy to Firebase
 ```
 
-Configuration in `swa-cli.config.json` specifies app location, output dir (`dist`), and dev server URL.
+For frontend only:
+```bash
+firebase deploy --only hosting
+```
+
+For functions only:
+```bash
+firebase deploy --only functions
+```
 
 ## Key Conventions
 
@@ -369,35 +388,30 @@ Playwright tests in `tests/` directory. Config in `playwright.config.ts` with 30
 - Service worker precache manifest injected by Vite plugin at build time
 - Azure Functions require `OPENAI_TOKEN` env variable for AI features
 
-## AI Integration
+### AI Integration
 
 ### Frontend AI Services (`src/services/ai.ts`)
-All AI features proxy through Azure Functions to protect API keys:
+All AI features proxy through Firebase Functions to protect API keys:
 
 ```typescript
 // Generate post from prompt
-await createAPost(prompt);  // -> /api/HandleAIAction
-
-// Summarize a status
-await summarize(statusText);  // -> /api/summarizeStatus
-
-// Translate content
-await translate(text, "en-us");  // -> /api/translateStatus
+await createAPost(prompt);  // -> /generateStatus
 
 // Generate images
-await createImage(prompt);  // -> /api/createImage
+await createImage(prompt);  // -> /generateImage
 
-// Chat with AI bot
-await requestMammothBot(prompt, previousMessages);  // -> /api/mammothBot
+// Chat with AI bot (if implemented)
+await requestCohoBot(prompt, previousMessages);  // -> /cohoBot
 ```
 
 ### Backend AI Functions
-Each Azure Function follows this pattern:
-1. Accept query params or POST body
-2. Call OpenAI API with `process.env.OPENAI_TOKEN`
-3. Return formatted response in `context.res`
+Each Firebase Function follows this pattern:
+1. Handle CORS preflight (OPTIONS requests)
+2. Accept query params or POST body
+3. Call OpenAI API with `process.env.OPENAI_API_KEY`
+4. Return formatted response via `response.json()`
 
-Example: `api/HandleAIAction/index.ts` uses GPT-3.5-turbo with specific temperature/token settings for post generation.
+Example: `functions/src/index.ts` `generateStatus` uses GPT-3.5-turbo-instruct with specific temperature/token settings for post generation.
 
 ## Offline & PWA Features
 
